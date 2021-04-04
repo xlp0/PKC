@@ -21,12 +21,12 @@ fi
 
 # Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
 if [ ! -e ./docker-compose.yml ]; then
-  curl https://raw.githubusercontent.com/benkoo/XLPWikiMountPoint/main/docker-compose.yml > docker-compose.yml
+  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/docker-compose.yml > docker-compose.yml
 fi
 
 # Make sure that LocalSettings.php is available in this directory, otherwise, download it.
 if [ ! -e ./LocalSettings.php ]; then
-  curl https://raw.githubusercontent.com/benkoo/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
+  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
 fi
 
 # If docker is running already, first run a data dump before shutting down docker processes
@@ -54,9 +54,8 @@ docker-compose down --volumes
 # Decompress the InitialDataPackage to ./mountPoint 
 if [ ! -e ./mountPoint/ ]; then
 
-if [ ! -e ./InitialContentPackage.tar.gz ]; then
-  
-  curl  https://raw.githubusercontent.com/benkoo/XLPWikiMountPoint/main/InitialContentPackage.tar.gz > temp.tar.gz
+if [ ! -e ./InitialContentPackage.tar.gz ]; then 
+  curl  https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/InitialContentPackage.tar.gz > temp.tar.gz
 fi
   tar -xzvf ./temp.tar.gz -C .
   if [ -e ./temp.tar.gz ]; then 

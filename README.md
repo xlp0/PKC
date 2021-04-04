@@ -29,14 +29,14 @@ The following text shows the required resources and action items for [PKC] insta
 5. Read the instructions in the [Main Page]. 
 
 ## Outcomes Expected
-1. Every 30 minutes, all the changes you made to this local instance of MediaWiki will be automatically backed up to the directory's "backup" directory.
+1. Every 30 minutes, all the changes you made to this local instance of MediaWiki will be automatically backed up to the directory's "backup/" sub-directory.
 2. The textual content stored in MediaWiki's database can will be stored in an XML file: XLPLATEST.xml
-3. All the uploaded files, assuming the file names are accepted by the host operating system, will be dumped to the "backup/MediaFile" directory.
+3. All the uploaded files, assuming the file names are accepted by the host operating system, will be dumped to the "backup/MediaFile/" sub-directory.
 
 ## Boundary Conditions
 1. We do not warrant any reliability, completeness, and accuracy of this installation procedure. **Any action you take upon this information and execute this script is at your own risk**, We will not be liable for any losses and damages in connection to the use of the actions and software prescribed here. 
 2. We have only tested on a small number of machines and configurations, your mileage may vary.
-3. Do not remove any of the files in the directory with *backup/*, such as *docker-compose.yml* and the *LocalSettings.php*. These files are the configuration files for Docker and MediaWiki respectively. Missing them, this system will stops to work.  
+3. Do not remove any of the files in the directory with "*backup/*", such as "*docker-compose.yml*" and the "*LocalSettings.php*". These files are the configuration files for [Docker] and [MediaWiki] respectively. Missing them, this system will stops to work.  
 
 
 [Personal Knowledge Container]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md

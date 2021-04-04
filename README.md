@@ -23,11 +23,29 @@ The following text shows the required resources and action items for [PKC] insta
 
 ## Installation Procedure
 1. Install [Docker], the Installation instructions and downloadable files can be found here: https://docs.docker.com/get-started/
-2. Download the following script: [up.sh]. Ideally, you should just [git] clone this project. To download [git], go to [Git Installation]. 
-3. Go to a [command line], or so called [terminal] application, move your working directory using the command "**[cd]**" for **change directory**, to a directory in your file system that you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use [Git Bash], when you install [git] for Windows, [Git Bash] is included the installation process.
-4. Go to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
-5. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
-6. Read the instructions in the [Main Page]. 
+2. Go to a [command line], or so called [terminal] application, move your working directory using the command "**[cd]**" for **change directory**, to a directory in your file system that you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use [Git Bash], when you install [git] for Windows, [Git Bash] is included the installation process.
+
+Assume the directory you keep your working files is called: **Workspace**. Your terminal application should have something like this:
+
+```
+<machine_name>:Workspace <user_name>$
+```
+
+Download the entire package using [git]. You may copy the instruction as follows:
+
+```
+<machine_name>:Workspace <user_name>$ git clone https://github.com/benkoo/PersonalKnowledgeContainer.git
+```
+
+3. Change your working directory using the command [cd] to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
+
+```
+<machine_name>:Workspace <user_name>$ cd PersonalKnowledgeContainer
+<machine_name>:Workspace <user_name>$ ./up.sh
+```
+
+4. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
+5. Read the instructions in the [Main Page]. 
 
 ## Outcomes Expected
 1. Every 30 minutes, all the changes you made to this local instance of MediaWiki will be automatically backed up to the directory's "backup/" sub-directory.

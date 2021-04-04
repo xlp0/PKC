@@ -1,4 +1,4 @@
-# PersonalKnowledgeContainer
+# Personal Knowledge Container
 This project, [PersonalKnowledgeContainer], abbreviated as [PKC], provides an executable script ([up.sh]) that installs a MediaWiki-based docker-based [microservice] on a machine of your choice. After the installation, it can operate on your own machine with or without Internet connection.
 
 ## Context

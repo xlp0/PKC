@@ -18,7 +18,7 @@ The following text shows the required resources and action items for [PKC] insta
 ## Required Resources
 1. A computer that you have access to its "root" or "administrator" previledge.
 2. Operatng Systems that support Docker: Windows 10, Mac OS X Big Sur 11.2.3 and Linux.
-3. Under Windows 10 Environment, some VPN software might interfere with Docker, you will need to remove VPN software before installing Docker.
+3. Under Windows 10 Environment, some VPN software might interfere with Docker's Windows Subsystem for Linux, a.k.a. [WSL], you will need to remove VPN software before installing Docker.
 4. Access to the Internet during intallation time. We you perform the installation on a network with 10Mbps+ to the Internet. After installation, this system can operated without access to the Internet.
 
 ## Installation Procedure
@@ -43,3 +43,4 @@ The following text shows the required resources and action items for [PKC] insta
 [PKC]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
 [microservice]: https://www.bmc.com/blogs/microservices-architecture/
 [MediaWiki]: https://www.mediawiki.org/wiki/MediaWiki
+[WSL]: https://docs.docker.com/docker-for-windows/wsl/

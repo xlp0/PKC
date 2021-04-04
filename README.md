@@ -1,5 +1,5 @@
 # PersonalKnowledgeContainer
-This project, [Personal Knowledge Container], abbreviated as [PKC] provides an executable script that installs a MediaWiki-based Knowledge Container for small organizations.
+This project, [PersonalKnowledgeContainer], abbreviated as [PKC] provides an executable script ([up.sh]) that installs a MediaWiki-based docker-based [microservice] on a machine of your choice. After the installation, it can operate on your own machine with or without Internet connection.
 
 ## Context
 After [microservice] technologies become ubiquitous, it is possible to organize personal knowledge using a personally operated [MediaWiki] services that could work even the computer is not connect to the Internet. This **off-line** capability will enable anyone to enjoy the power of open source software without worrying your data might be leaked to the public. However, to make sure that your own data will always be accessible to you, users of this self-operated service must have a simple procedure to perform data backup and restoration, so that data may continue to work after one switch to a different computer. Moreover, individuals shoud also be able to read their own data even the software for displaying them hasevolved to a new version that doesn't work with data stored with previous versions. This project intend to resolve this challenge by giving everyone the choice to run their own chosen version of MediaWiki software, given that all the images that have proven to work has publicly available images, so that even if the software has been abandoned, one may use [container-virtualization] technologies to continue operate the software.
@@ -58,7 +58,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 3. Do not remove any of the files in the directory with "*backup/*", such as "*docker-compose.yml*" and the "*LocalSettings.php*". These files are the configuration files for [Docker] and [MediaWiki] respectively. Missing them, this system will stops to work.  
 
 
-[Personal Knowledge Container]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
+[PersonalKnowledgeContainer]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
 [container-virtualization]:https://searchitoperations.techtarget.com/definition/container-containerization-or-container-based-virtualization
 [command line]:https://www.osc.edu/supercomputing/unix-cmds
 [terminal]: https://www.techopedia.com/definition/28747/mac-terminal-mac-os-x#:~:text=The%20Mac%20Terminal%20is%20a,OS%20X%20versions%20through%20Lion.&text=Terminal%20allows%20users%20to%20modify,graphical%20user%20interface%20(GUI).

@@ -23,10 +23,11 @@ The following text shows the required resources and action items for [PKC] insta
 
 ## Installation Procedure
 1. Install [Docker], the Installation instructions and downloadable files can be found here: https://docs.docker.com/get-started/
-2. Download the following script:
-3. Go to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
-4. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
-5. Read the instructions in the [Main Page]. 
+2. Download the following script: [up.sh]. Ideally, you should just [git] clone this project. To download [git], go to [Git Installation]. 
+3. Go to a Terminal application, change directory ([cd]) to a directory in your file system that you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use [Git Bash], when you install [git] for Windows, this will be automaticatlly included.
+4. Go to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
+5. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
+6. Read the instructions in the [Main Page]. 
 
 ## Outcomes Expected
 1. Every 30 minutes, all the changes you made to this local instance of MediaWiki will be automatically backed up to the directory's "backup/" sub-directory.
@@ -47,3 +48,6 @@ The following text shows the required resources and action items for [PKC] insta
 [Main Page]: http://localhost:9352/index.php/Main_Page
 [WSL]: https://docs.docker.com/docker-for-windows/wsl/
 [up.sh]:https://github.com/benkoo/PersonalKnowledgeContainer/blob/main/up.sh
+[git]:https://git-scm.com/
+[Git Installation]:https://git-scm.com/
+[Git Bash]: https://gitforwindows.org/

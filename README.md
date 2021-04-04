@@ -43,6 +43,7 @@ The following text shows the required resources and action items for [PKC] insta
 [Personal Knowledge Container]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
 [container-virtualization]:https://searchitoperations.techtarget.com/definition/container-containerization-or-container-based-virtualization
 [PKC]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
+[cd]:https://www.minitool.com/news/how-to-change-directory-in-cmd.html
 [microservice]: https://www.bmc.com/blogs/microservices-architecture/
 [Docker]: http://docker.io
 [MediaWiki]: https://www.mediawiki.org/wiki/MediaWiki

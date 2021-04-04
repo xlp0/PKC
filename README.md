@@ -37,11 +37,11 @@ Download the entire package using [git]. You may copy the instruction as follows
 <machine_name>:Workspace <user_name>$ git clone https://github.com/benkoo/PersonalKnowledgeContainer.git
 ```
 
-3. Change your working directory using the command [cd] to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
+3. After the [git clone] instruction copied relevant data to your your working directory, using the command [cd] to the **PersonalKnolwedgeContainer** directory that contains the script ([up.sh]), and type: "./[up.sh]" to execute the script.
 
 ```
 <machine_name>:Workspace <user_name>$ cd PersonalKnowledgeContainer
-<machine_name>:Workspace <user_name>$ ./up.sh
+<machine_name>:PersonalKnowledgeContainer <user_name>$ ./up.sh
 ```
 
 4. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352

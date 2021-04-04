@@ -76,4 +76,4 @@ docker-compose up -d --build
 echo $MW_CONTAINER" will do regular database content dump."
 docker exec $MW_CONTAINER service cron start
 
-echo "Please go to a browser and use http://localhost:8080 to test the service"
+echo "Please go to a browser and use http://localhost:9352 to test the service"

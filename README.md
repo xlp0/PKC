@@ -18,7 +18,7 @@ The following text shows the required resources and action items for [PKC] insta
 ## Required Resources
 1. A computer that you have access to its "root" or "administrator" previledge.
 2. Operatng Systems that support [Docker]: Windows 10, Mac OS X Big Sur 11.2.3 and Linux.
-3. Under Windows 10 Environment, some VPN software might interfere with [Docker]'s Windows Subsystem for Linux, a.k.a. [WSL], you will need to remove VPN software before installing [Docker].
+3. Under Windows 10 Environment, some VPN software might interfere with [Docker]'s Windows Subsystem for Linux, a.k.a. [WSL], you will need to remove VPN software before installing [Docker]. In case you don't want to remvoe your VPN software, or your Docker and Bash have compatibility issues, please try to [VirutalBox_PKC] solution.
 4. Access to the Internet during intallation time. Please try to perform the installation on a network with 10Mbps+ to the Internet. After installation, this system can operated without access to the Internet.
 
 ## Installation Procedure
@@ -63,6 +63,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 [command line]:https://www.osc.edu/supercomputing/unix-cmds
 [terminal]: https://www.techopedia.com/definition/28747/mac-terminal-mac-os-x#:~:text=The%20Mac%20Terminal%20is%20a,OS%20X%20versions%20through%20Lion.&text=Terminal%20allows%20users%20to%20modify,graphical%20user%20interface%20(GUI).
 [PKC]: https://github.com/xlp0/PersonalKnowledgeContainer
+[VirtualBox PKC]: https://github.com/xlp0/VirtualBox_PKC
 [cd]:https://www.minitool.com/news/how-to-change-directory-in-cmd.html
 [microservice]: https://www.bmc.com/blogs/microservices-architecture/
 [Docker]: http://docker.io

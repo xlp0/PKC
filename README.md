@@ -24,7 +24,7 @@ The following text shows the required resources and action items for [PKC] insta
 ## Installation Procedure
 1. Install [Docker], the Installation instructions and downloadable files can be found here: https://docs.docker.com/get-started/
 2. Download the following script:
-3. Go to the directory that contains this script (up.sh), and type: "./up.sh" to execute the script.
+3. Go to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
 4. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
 5. Read the instructions in the [Main Page]. 
 
@@ -46,3 +46,4 @@ The following text shows the required resources and action items for [PKC] insta
 [MediaWiki]: https://www.mediawiki.org/wiki/MediaWiki
 [Main Page]: http://localhost:9352/index.php/Main_Page
 [WSL]: https://docs.docker.com/docker-for-windows/wsl/
+[up.sh]:PersonalKnowledgeContainer/up.sh

@@ -34,7 +34,7 @@ The following text shows the required resources and action items for [PKC] insta
 
 ## Boundary Conditions
 1. We have only tested on a small number of machines and configurations, your milage may vary.
-2. We do not warrant any reliability, completeness, and accuracy of this installation procedure.''''Any action you take upon this information is script is at your own risk,'''' We will not be liable for any losses and damages in connection to the use of the software prescribed here. 
+2. We do not warrant any reliability, completeness, and accuracy of this installation procedure.**Any action you take upon this information is script is at your own risk**, We will not be liable for any losses and damages in connection to the use of the software prescribed here. 
 
 
 [Personal Knowledge Container]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md

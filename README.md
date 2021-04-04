@@ -73,3 +73,4 @@ Download the entire package using [git]. You may copy the instruction as follows
 [git]:https://git-scm.com/
 [Git Installation]:https://git-scm.com/
 [Git Bash]: https://gitforwindows.org/
+[git clone]:https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-clone#:~:text=git%20clone%20is%20a%20Git,copy%20of%20the%20target%20repository.

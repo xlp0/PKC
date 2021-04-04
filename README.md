@@ -24,7 +24,7 @@ The following text shows the required resources and action items for [PKC] insta
 ## Installation Procedure
 1. Install [Docker], the Installation instructions and downloadable files can be found here: https://docs.docker.com/get-started/
 2. Download the following script: [up.sh]. Ideally, you should just [git] clone this project. To download [git], go to [Git Installation]. 
-3. Go to a Terminal application, change directory ([cd]) to a directory in your file system that you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use [Git Bash], when you install [git] for Windows, [Git Bash] is included the installation process.
+3. Go to a [command line], or so called [terminal] application, move your working directory using the command **[cd]** for **change directory**, to a directory in your file system that you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use [Git Bash], when you install [git] for Windows, [Git Bash] is included the installation process.
 4. Go to the directory that contains this script ([up.sh]), and type: "./[up.sh]" to execute the script.
 5. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
 6. Read the instructions in the [Main Page]. 
@@ -42,6 +42,8 @@ The following text shows the required resources and action items for [PKC] insta
 
 [Personal Knowledge Container]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
 [container-virtualization]:https://searchitoperations.techtarget.com/definition/container-containerization-or-container-based-virtualization
+[command line]:https://www.osc.edu/supercomputing/unix-cmds
+[terminal]: https://www.techopedia.com/definition/28747/mac-terminal-mac-os-x#:~:text=The%20Mac%20Terminal%20is%20a,OS%20X%20versions%20through%20Lion.&text=Terminal%20allows%20users%20to%20modify,graphical%20user%20interface%20(GUI).
 [PKC]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md
 [cd]:https://www.minitool.com/news/how-to-change-directory-in-cmd.html
 [microservice]: https://www.bmc.com/blogs/microservices-architecture/

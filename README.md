@@ -46,4 +46,4 @@ The following text shows the required resources and action items for [PKC] insta
 [MediaWiki]: https://www.mediawiki.org/wiki/MediaWiki
 [Main Page]: http://localhost:9352/index.php/Main_Page
 [WSL]: https://docs.docker.com/docker-for-windows/wsl/
-[up.sh]:PersonalKnowledgeContainer/up.sh
+[up.sh]:https://github.com/benkoo/PersonalKnowledgeContainer/blob/main/up.sh

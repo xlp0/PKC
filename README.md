@@ -33,8 +33,9 @@ The following text shows the required resources and action items for [PKC] insta
 3. All the uploaded files, assuming the file names are accepted by the host operating system, will be dumped to the "backup/MediaFile" directory.
 
 ## Boundary Conditions
-1. We have only tested on a small number of machines and configurations, your milage may vary.
-2. We do not warrant any reliability, completeness, and accuracy of this installation procedure. **Any action you take upon this information is script is at your own risk**, We will not be liable for any losses and damages in connection to the use of the software prescribed here. 
+1. We do not warrant any reliability, completeness, and accuracy of this installation procedure. **Any action you take upon this information is script is at your own risk**, We will not be liable for any losses and damages in connection to the use of the software prescribed here. 
+2. We have only tested on a small number of machines and configurations, your milage may vary.
+3. Do not remove any of the files in the directory with *backup/*, such as *docker-compose.yml* and the *LocalSettings.php*. These files are the configuration files for Docker and MediaWiki respectively. Missing them, this system will stops to work.  
 
 
 [Personal Knowledge Container]: https://github.com/benkoo/PersonalKnowledgeContainer/edit/main/README.md

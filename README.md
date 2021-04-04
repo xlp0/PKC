@@ -19,7 +19,7 @@ The following text shows the required resources and action items for [PKC] insta
 1. A computer that you have access to its "root" or "administrator" previledge.
 2. Operatng Systems that support Docker: Windows 10, Mac OS X Big Sur 11.2.3 and Linux.
 3. Under Windows 10 Environment, some VPN software might interfere with Docker's Windows Subsystem for Linux, a.k.a. [WSL], you will need to remove VPN software before installing Docker.
-4. Access to the Internet during intallation time. We you perform the installation on a network with 10Mbps+ to the Internet. After installation, this system can operated without access to the Internet.
+4. Access to the Internet during intallation time. Please try to perform the installation on a network with 10Mbps+ to the Internet. After installation, this system can operated without access to the Internet.
 
 ## Installation Procedure
 1. Install Docker, the Installation instructions and downloadable files can be found here: https://docs.docker.com/get-started/

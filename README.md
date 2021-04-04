@@ -2,7 +2,7 @@
 This project, [[Personal Knowledge Container]], abbreviated as [[PKC]] provides an executable script that installs a MediaWiki-based Knowledge Container for small organizations.
 
 ## Context
-After [microservice] technologies become ubiquitous, it is possible to organize personal knowledge using locally operated [MediaWiki] services. The main challenge in using this Web-based tools is how data can be backed-up and restored, so that individuals can always get to their own content data even the software for displaying them has updated or evolved to a point that introduces incompatibility. This project intend to resolve this challenge by giving everyone the choice to run their own chosen version of MediaWiki software, given that all the images that have proven to work has publicly available images, so that even if the software has been abandoned, one may use [[container-virtualization]] technologies to continue operate the software.
+After [[microservice]] technologies become ubiquitous, it is possible to organize personal knowledge using locally operated [[MediaWiki]] services. The main challenge in using this Web-based tools is how data can be backed-up and restored, so that individuals can always get to their own content data even the software for displaying them has updated or evolved to a point that introduces incompatibility. This project intend to resolve this challenge by giving everyone the choice to run their own chosen version of MediaWiki software, given that all the images that have proven to work has publicly available images, so that even if the software has been abandoned, one may use [[container-virtualization]] technologies to continue operate the software.
 
 ## Goal
 Create a basic set of services, files, and page content that help individuals to operate a MediaWiki website on any machines of their choosing, and allow them to continuously work with their own data set, independent of future changes.
@@ -37,3 +37,5 @@ The following text shows the required resources and action items for [[PKC]] ins
 2. We do not warrant any reliability, completeness, and accuracy of this installation procedure.''''Any action you take upon this information is script is at your own risk,'''' We will not be liable for any losses and damages in connection to the use of the software prescribed here. 
 
 
+[[microservice]] https://www.bmc.com/blogs/microservices-architecture/
+[[MediaWiki]] https://www.mediawiki.org/wiki/MediaWiki

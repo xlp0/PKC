@@ -56,7 +56,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 1. We do not warrant any reliability, completeness, and accuracy of this installation procedure. **Any action you take upon this information and execute this script is at your own risk**, We will not be liable for any losses and damages in connection to the use of the actions and software prescribed here. 
 2. We have only tested on a small number of machines and configurations, your mileage may vary.
 3. Do not remove any of the files in the directory with "*backup/*", such as "*docker-compose.yml*" and the "*LocalSettings.php*". These files are the configuration files for [Docker] and [MediaWiki] respectively. Missing them, this system will stops to work.  
-4. For the sake of reducing typos, the project has moved from git@github.com:xlp0/PersonalKnowledgeContainer.git to git@github.com:xlp0/PKC.git. For the current implementation of Github, these two git repository names point to the same source. When GitHub change this practice, it will change. We recommend you to use the shorter version.
+4. For the sake of reducing typos, the project has moved from https://github.com/xlp0/PersonalKnowledgeContainer to https://github.com/xlp0/PKC. For the current implementation of Github, these two git repository names point to the same source. When GitHub change this practice, it will change. We recommend you to use the shorter version.
 
 
 [PersonalKnowledgeContainer]: https://github.com/xlp0/PersonalKnowledgeContainer
@@ -71,7 +71,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 [MediaWiki]: https://www.mediawiki.org/wiki/MediaWiki
 [Main Page]: http://localhost:9352/index.php/Main_Page
 [WSL]: https://docs.docker.com/docker-for-windows/wsl/
-[up.sh]:https://github.com/benkoo/PersonalKnowledgeContainer/blob/main/up.sh
+[up.sh]:https://github.com/xlp0/PKC/blob/main/up.sh
 [git]:https://git-scm.com/
 [Git Installation]:https://git-scm.com/
 [Git Bash]: https://gitforwindows.org/

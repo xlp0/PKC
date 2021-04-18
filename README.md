@@ -71,7 +71,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 [MediaWiki]: https://www.mediawiki.org/wiki/MediaWiki
 [Main Page]: http://localhost:9352/index.php/Main_Page
 [WSL]: https://docs.docker.com/docker-for-windows/wsl/
-[up.sh]:https://github.com/benkoo/PersonalKnowledgeContainer/blob/main/up.sh
+[up.sh]:https://github.com/xlp0/PKC/blob/main/up.sh
 [git]:https://git-scm.com/
 [Git Installation]:https://git-scm.com/
 [Git Bash]: https://gitforwindows.org/

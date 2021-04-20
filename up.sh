@@ -4,8 +4,16 @@ if [ -f .env ]; then
     # Load Environment Variables
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
     # For instance, will be example_kaggle_key
+    echo "Loaded environmental variable: TRANSPORT_STRING=$TRANSPORT_STRING"
+    echo "Loaded environmental variable: HOST_STRING=$HOST_STRING"
     echo "Loaded environmental variable: PortNumber=$PortNumber"
 fi
+
+searchString="localhost:80"
+replaceString="$HOST_STRING:$PortNumber"
+filename="LocalSettings.php"
+
+sed "s|\$wgServer =.*|\$wgServer = \"$TRANSPORT_STRING://${replaceString}\";|" $filename > temp.txt && mv temp.txt $filename
 
 # Check if docker is installed or not
 if [[ $(which docker) && $(docker --version) ]]; then
@@ -87,4 +95,5 @@ docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
 
 docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
 
-echo "Please go to a browser and use http://localhost:$PortNumber to test the service"
+
+echo "Please go to a browser and use http://$HOST_STRING:$PortNumber to test the service"

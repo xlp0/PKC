@@ -1,6 +1,4 @@
 # Ignore the files that might be in conflict with data content in https://github.com/benkoo/XLPWikiMountPoint
-LocalSettings.php
-docker-compose.yml
 mountPoint/*
 backup/*
 shudownDockersAndRemoveImages.sh

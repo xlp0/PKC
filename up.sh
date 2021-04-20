@@ -9,8 +9,15 @@ if [ -f .env ]; then
     echo "Loaded environmental variable: PortNumber=$PortNumber"
 fi
 
-searchString="localhost:80"
-replaceString="$HOST_STRING:$PortNumber"
+
+if [[ ${TRANSPORT_STRING} =~  .*https.* ]]; then
+	echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING"
+	replaceString="$HOST_STRING";
+else
+	echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING:$PortNumber"
+	replaceString="$HOST_STRING:$PortNumber";
+fi
+
 filename="LocalSettings.php"
 
 sed "s|\$wgServer =.*|\$wgServer = \"$TRANSPORT_STRING://${replaceString}\";|" $filename > temp.txt && mv temp.txt $filename

@@ -70,7 +70,7 @@ DB_CONTAINER=$LOWERCASE_CURRENTDIR"_database_1"
 # echo "Executing: " docker exec $MW_CONTAINER $BACKUPSCRIPTFULLPATH
 # docker exec $MW_CONTAINER $BACKUPSCRIPTFULLPATH
 # stop all docker processes
-docker-compose down --volumes
+sudo docker-compose down --volumes
 
 # If the mountPoint directory doesn't exist, 
 # Decompress the InitialDataPackage to ./mountPoint 
@@ -86,7 +86,7 @@ fi
 fi
 
 # Start the docker processes
-docker-compose up -d --build
+sudo docker-compose up -d --build
 
 
 # After docker processes are ready, reload the data from earlier dump
@@ -95,12 +95,11 @@ docker-compose up -d --build
 # docker exec $MW_CONTAINER $RESOTRESCRIPTFULLPATH
 
 echo $MW_CONTAINER" will do regular database content dump."
-docker exec $MW_CONTAINER service cron start
+sudo docker exec $MW_CONTAINER service cron start
 
 # Give read/write access to all users for the images directory.
-docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
+sudo docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
 
-docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
-
+sudo docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
 
 echo "Please go to a browser and use http://$HOST_STRING:$PortNumber to test the service"

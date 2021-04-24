@@ -258,11 +258,16 @@ wfLoadExtension( 'Kartographer' );
 
 wfLoadExtension( 'EmbedSpotify' );
 
+wfLoadExtension( 'PageForms' );
+
+
 $egMapsGMaps3ApiKey = 'AIzaSyBQuxfm0meYxGrQfdVY1FeiINS0nAW3avo';
 $egMapsDefaultService = 'leaflet';
 wfLoadExtension( 'Maps' );
 
 $wgShowExceptionDetails = true;
+
+wfLoadExtension( 'MW-OAuth2Client' );
 
 # The following statements are for OATHAuth
 wfLoadExtension( 'OATHAuth' );

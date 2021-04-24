@@ -20,7 +20,7 @@ fi
 
 filename="LocalSettings.php"
 
-sed "s|\$wgServer =.*|\$wgServer = \"$TRANSPORT_STRING://${replaceString}\";|" $filename > temp.txt && mv temp.txt $filename
+sudo sed "s|\$wgServer =.*|\$wgServer = \"$TRANSPORT_STRING://${replaceString}\";|" $filename > temp.txt && mv temp.txt $filename
 
 # Check if docker is installed or not
 if [[ $(which docker) && $(docker --version) ]]; then

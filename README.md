@@ -34,7 +34,7 @@ Assume the directory you keep your working files is called: **Workspace**. Your 
 Download the entire package using [git]. You may copy the instruction as follows:
 
 ```
-<machine_name>:Workspace <user_name>$ git clone https://github.com/benkoo/PersonalKnowledgeContainer.git
+<machine_name>:Workspace <user_name>$ git clone https://github.com/benkoo/PKC.git
 ```
 
 3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PersonalKnolwedgeContainer** directory that contains the script ([up.sh]), and type: "./[up.sh]" to execute the script.

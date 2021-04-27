@@ -40,8 +40,8 @@ Download the entire package using [git]. You may copy the instruction as follows
 3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PKC** directory that contains the script ([up.sh]), and type: "./[up.sh]" to execute the script.
 
 ```
-<machine_name>:Workspace <user_name>$ cd PersonalKnowledgeContainer
-<machine_name>:PersonalKnowledgeContainer <user_name>$ ./up.sh
+<machine_name>:Workspace <user_name>$ cd PKC
+<machine_name>:PKC <user_name>$ ./up.sh
 ```
 
 4. Open a browser: type the following URL to the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352

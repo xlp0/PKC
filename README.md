@@ -37,7 +37,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 <machine_name>:Workspace <user_name>$ git clone https://github.com/benkoo/PKC.git
 ```
 
-3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PersonalKnolwedgeContainer** directory that contains the script ([up.sh]), and type: "./[up.sh]" to execute the script.
+3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PKC** directory that contains the script ([up.sh]), and type: "./[up.sh]" to execute the script.
 
 ```
 <machine_name>:Workspace <user_name>$ cd PersonalKnowledgeContainer

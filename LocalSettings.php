@@ -68,6 +68,9 @@ $wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 # This has no effect unless $wgSharedDB is also set.
 $wgSharedTables[] = "actor";
 
+# Requires that a user be registered before they can edit.
+$wgGroupPermissions['*']['edit'] = false;
+
 ## Shared memory settings
 $wgMainCacheType = CACHE_ACCEL;
 $wgMemCachedServers = [];

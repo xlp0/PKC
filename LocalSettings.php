@@ -268,6 +268,8 @@ wfLoadExtension( 'Maps' );
 $wgShowExceptionDetails = true;
 
 wfLoadExtension( 'MW-OAuth2Client' );
+wfLoadExtension( 'Widgets' );
+
 
 # The following statements are for OATHAuth
 wfLoadExtension( 'OATHAuth' );

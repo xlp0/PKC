@@ -22,6 +22,8 @@ filename="LocalSettings.php"
 
 sudo sed "s|\$wgServer =.*|\$wgServer = \"$TRANSPORT_STRING://${replaceString}\";|" $filename > temp.txt && sudo mv temp.txt $filename
 
+echo "Please type in the Administrative(root) password of the machine that you are installing PKC service when asked... "
+
 # Check if docker is installed or not
 if [[ $(which docker) && $(docker --version) ]]; then
   echo "$OSTYPE has $(docker --version) installed"

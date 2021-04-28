@@ -273,6 +273,11 @@ $wgShowExceptionDetails = true;
 wfLoadExtension( 'MW-OAuth2Client' );
 wfLoadExtension( 'Widgets' );
 
+wfLoadExtension( 'GoogleDocs4MW' );
+wfLoadExtension( 'TemplateWizard' );
+
+
+
 
 # The following statements are for OATHAuth
 wfLoadExtension( 'OATHAuth' );

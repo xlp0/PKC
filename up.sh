@@ -117,7 +117,7 @@ fi
 fi
 
 # Start the docker processes
-sudo docker-compose up -d --build
+docker-compose up -d --build
 
 
 # After docker processes are ready, reload the data from earlier dump

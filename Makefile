@@ -1,6 +1,6 @@
 BACKUPANDRESTORE_DIR=/var/www/html/extensions/BackupAndRestore
 
-init: backupNow
+init:
 	./up.sh
 
 shutdown: backupNow

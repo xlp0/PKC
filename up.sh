@@ -42,7 +42,7 @@ if [ -f .env ]; then
     for (( i=0; i<$len; i++ ));
     do
       echo "Replacing string in LocalSettings.php: ${oauth_key_array[$i]}"
-        sudo sed "s|\$${oauth_key_array[$i]}[[:blank:]]*=.*|\$${oauth_key_array[$i]} = \"${oauth_val_array[$i]}\";|" $filename > temp.txt && mv temp.txt $filename
+        sed "s|\$${oauth_key_array[$i]}[[:blank:]]*=.*|\$${oauth_key_array[$i]} = \"${oauth_val_array[$i]}\";|" $filename > temp.txt && mv temp.txt $filename
     done
 fi
 
@@ -96,7 +96,7 @@ DB_CONTAINER=$LOWERCASE_CURRENTDIR"_database_1"
 # echo "Executing: " docker exec $MW_CONTAINER $BACKUPSCRIPTFULLPATH
 # docker exec $MW_CONTAINER $BACKUPSCRIPTFULLPATH
 # stop all docker processes
-sudo docker-compose down --volumes
+docker-compose down --volumes
 
 # If the mountPoint directory doesn't exist, 
 # Decompress the InitialDataPackage to ./mountPoint 
@@ -121,11 +121,11 @@ sudo docker-compose up -d --build
 # docker exec $MW_CONTAINER $RESOTRESCRIPTFULLPATH
 
 echo $MW_CONTAINER" will do regular database content dump."
-sudo docker exec $MW_CONTAINER service cron start
+docker exec $MW_CONTAINER service cron start
 
 # Give read/write access to all users for the images directory.
-sudo docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
+docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
 
-sudo docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
+docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
 
 echo "Please go to a browser and use http://$HOST_STRING:$PortNumber to test the service"

@@ -1,5 +1,35 @@
 #! /bin/bash
 
+# Check if docker is installed or not
+if [[ $(which docker) && $(docker --version) ]]; then
+  echo "$OSTYPE has $(docker --version) installed"
+  else
+    echo "You need to Install docker"
+    # command
+    case "$OSTYPE" in
+      darwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-mac/install/" ;; 
+      msys*)    echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
+      cygwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
+      linux*)
+        echo "Some $OSTYPE distributions could install Docker, we will try to install Docker for you..." 
+        ./AdvancedTooling/installDockerForUbuntu.sh   
+        echo "Installation complete, setting up the sudo su command, you will need the root access to this linux machine."
+        sudo su ;;
+      *)        echo "Sorry, this $OSTYPE might not have Docker implementation" ;;
+    esac
+fi
+
+# Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
+if [ ! -e ./docker-compose.yml ]; then
+  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/docker-compose.yml > docker-compose.yml
+fi
+
+# Make sure that LocalSettings.php is available in this directory, otherwise, download it.
+if [ ! -e ./LocalSettings.php ]; then
+  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
+fi
+
+
 if [ -f .env ]; then
     # Load Environment Variables
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
@@ -48,34 +78,9 @@ fi
 
 echo "Please type in the Administrative(root) password of the machine that you are installing PKC service when asked... "
 
-# Check if docker is installed or not
-if [[ $(which docker) && $(docker --version) ]]; then
-  echo "$OSTYPE has $(docker --version) installed"
-  else
-    echo "You need to Install docker"
-    # command
-    case "$OSTYPE" in
-      darwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-mac/install/" ;; 
-      msys*)    echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
-      cygwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
-      linux*)
-        echo "Some $OSTYPE distributions could install Docker, we will try to install Docker for you..." 
-        ./AdvancedTooling/installDockerForUbuntu.sh   
-        echo "Installation complete, setting up the sudo su command, you will need the root access to this linux machine."
-        sudo su ;;
-      *)        echo "Sorry, this $OSTYPE might not have Docker implementation" ;;
-    esac
-fi
 
-# Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
-if [ ! -e ./docker-compose.yml ]; then
-  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/docker-compose.yml > docker-compose.yml
-fi
 
-# Make sure that LocalSettings.php is available in this directory, otherwise, download it.
-if [ ! -e ./LocalSettings.php ]; then
-  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
-fi
+
 
 # If docker is running already, first run a data dump before shutting down docker processes
 # One can use the following instruction to find the current directory name withou the full path

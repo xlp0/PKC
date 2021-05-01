@@ -29,14 +29,28 @@ if [ ! -e ./LocalSettings.php ]; then
   curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
 fi
 
+# In case, there is no .env file
+PORT_NUMBER="9352"
 
 if [ -f .env ]; then
-    # Load Environment Variables
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+    echo "Loaded environmental variable: PORT_NUMBER=$PORT_NUMBER"
+fi
+
+# In case, there is no .machine_specific_env file
+TRANSPORT_STRING="http"
+HOST_STRING="localhost"
+OAUTH_CLIENT_ID="83698ede718fea93a79e"
+OAUTH_CLIENT_SECRET="290648a66406e1bb3c5655a96c34b62fac5e4e9a"
+LOGO_FILE_NAME="xlp.png"
+
+
+if [ -f .machine_specific_env ]; then
+    # Load Environment Variables
+    export $(cat .machine_specific_env | grep -v '#' | awk '/=/ {print $1}')
     # For instance, will be example_kaggle_key
     echo "Loaded environmental variable: TRANSPORT_STRING=$TRANSPORT_STRING"
     echo "Loaded environmental variable: HOST_STRING=$HOST_STRING"
-    echo "Loaded environmental variable: PortNumber=$PortNumber"
     echo "Loaded environmental variable: OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID"
     #Secret will not show
     echo "Loaded environmental variable: OAUTH_CLIENT_SECRET=********"
@@ -45,8 +59,8 @@ if [ -f .env ]; then
       echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING"
       replaceString="$HOST_STRING";
     else
-      echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING:$PortNumber"
-      replaceString="$HOST_STRING:$PortNumber";
+      echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING:$PORT_NUMBER"
+      replaceString="$HOST_STRING:$PORT_NUMBER";
     fi
 
 
@@ -57,6 +71,7 @@ if [ -f .env ]; then
     # Put in all the params for configuration
     oauth_key_array=(
       "wgServer" 
+      "wgLogos"
       "wgOAuth2Client\[\'client\'\]\[\'id\'\]" 
       "wgOAuth2Client\[\'client\'\]\[\'secret\'\]"
       "wgOAuth2Client\[\'configuration\'\]\[\'redirect_uri\'\]"
@@ -64,6 +79,7 @@ if [ -f .env ]; then
 
     oauth_val_array=(
       $TRANSPORT_STRING://${replaceString} 
+      "\[ \'1x\' => \"\$wgResourceBasePath\/resources\/assets\/$LOGO_FILE_NAME\" \];"
       $OAUTH_CLIENT_ID 
       $OAUTH_CLIENT_SECRET
       "$TRANSPORT_STRING://${replaceString}/index.php/Special:OAuth2Client/callback"
@@ -71,16 +87,17 @@ if [ -f .env ]; then
     len=${#oauth_key_array[@]}
     for (( i=0; i<$len; i++ ));
     do
-      echo "Replacing string in LocalSettings.php: ${oauth_key_array[$i]}"
+      echo "Replacing string in LocalSettings.php: ${oauth_key_array[$i]} "
+      if [ ${oauth_key_array[$i]} = "wgLogos" ]; then
+        sed "s|\$${oauth_key_array[$i]}[[:blank:]]*=.*|\$${oauth_key_array[$i]} = ${oauth_val_array[$i]};|" $filename > temp.txt && mv temp.txt $filename
+      else  
+        echo
         sed "s|\$${oauth_key_array[$i]}[[:blank:]]*=.*|\$${oauth_key_array[$i]} = \"${oauth_val_array[$i]}\";|" $filename > temp.txt && mv temp.txt $filename
+      fi
     done
 fi
 
 echo "Please type in the Administrative(root) password of the machine that you are installing PKC service when asked... "
-
-
-
-
 
 # If docker is running already, first run a data dump before shutting down docker processes
 # One can use the following instruction to find the current directory name withou the full path

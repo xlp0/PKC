@@ -342,5 +342,10 @@ function StripLogin(&$personal_urls, &$wgTitle) {
 
 $wgHooks['PersonalUrls'][] = 'StripLogin';
 
+## For attaching licensing metadata to pages, and displaying an
+## appropriate copyright notice / icon. GNU Free Documentation
+## License and Creative Commons licenses are supported so far.
+$wgRightsPage = "License"; # Set to the title of a wiki page that describes your license/copyright
+$wgRightsIcon = "$wgResourceBasePath/resources/assets/by-sa.png";
 $wgRightsUrl = 'https://creativecommons.org/licenses/by-sa/3.0/';
 $wgRightsText = "a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License";

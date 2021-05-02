@@ -11,10 +11,16 @@ if [[ $(which docker) && $(docker --version) ]]; then
       msys*)    echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
       cygwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
       linux*)
-        echo "Some $OSTYPE distributions could install Docker, we will try to install Docker for you..." 
-        ./AdvancedTooling/installDockerForUbuntu.sh   
-        echo "Installation complete, setting up the sudo su command, you will need the root access to this linux machine."
-        sudo su ;;
+        echo "Some $OSTYPE distributions could install Docker" 
+
+        if command -v apt-get &> /dev/null; then
+            echo "It looks like you are on a Debian-based or Ubuntu-based system."
+            echo "We will try to install Docker for you"
+            ./AdvancedTooling/installDockerForUbuntu.sh
+            echo "Installation complete, setting up the sudo su command, you will need the root access to this linux machine."
+            sudo su
+        fi
+        ;;
       *)        echo "Sorry, this $OSTYPE might not have Docker implementation" ;;
     esac
 fi

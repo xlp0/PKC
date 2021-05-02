@@ -7,9 +7,18 @@ if [[ $(which docker) && $(docker --version) ]]; then
     echo "You need to Install docker"
     # command
     case "$OSTYPE" in
-      darwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-mac/install/" ;; 
-      msys*)    echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
-      cygwin*)  echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/" ;;
+      darwin*)
+          echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-mac/install/"
+          exit
+          ;;
+      msys*)
+          echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/"
+          exit
+          ;;
+      cygwin*)
+          echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/"
+          exit
+          ;;
       linux*)
         echo "Some $OSTYPE distributions could install Docker" 
 
@@ -19,6 +28,8 @@ if [[ $(which docker) && $(docker --version) ]]; then
             ./AdvancedTooling/installDockerForUbuntu.sh
             echo "Installation complete, setting up the sudo su command, you will need the root access to this linux machine."
             sudo su
+        else
+            exit
         fi
         ;;
       *)        echo "Sorry, this $OSTYPE might not have Docker implementation" ;;

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 # Check if docker is installed or not
 if [[ $(which docker) && $(docker --version) ]]; then

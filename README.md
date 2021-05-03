@@ -8,7 +8,7 @@ After [microservice] technologies become ubiquitous, it is possible to organize 
 Create a basic set of services, files, and page content that help individuals to operate a MediaWiki website on any machines of their choosing, and allow them to continuously work with their own data set, independent of future changes.
 
 ## Success Criteria
-1. Allow Individuals to install an instance of MediaWiki service by reading this REAME.md file.
+1. Allow Individuals to install an instance of MediaWiki service by reading this README.md file.
 2. Make all textual content, executable software images, installation scripts in the public domain, so that everyone can share and use them at will.
 3. Provide instructions to learn about how to use [PKC] in the initial MediaWiki's database, so that people can start learning to use PKC through their own instance of MediaWiki.
 

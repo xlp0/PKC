@@ -272,7 +272,7 @@ wfLoadExtension( 'Maps' );
 
 $wgShowExceptionDetails = true;
 
-wfLoadExtension( 'MW-OAuth2Client' );
+wfLoadExtension( 'Cargo' );
 wfLoadExtension( 'Widgets' );
 
 wfLoadExtension( 'GoogleDocs4MW' );

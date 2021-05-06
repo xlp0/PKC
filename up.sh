@@ -167,4 +167,4 @@ docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
 
 docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
 
-echo "Please go to a browser and use http://$HOST_STRING:$PortNumber to test the service"
+echo "Please go to a browser and use http://$HOST_STRING:$PORT_NUMBER to test the service"

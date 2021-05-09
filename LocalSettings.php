@@ -94,7 +94,7 @@ $wgImageMagickConvertCommand = "/usr/bin/convert";
 $wgFileExtensions = array( 'png', 'gif', 'jpg', 'jpeg', 'doc',
     'xls', 'mpp', 'pdf', 'ppt', 'tiff', 'bmp', 'docx', 'xlsx',
     'pptx', 'ps', 'odt', 'ods', 'odp', 'odg', 'mp4', 'zip',
-    'stl', 'sla'
+    'stl', 'sla', 'svg'
 );
 
 $wgFileExtensions = array_merge(
@@ -195,7 +195,7 @@ wfLoadExtension( 'TitleBlacklist' );
 # The following extension requires to instsallation of Parsoid server
 # wfLoadExtension( 'VisualEditor' );
 wfLoadExtension( 'WikiEditor' );
-
+wfLoadExtension( 'DrawioEditor' );
 
 
 # End of automatically generated settings.

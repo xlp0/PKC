@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Check if docker is installed or not
 if [[ $(which docker) && $(docker --version) ]]; then
   echo "$OSTYPE has $(docker --version) installed"

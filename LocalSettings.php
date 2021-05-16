@@ -278,7 +278,13 @@ wfLoadExtension( 'Widgets' );
 wfLoadExtension( 'GoogleDocs4MW' );
 wfLoadExtension( 'TemplateWizard' );
 
+# wfLoadExtension( 'HeadScript' );
 
+#wfLoadExtension( 'Matomo' );
+
+#wfLoadExtension( 'MatomoAnalytics' );
+#$wgMatomoAnalyticsServerURL = 'http://localhost:8080';
+#$wgMatomoAnalyticsTokenAuth = '0c55c14282fc1f35e120decc02f86504';
 
 
 # The following statements are for OATHAuth
@@ -349,3 +355,30 @@ $wgRightsPage = "License"; # Set to the title of a wiki page that describes your
 $wgRightsIcon = "$wgResourceBasePath/resources/assets/by-sa.png";
 $wgRightsUrl = 'https://creativecommons.org/licenses/by-sa/3.0/';
 $wgRightsText = "a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License";
+
+$wgHooks['BeforePageDisplay'][] = function( OutputPage &$out, Skin &$skin ) {
+  $code = <<<HTML
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+  _paq.push(["setCookieDomain", "*.localhost"]);
+  _paq.push(["setDomains", ["*.localhost"]]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//localhost:8080/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '2']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//localhost:8080/matomo.php?idsite=2&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Matomo Code -->
+HTML;
+
+  $out->addHeadItem( 'gtag-insert', $code );
+  return true;
+};

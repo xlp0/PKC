@@ -36,7 +36,7 @@ $wgResourceBasePath = $wgScriptPath;
 
 ## The URL paths to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogos = [ '1x' => "$wgResourceBasePath/resources/assets/xlp.png" ];;
+$wgLogos = [ '1x' => "$wgResourceBasePath/resources/assets/aqua.png" ];;
 
 ## UPO means: this is also a user preference option
 
@@ -82,6 +82,8 @@ $wgMemCachedServers = [];
 $wgEnableUploads = true;
 $wgUseImageMagick = true;
 $wgImageMagickConvertCommand = "/usr/bin/convert";
+
+$wgAllowExternalImages = true;
 
 ## Set the maximum file update size to about 50MB.
 # This number is already set in the docker image's /usr/local/etc/php/php.ini
@@ -254,6 +256,7 @@ wfLoadExtension( '3DAlloy' );
 
 # Loading Math extension
 wfLoadExtension( 'Math' );
+wfLoadExtension( 'PGFTikZ' );
 
 wfLoadExtension( 'GeoData' );
 
@@ -277,6 +280,7 @@ wfLoadExtension( 'Widgets' );
 
 wfLoadExtension( 'GoogleDocs4MW' );
 wfLoadExtension( 'TemplateWizard' );
+wfLoadExtension( 'ExtensionDataAccounting' );
 
 # wfLoadExtension( 'HeadScript' );
 

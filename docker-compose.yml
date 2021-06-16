@@ -5,7 +5,7 @@
 version: '3'
 services:
   database:
-    image: xlp0/mariadb
+    image: xlp0/mariadbtest
     restart: always
     environment:
       # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
@@ -16,7 +16,7 @@ services:
     volumes:
       - ./mountPoint/mariadb:/var/lib/mysql
   mediawiki:
-    image: xlp0/mediawiki${TAG}
+    image: xlp0/semanticwiki
     restart: always
     ports:
       - ${PORT_NUMBER}:80
@@ -30,8 +30,6 @@ services:
       - ./LocalSettings.php:/var/www/html/LocalSettings.php
       - ./backup:/var/www/html/backup
       - ./backup/ToBeUploaded:/var/www/html/backup/ToBeUploaded
-
-
     depends_on:
       - database
   

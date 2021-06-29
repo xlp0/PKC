@@ -17,7 +17,7 @@ services:
     volumes:
       - ./mountPoint/mariadb:/var/lib/mysql
   mediawiki:
-    image: xlp0/mediawiki
+    image: xlp0/semanticwiki
     platform: linux
     restart: always
     ports:

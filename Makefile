@@ -7,7 +7,6 @@ shutdown: backupNow
 	docker-compose down --volumes 
 
 removeAllImages: backupNow
-	docker-compose down --volumes 
 	docker rmi -f $(shell docker images -q)
 
 backupNow:

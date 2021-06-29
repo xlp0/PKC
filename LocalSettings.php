@@ -223,6 +223,8 @@ wfLoadExtension("EmbedVideo");
 
 wfLoadExtension( 'MultimediaViewer' );
 
+wfLoadExtension( 'TemplateData' );
+
 //Allow user the usage of the pdf tag
 $wgGroupPermissions['*']['embed_pdf'] = true;
 
@@ -386,3 +388,16 @@ HTML;
   $out->addHeadItem( 'gtag-insert', $code );
   return true;
 };
+
+define( "NS_BOOK", 500 );
+$wgExtraNamespaces[NS_BOOK] = "BOOK";
+define( "NS_BOOK_TALK", 501 );
+$wgExtraNamespaces[NS_BOOK_TALK] = "BOOK_TALK";
+define( "NS_AUTHOR", 502 );
+$wgExtraNamespaces[NS_AUTHOR] = "AUTHOR";
+define( "NS_AUTHOR_TALK", 503 );
+$wgExtraNamespaces[NS_AUTHOR] = "AUTHOR_TALK";
+define( "NS_PUBLISHER", 504 );
+$wgExtraNamespaces[NS_PUBLISHER] = "PUBLISHER";
+define( "NS_PUBLISHER_TALK", 505 );
+$wgExtraNamespaces[NS_AUTHOR] = "PUBLISHER_TALK";

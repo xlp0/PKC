@@ -6,7 +6,7 @@ version: '3'
 services:
   database:
     image: xlp0/mariadbtest
-    platform: linux
+    platform: linux/amd64
     restart: always
     environment:
       # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
@@ -18,7 +18,7 @@ services:
       - ./mountPoint/mariadb:/var/lib/mysql
   mediawiki:
     image: xlp0/semanticwiki
-    platform: linux
+    platform: linux/amd64
     restart: always
     ports:
       - ${PORT_NUMBER}:80

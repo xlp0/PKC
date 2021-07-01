@@ -165,10 +165,23 @@ wfLoadSkin( 'Timeless' );
 wfLoadSkin( 'Vector' );
 
 
+# Allowing HTML code to be rendered in MediaWiki pages
+$wgRawHtml = true;
+
 # Enabled extensions. Most of the extensions are enabled by adding
 # wfLoadExtension( 'ExtensionName' );
 # to LocalSettings.php. Check specific extension documentation for more details.
 # The following extensions were automatically enabled:
+wfLoadExtension( 'CSS' );
+wfLoadExtension( 'HTMLTags' );
+
+require_once "$IP/extensions/HTMLets/HTMLets.php";
+$wgHTMLetsDirectory = "$IP/extensions/HTMLets";
+
+wfLoadExtension( 'NamespaceHTML' );
+
+wfLoadExtension( 'ExternalData' );
+
 wfLoadExtension( 'CategoryTree' );
 wfLoadExtension( 'Cite' );
 wfLoadExtension( 'CiteThisPage' );

@@ -21,6 +21,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 $wgSitename = "XLP";
 
+# Enable subpages in the main namespace
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+
+# Enable subpages in the template namespace
+$wgNamespacesWithSubpages[NS_TEMPLATE] = true;
+
+
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
 ## For more information on customizing the URLs

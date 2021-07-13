@@ -31,7 +31,7 @@ $wgSitename = "XLP";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "http://localhost:9352";
+$wgServer = "https://dev.xlp.pub";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -265,12 +265,12 @@ wfLoadExtension( 'EmbedSpotify' );
 
 
 wfLoadExtension( 'MW-OAuth2Client' );
-$wgOAuth2Client['client']['id'] = "37aa757b21d9573eee78";
-$wgOAuth2Client['client']['secret'] = "a3243928194e6dc66df4f8b7bad930dcb7c551ea";
+$wgOAuth2Client['client']['id'] = "5a06013e427f5b62ef3a";
+$wgOAuth2Client['client']['secret'] = "94497ab1e35a638274ba454eb3d3180f51a9a88c";
 $wgOAuth2Client['configuration']['authorize_endpoint']     = 'https://github.com/login/oauth/authorize'; // Authorization URL
 $wgOAuth2Client['configuration']['access_token_endpoint']  = 'https://github.com/login/oauth/access_token'; // Token URL
 $wgOAuth2Client['configuration']['api_endpoint']           = 'https://api.github.com/user'; // URL to fetch user JSON
-$wgOAuth2Client['configuration']['redirect_uri'] = "http://localhost:9352/index.php/Special:OAuth2Client/callback";
+$wgOAuth2Client['configuration']['redirect_uri'] = "https://dev.xlp.pub/Special:OAuth2Client/callback";
 $wgOAuth2Client['configuration']['username'] = 'login'; // JSON path to username
 $wgOAuth2Client['configuration']['email'] = 'email'; // JSON path to email
 $wgOAuth2Client['configuration']['scopes'] = 'openid email profile'; //Permissions
@@ -344,3 +344,4 @@ $wgSMTP = [
 ];
 
 wfLoadExtension( 'PageForms' );
+wfLoadExtension( 'SemanticResultFormats' );

@@ -350,6 +350,8 @@ enableSemantics();
 
 wfLoadExtension( 'MW-OAuth2Client' );
 
+wfLoadExtension( 'SemanticResultFormats' );
+
 # The following two lines contains information on Github's OAuth service. You will have to apply for your own information to get things to work.
 $wgOAuth2Client['client']['id'] = "83698ede718fea93a79e";
 $wgOAuth2Client['client']['secret'] = "290648a66406e1bb3c5655a96c34b62fac5e4e9a";

@@ -162,6 +162,8 @@ docker-compose up -d --build
 echo $MW_CONTAINER" will do regular database content dump."
 docker exec $MW_CONTAINER service cron start
 
+docker exec $MW_CONTAINER composer update --no-dev
+
 # Give read/write access to all users for the images directory.
 docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
 

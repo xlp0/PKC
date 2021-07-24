@@ -1,0 +1,13 @@
+# TRANSPORT_STRING stands for the http or https
+TRANSPORT_STRING=https
+
+# HOST_STRING Stands for the IP address or Host Name
+HOST_STRING=thewiki.us
+
+
+# For OAUTH configuation to be placed in LocalSettings.php for MediaWiki
+OAUTH_CLIENT_ID=1940c95cbfd1a8af9f3e
+OAUTH_CLIENT_SECRET=d9f1a6e0fc4dc7fe16a9ca46e77a6630873860c6
+
+# Logo File Name
+LOGO_FILE_NAME=EuMuse.png

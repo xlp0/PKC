@@ -423,3 +423,6 @@ define( "NS_PUBLISHER", 504 );
 $wgExtraNamespaces[NS_PUBLISHER] = "PUBLISHER";
 define( "NS_PUBLISHER_TALK", 505 );
 $wgExtraNamespaces[NS_AUTHOR] = "PUBLISHER_TALK";
+
+wfLoadSkin( 'Medik' );
+$wgDefaultSkin = 'medik';

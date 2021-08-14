@@ -27,9 +27,9 @@ services:
       # After initial setup, download LocalSettings.php to the same directory as
       # this yaml and uncomment the following line and use compose to restart
       # the mediawiki service
-      - ./LocalSettings.php:/var/www/html/LocalSettings.php
-      - ./backup:/var/www/html/backup
-      - ./backup/ToBeUploaded:/var/www/html/backup/ToBeUploaded
+      - ./mountPoint/LocalSettings.php:/var/www/html/LocalSettings.php
+      - ./mountPoint/backup:/var/www/html/backup
+      - ./mountPoint/backup/ToBeUploaded:/var/www/html/backup/ToBeUploaded
 
 
     depends_on:

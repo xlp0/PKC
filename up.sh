@@ -44,7 +44,7 @@ if [ ! -e ./docker-compose.yml ]; then
 fi
 
 # Make sure that LocalSettings.php is available in this directory, otherwise, download it.
-if [ ! -e ./LocalSettings.php ]; then
+if [ ! -e ./mountPoint/LocalSettings.php ]; then
   curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
 fi
 

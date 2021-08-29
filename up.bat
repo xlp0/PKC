@@ -44,6 +44,5 @@ if %found%==false (
 )
 
 :readyToLaunch
-timeout %w% > NUL
 docker exec -it pkc_mediawiki_1 php /var/www/html/maintenance/update.php
 start http://localhost:9352

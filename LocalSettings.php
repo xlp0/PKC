@@ -162,7 +162,10 @@ $wgDefaultSkin = "vector";
 wfLoadSkin( 'MonoBook' );
 wfLoadSkin( 'Timeless' );
 wfLoadSkin( 'Vector' );
-
+wfLoadSkin( 'Refreshed' );
+wfLoadSkin( 'Medik' );
+$wgDefaultSkin = 'medik';
+$wgMedikColor = "#0582AD";
 
 # Enabled extensions. Most of the extensions are enabled by adding
 # wfLoadExtension( 'ExtensionName' );

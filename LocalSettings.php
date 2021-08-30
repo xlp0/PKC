@@ -159,8 +159,8 @@ $wgDiff3 = "/usr/bin/diff3";
 wfLoadSkin( 'MonoBook' );
 wfLoadSkin( 'Timeless' );
 wfLoadSkin( 'Vector' );
-wfLoadSkin( 'Medik' );
-wfLoadSkin( 'Refreshed' );
+#wfLoadSkin( 'Medik' );
+#wfLoadSkin( 'Refreshed' );
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'vector', 'monobook', 'medik':

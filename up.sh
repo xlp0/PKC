@@ -147,7 +147,10 @@ docker-compose up -d --build
 #docker exec $MW_CONTAINER service cron start
 
 # Give read/write access to all users for the images directory.
-docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
+# docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
+
+echo "It needs to wait for at least 3 seconds before launching the php /var/www/html/maintenance/update.php script"
+sleep 3
 
 docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
 

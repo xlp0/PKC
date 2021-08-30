@@ -17,7 +17,7 @@ services:
       - ./mountPoint/mariadb:/var/lib/mysql
   mediawiki:
     #image: mediawiki
-    image: xlp0/semanticwiki
+    image: xlp0/pkc
     restart: always
     ports:
       - ${PORT_NUMBER}:80

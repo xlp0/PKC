@@ -36,8 +36,7 @@ $wgResourceBasePath = $wgScriptPath;
 
 ## The URL paths to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogos = [ '1x' => "$wgResourceBasePath/resources/assets/xlp.png" ];
-#$wgLogos = [ '1x' => "$wgResourceBasePath/resources/assets/EuMuse.png" ];
+$wgLogos = [ '1x' => "$wgResourceBasePath/resources/assets/xlp.png" ];;
 
 ## UPO means: this is also a user preference option
 
@@ -95,7 +94,7 @@ $wgImageMagickConvertCommand = "/usr/bin/convert";
 $wgFileExtensions = array( 'png', 'gif', 'jpg', 'jpeg', 'doc',
     'xls', 'mpp', 'pdf', 'ppt', 'tiff', 'bmp', 'docx', 'xlsx',
     'pptx', 'ps', 'odt', 'ods', 'odp', 'odg', 'mp4', 'zip',
-    'stl', 'sla'
+    'stl', 'sla', 'svg'
 );
 
 $wgFileExtensions = array_merge(
@@ -153,19 +152,21 @@ $wgRightsIcon = "";
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
 
-## Default skin: you can change the default skin. Use the internal symbolic
-## names, ie 'vector', 'monobook':
-$wgDefaultSkin = "vector";
+
 
 # Enabled skins.
 # The following skins were automatically enabled:
 wfLoadSkin( 'MonoBook' );
 wfLoadSkin( 'Timeless' );
 wfLoadSkin( 'Vector' );
-wfLoadSkin( 'Refreshed' );
 wfLoadSkin( 'Medik' );
-$wgDefaultSkin = 'medik';
+wfLoadSkin( 'Refreshed' );
+
+## Default skin: you can change the default skin. Use the internal symbolic
+## names, ie 'vector', 'monobook', 'medik':
+$wgDefaultSkin = "vector";
 $wgMedikColor = "#0582AD";
+
 
 # Enabled extensions. Most of the extensions are enabled by adding
 # wfLoadExtension( 'ExtensionName' );
@@ -196,10 +197,10 @@ wfLoadExtension( 'SyntaxHighlight_GeSHi' );
 wfLoadExtension( 'TemplateData' );
 wfLoadExtension( 'TextExtracts' );
 wfLoadExtension( 'TitleBlacklist' );
-# The following extension requires to instsallation of Parsoid server
+# The following extension requires to installation of Parsoid server
 # wfLoadExtension( 'VisualEditor' );
 wfLoadExtension( 'WikiEditor' );
-
+wfLoadExtension( 'DrawioEditor' );
 
 
 # End of automatically generated settings.
@@ -276,13 +277,19 @@ wfLoadExtension( 'Maps' );
 
 $wgShowExceptionDetails = true;
 
-wfLoadExtension( 'MW-OAuth2Client' );
+wfLoadExtension( 'Cargo' );
 wfLoadExtension( 'Widgets' );
 
 wfLoadExtension( 'GoogleDocs4MW' );
 wfLoadExtension( 'TemplateWizard' );
 
+# wfLoadExtension( 'HeadScript' );
 
+#wfLoadExtension( 'Matomo' );
+
+#wfLoadExtension( 'MatomoAnalytics' );
+#$wgMatomoAnalyticsServerURL = 'http://localhost:8080';
+#$wgMatomoAnalyticsTokenAuth = '0c55c14282fc1f35e120decc02f86504';
 
 
 # The following statements are for OATHAuth
@@ -346,5 +353,37 @@ function StripLogin(&$personal_urls, &$wgTitle) {
 
 $wgHooks['PersonalUrls'][] = 'StripLogin';
 
+## For attaching licensing metadata to pages, and displaying an
+## appropriate copyright notice / icon. GNU Free Documentation
+## License and Creative Commons licenses are supported so far.
+$wgRightsPage = "License"; # Set to the title of a wiki page that describes your license/copyright
+$wgRightsIcon = "$wgResourceBasePath/resources/assets/by-sa.png";
 $wgRightsUrl = 'https://creativecommons.org/licenses/by-sa/3.0/';
 $wgRightsText = "a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License";
+
+$wgHooks['BeforePageDisplay'][] = function( OutputPage &$out, Skin &$skin ) {
+  $code = <<<HTML
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+  _paq.push(["setCookieDomain", "*.localhost"]);
+  _paq.push(["setDomains", ["*.localhost"]]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//localhost:8080/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '2']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//localhost:8080/matomo.php?idsite=2&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Matomo Code -->
+HTML;
+
+  $out->addHeadItem( 'gtag-insert', $code );
+  return true;
+};

@@ -39,13 +39,8 @@ if [[ $(which docker) && $(docker --version) ]]; then
 fi
 
 # Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
-if [ ! -e ./docker-compose.yml ]; then
-  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/docker-compose.yml > docker-compose.yml
-fi
-
-# Make sure that LocalSettings.php is available in this directory, otherwise, download it.
-if [ ! -e ./mountPoint/LocalSettings.php ]; then
-  curl https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/LocalSettings.php > LocalSettings.php
+if [ ! -e ./mountPoint ]; then
+  tar -xzvf ./resources/mountPoint.tar.gz mountPoint
 fi
 
 # In case, there is no .env file
@@ -139,30 +134,17 @@ DB_CONTAINER=$LOWERCASE_CURRENTDIR"_database_1"
 # stop all docker processes
 docker-compose down --volumes
 
-# If the mountPoint directory doesn't exist, 
-# Decompress the InitialDataPackage to ./mountPoint 
-if [ ! -e ./mountPoint/ ]; then
-
-if [ ! -e ./InitialContentPackage.tar.gz ]; then 
-  curl  https://raw.githubusercontent.com/xlp0/XLPWikiMountPoint/main/InitialContentPackage.tar.gz > temp.tar.gz
-fi
-  tar -xzvf ./temp.tar.gz -C .
-  if [ -e ./temp.tar.gz ]; then 
-    rm ./temp.tar.gz
-  fi
-fi
 
 # Start the docker processes
 docker-compose up -d --build
-
 
 # After docker processes are ready, reload the data from earlier dump
 # echo "Loading data from earlier backups..."
 # echo "Executing: " docker exec $MW_CONTAINER $RESOTRESCRIPTFULLPATH
 # docker exec $MW_CONTAINER $RESOTRESCRIPTFULLPATH
 
-echo $MW_CONTAINER" will do regular database content dump."
-docker exec $MW_CONTAINER service cron start
+#echo $MW_CONTAINER" will do regular database content dump."
+#docker exec $MW_CONTAINER service cron start
 
 # Give read/write access to all users for the images directory.
 docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images

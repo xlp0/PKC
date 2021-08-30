@@ -16,7 +16,7 @@ services:
     volumes:
       - ./mountPoint/mariadb:/var/lib/mysql
   mediawiki:
-    image: xlp0/mediawiki${TAG}
+    image: xlp0/semanticwiki
     restart: always
     ports:
       - ${PORT_NUMBER}:80
@@ -29,7 +29,6 @@ services:
       # the mediawiki service
       - ./LocalSettings.php:/var/www/html/LocalSettings.php
       - ./mountPoint/backup:/var/www/html/backup
-      - ./mountPoint/backup/ToBeUploaded:/var/www/html/backup/ToBeUploaded
 
 
     depends_on:

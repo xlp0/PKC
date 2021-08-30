@@ -32,6 +32,7 @@ for %%d in %l% do (
         echo Will use docker-compose to launch PKC
         docker-compose up -d 
         echo Wait for Docker-compose to get services ready before launching the browser... 
+        timeout /t %w% > nul
         goto :readyToLaunch
     ) 
 )

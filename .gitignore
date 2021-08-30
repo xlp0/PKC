@@ -5,3 +5,5 @@ shudownDockersAndRemoveImages.sh
 .DS_Store
 .vscode/
 .machine_specific_env
+*.sql
+*.gz

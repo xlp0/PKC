@@ -155,3 +155,5 @@ sleep 3
 docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
 
 echo "Please go to a browser and use http://$HOST_STRING:$PORT_NUMBER to test the service"
+
+open http://$HOST_STRING:$PORT_NUMBER

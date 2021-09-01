@@ -34,7 +34,7 @@ Assume the directory you keep your working files in  is called: **Workspace**. Y
 Download the entire package using [git]. You may copy the instruction as follows:
 
 ```
-<machine_name>:Workspace <user_name>$ git clone https://github.com/benkoo/PKC.git
+<machine_name>:Workspace <user_name>$ git clone https://github.com/xlp0/PKC.git
 ```
 
 3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PKC** directory that contains the script ([up.sh]), and type: " sudo ./[up.sh]" to execute the script.

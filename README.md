@@ -23,7 +23,7 @@ The following text shows the required resources and action items for [PKC] insta
 
 ## Installation Procedure
 1. Install [Docker], the installation instructions and downloadable files can be found here: https://docs.docker.com/get-started/
-2. Go to a [command line], or so called [terminal] application, move your working directory using the command "**[cd]**" for **change directory** to a directory in your file system where you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use [Git Bash], when you install [git] for Windows, [Git Bash] is included in the installation process.
+2. Go to a [command line], or so called [terminal] application, move your working directory using the command "**[cd]**" for **change directory** to a directory in your file system where you keep your working files. For Mac OS X and Linux operating systems, Terminal applications are bundled during installation. For Windows 10, we recommend you to use PowerShell to perform command line instructions.
 
 Assume the directory you keep your working files in  is called: **Workspace**. Your terminal application should have something like this:
 
@@ -37,7 +37,7 @@ Download the entire package using [git]. You may copy the instruction as follows
 <machine_name>:Workspace <user_name>$ git clone https://github.com/xlp0/PKC.git
 ```
 
-3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PKC** directory that contains the script ([up.sh]), and type: " sudo ./[up.sh]" to execute the script.
+3. After the [git clone] instruction copied relevant data to your working directory, using the command [cd] to the **PKC** directory that contains the script ([up.sh]), and type: " sudo ./[up.sh]" to execute the script. If you are using Windows 10, please use .\up.bat in PowerShell.
 
 ```
 <machine_name>:Workspace <user_name>$ cd PKC

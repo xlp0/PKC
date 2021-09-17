@@ -44,7 +44,13 @@ Download the entire package using [git]. You may copy the instruction as follows
 <machine_name>:PKC <user_name>$ sudo ./up.sh
 ```
 
-4. Open a browser: type the following URL into the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
+If you are using a Windows 10 machine, please do the following:
+```
+<machine_name>:Workspace <user_name>$ cd PKC
+<machine_name>:PKC <user_name>$ .\up.bat
+```
+
+4. In most cases, the up.sh or up.bat script will automatically open a browser and show the Main Page of PKC. If not, just open your favorite browser: type the following URL into the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
 5. Read the instructions on the [Main Page]. 
 
 ## Outcomes Expected

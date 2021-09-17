@@ -51,8 +51,9 @@ If you are using a Windows 10 machine, please do the following:
 ```
 
 4. In most cases, the up.sh or up.bat script will automatically open a browser and show the Main Page of PKC. If not, just open your favorite browser: type the following URL into the browser's URL field: http://localhost:9352 or http://127.0.0.1:9352
-5. To edit a page, you can use this link: http://localhost:9352/index.php/Special:UserLogin . If you want to try the Open Authentication extension, just click on the "login through Github" link, and use your Github account to log-in. If you don't have a Github.com account, you can apply for one for free.
-6. Read the instructions on the [Main Page]. 
+5. To edit a page, you can use this link: http://localhost:9352/index.php/Special:UserLogin User name:Admin, Password:metalanguage
+6. If you want to try the Open Authentication extension, just click on the "login through Github" link, and use your Github account to log-in. If you don't have a Github.com account, you can apply for one for free.
+7. Read the instructions on the [Main Page]. 
 
 ## Outcomes Expected
 1. Every 30 minutes, all the changes you made to this local instance of MediaWiki will be automatically backed up to the directory's "backup/" sub-directory.

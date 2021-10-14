@@ -15,7 +15,7 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
     volumes:
       - ./mountPoint/mariadb:/var/lib/mysql
-      - ./mountPoint/backup/automysqlbackup:/var/lib/automysqlbackup/
+      #- ./mountPoint/backup/automysqlbackup:/var/lib/automysqlbackup/
   mediawiki:
     #image: mediawiki
     image: xlp0/pkc

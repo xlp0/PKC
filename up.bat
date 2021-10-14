@@ -45,5 +45,5 @@ if %found%==false (
 )
 
 :readyToLaunch
-docker exec -it pkc_mediawiki_1 php /var/www/html/maintenance/update.php
+docker exec -it pkc-mediawiki-1 php /var/www/html/maintenance/update.php
 start http://localhost:9352

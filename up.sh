@@ -120,8 +120,8 @@ echo "Please type in the Administrative(root) password of the machine that you a
 # See https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash
 # However, it will not work in Mac OS X, since it is still using Bash v 3.2
 LOWERCASE_CURRENTDIR="$(tr [A-Z] [a-z] <<< "${PWD##*/}")"
-MW_CONTAINER=$LOWERCASE_CURRENTDIR"_mediawiki_1"
-DB_CONTAINER=$LOWERCASE_CURRENTDIR"_database_1"
+MW_CONTAINER=$LOWERCASE_CURRENTDIR"-mediawiki-1"
+DB_CONTAINER=$LOWERCASE_CURRENTDIR"-database-1"
 
 # This variable should have the same value as the variable $wgResourceBasePath in LocalSettings.php
 # ResourceBasePath="/var/www/html"

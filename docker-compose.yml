@@ -6,6 +6,7 @@ version: '3'
 services:
   database:
     image: xlp0/mariadb_auto
+    container_name: pkc-database-1
     restart: always
     environment:
       # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
@@ -19,6 +20,7 @@ services:
   mediawiki:
     #image: mediawiki
     image: xlp0/pkc
+    container_name: pkc-mediawiki-1
     restart: always
     ports:
       - ${PORT_NUMBER}:80

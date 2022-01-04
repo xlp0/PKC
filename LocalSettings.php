@@ -174,6 +174,9 @@ $wgMedikColor = "#0582AD";
 # The following extensions were automatically enabled:
 wfLoadExtension( 'CategoryTree' );
 wfLoadExtension( 'Cite' );
+$wgAllowCiteGroups = true; 
+$wgCiteBookReferencing = true;
+
 wfLoadExtension( 'CiteThisPage' );
 wfLoadExtension( 'CodeEditor' );
 wfLoadExtension( 'ConfirmEdit' );

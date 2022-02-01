@@ -5,7 +5,7 @@
 version: '3'
 services:
   database:
-    image: xlp0/mariadb_auto
+    image: xlp0/mariadb
     container_name: pkc-database-1
     restart: always
     environment:
@@ -33,6 +33,9 @@ services:
       # the mediawiki service
       - ./LocalSettings.php:/var/www/html/LocalSettings.php
       - ./mountPoint/backup:/var/www/html/backup
+      #- ./mountPoint/backup/data:/var/www/html/importFolder
+      #- ./mountPoint/backup/PhpScripting:/var/www/html/maintenance/New
+
 
 
     depends_on:

@@ -1,6 +1,7 @@
 # Ignore the files that might be in conflict with data content in https://github.com/benkoo/XLPWikiMountPoint
 mountPoint/*
 backup/*
+TempStorage/*
 shudownDockersAndRemoveImages.sh
 .DS_Store
 .vscode/

@@ -194,6 +194,7 @@ wfLoadExtension( 'Poem' );
 wfLoadExtension( 'Renameuser' );
 wfLoadExtension( 'ReplaceText' );
 wfLoadExtension( 'Scribunto' );
+wfLoadExtension( 'SemanticScribunto' );
 wfLoadExtension( 'SecureLinkFixer' );
 wfLoadExtension( 'SpamBlacklist' );
 wfLoadExtension( 'SyntaxHighlight_GeSHi' );
@@ -406,3 +407,5 @@ $srfgFormats = [
   'tree', 'ultree', 'oltree', 'd3chart', 'latest', 'earliest', 'filtered', 'slideshow', 'timeseries', 'sparkline', 
   'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables'
 ];
+
+

@@ -193,8 +193,14 @@ wfLoadExtension( 'PdfHandler' );
 wfLoadExtension( 'Poem' );
 wfLoadExtension( 'Renameuser' );
 wfLoadExtension( 'ReplaceText' );
+
+$wgScribuntoDefaultEngine = 'luastandalone';
+$wgScribuntoEngineConf['luastandalone']['luaPath'] = '/usr/bin/lua';
+
 wfLoadExtension( 'Scribunto' );
 wfLoadExtension( 'SemanticScribunto' );
+
+
 wfLoadExtension( 'SecureLinkFixer' );
 wfLoadExtension( 'SpamBlacklist' );
 wfLoadExtension( 'SyntaxHighlight_GeSHi' );

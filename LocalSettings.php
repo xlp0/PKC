@@ -193,10 +193,14 @@ wfLoadExtension( 'PdfHandler' );
 wfLoadExtension( 'Poem' );
 wfLoadExtension( 'Renameuser' );
 wfLoadExtension( 'ReplaceText' );
+
 # According to MediaWiki.org, https://www.mediawiki.org/wiki/Extension_talk:Scribunto, the following line should only points to lua5.1
 $wgScribuntoEngineConf['luastandalone']['luaPath'] = '/usr/bin/lua5.1';
+
 wfLoadExtension( 'Scribunto' );
 wfLoadExtension( 'SemanticScribunto' );
+
+
 wfLoadExtension( 'SecureLinkFixer' );
 wfLoadExtension( 'SpamBlacklist' );
 wfLoadExtension( 'SyntaxHighlight_GeSHi' );

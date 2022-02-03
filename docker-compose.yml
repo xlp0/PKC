@@ -19,7 +19,7 @@ services:
       #- ./mountPoint/backup/automysqlbackup:/var/lib/automysqlbackup/
   mediawiki:
     #image: mediawiki
-    image: xlp0/pkc
+    image: xlp0/pkc_speedy
     container_name: pkc-mediawiki-1
     restart: always
     ports:

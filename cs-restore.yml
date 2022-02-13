@@ -1,0 +1,36 @@
+# To run .... 
+# ansible-playbook -i hosts cs-restore.yml --extra-vars "dbname=./downloaded/backup-20211003.sql.gz imagename=./downloaded/backup-image-20211003.tar.gz"
+# ansible-playbook -i hosts cs-restore.yml --extra-vars "dbname=backup-db.sql.zip imagename=backup-image-20211003.tar.gz"
+#
+---
+- name: Restore database and image backup
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - name: check name
+    ansible.builtin.debug:
+      msg: database filename, on this folder {{ dbname }}
+
+  - name: check image
+    ansible.builtin.debug:
+      msg: database filename, on this folder {{ imagename }}
+
+  - name: Upload source file
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+
+    loop:
+      - {src: '{{ dbname }}', dest: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/{{ dbname }}"}
+      - {src: '{{ imagename }}', dest: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/{{ imagename }}"}
+    become: true
+
+  - name: Execute restore script
+    command: sh -c "{{ ansible_env.PWD }}/cs/cs-restore.sh -m {{ ansible_env.PWD }}/cs/mountpoint -d {{ dbname }} -i {{ imagename }}"
+    become: true
+
+  - name: Execute the update script 
+    command: sh -c "{{ ansible_env.PWD }}/cs/update-sw.sh"

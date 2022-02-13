@@ -1,0 +1,53 @@
+---
+- name: install docker containers
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Get running containers
+    docker_host_info:
+      containers: yes
+    register: docker_info
+    ignore_errors: yes
+
+  - name: Stop running containers
+    docker_container:
+      name: "{{ item }}"
+      state: stopped
+    loop: "{{ docker_info.containers | map(attribute='Id') | list }}"
+    ignore_errors: yes
+
+  - name: Remove Stopped docker containers
+    shell:
+     docker rm $(docker ps -a -q);
+    when: (docker_info.containers | length)  != 0
+    ignore_errors: yes
+
+  - name: Get details of all images
+    docker_host_info:
+      images: yes
+      verbose_output: yes
+    register: image_info
+    ignore_errors: yes
+
+  - name: Remove all images
+    docker_image:
+      name: "{{ item }}"
+      state: absent
+    loop: "{{ image_info.images | map(attribute='Id') | list }}"
+    ignore_errors: yes
+  
+  - name: Find NGINX configuration files
+    find:
+      paths: /etc/nginx/sites-enabled
+      patterns: "*.conf"
+    register: files_to_delete
+    ignore_errors: yes
+
+  - name: cleanup NGINX Configuration, if exists
+    file:
+      path: "{{ item.path }}"
+      state: absent
+    with_items: "{{ files_to_delete.files }}"
+    ignore_errors: yes
+  

@@ -1,0 +1,57 @@
+---
+- name: Transfer backup file to target machine
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Fetch backup file to remote server
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+      mode: u=rwx,g=rx,o=rx
+
+    loop:
+      - {src: './mountpoint/backup_restore/mariadb/auto-database.sql.gz', dest: '{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb'}
+      - {src: './mountpoint/backup_restore/mediawiki/auto-images.tar.gz', dest: '{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki'}
+    become: true
+    
+  - name: execute restore script on remote server
+    command: sh -c "{{ ansible_env.PWD }}/cs/cs-restore.sh -m {{ ansible_env.PWD }}/cs/mountpoint -d auto-database.sql.gz -i auto-images.tar.gz"
+    become: true
+  
+#
+# copy database backup file
+#
+  # - name: Get files in mariadb folder
+  #   find:
+  #     paths: "./mountpoint/backup_restore/mariadb/"
+  #   register: found_files
+
+  # - name: Get latest file
+  #   set_fact:
+  #     latest_file: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+  # - debug: var=item.path
+  #   with_items: "{{ found_files.files }}"
+
+#
+# download images file
+#
+  # - name: Get files in a folder
+  #   find:
+  #     paths: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki"
+  #   register: found_files
+
+  # - name: Get latest file
+  #   set_fact:
+  #     latest_file: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+  # - name: ansible copy file from remote to local.
+  #   fetch:
+  #     src: "{{ latest_file.path }}"
+  #     dest: "./mountpoint/backup_restore/mediawiki/{{ ansible_host }}-mediawiki.tar.gz"
+  #     flat: yes
+#
+# run restore script on remote server
+#

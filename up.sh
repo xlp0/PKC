@@ -1,159 +1,194 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-set -e
+#####################################################################
+function prep_nginx {
+    # sed -i 's/old-text/new-text/g' input.txt
+    echo "Preparing NGINX Config Files ..."
+    # 
+    sed "s/#GIT_SUBDOMAIN/$GITEA_SUBDOMAIN/g" ./config-template/git.conf > ./config/git.conf
+    sed "s/#PMA_SUBDOMAIN/$PMA_SUBDOMAIN/g" ./config-template/pma.conf > ./config/pma.conf
+    sed "s/#MTM_SUBDOMAIN/$MTM_SUBDOMAIN/g" ./config-template/mtm.conf > ./config/mtm.conf
+    sed "s/#VS_SUBDOMAIN/$VS_SUBDOMAIN/g" ./config-template/vs.conf > ./config/vs.conf
+    sed "s/#KCK_SUBDOMAIN/$KCK_SUBDOMAIN/g" ./config-template/kck.conf > ./config/kck.conf
+    sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/reverse-proxy.conf > ./config/reverse-proxy.conf
+    sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/pkc.conf > ./config/pkc.conf
+    echo ""
+}
 
-# Check if docker is installed or not
-if [[ $(which docker) && $(docker --version) ]]; then
-  echo "$OSTYPE has $(docker --version) installed"
-  else
-    echo "You need to Install docker"
-    # command
-    case "$OSTYPE" in
-      darwin*)
-          echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-mac/install/"
-          exit
-          ;;
-      msys*)
-          echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/"
-          exit
-          ;;
-      cygwin*)
-          echo "$OSTYPE should install Docker Desktop by following this link https://docs.docker.com/docker-for-windows/install/"
-          exit
-          ;;
-      linux*)
-        echo "Some $OSTYPE distributions could install Docker" 
+#####################################################################
+function prep_local {
+    # 
+    # extracting mountpoint
+    # Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
+    if [ ! -e ./mountpoint ]; then
+        tar -xvf mountpoint-mac.tar.gz
+    fi
+    # copy LocalSettings.php
+    echo "Applying Localhost setting .... "
+    cp ./config/LocalSettings.php ./mountpoint/LocalSettings.php
+    cp ./config/config.ini.php-local ./mountpoint/matomo/config/config.ini.php
+    cp ./config-template/LocalSettings-local.php ./mountpoint/LocalSettings.php
+    # config/app.ini
+    cp ./config/app.ini ./mountpoint/gitea/gitea/conf/app.ini
+    cp ./config/update-mtm-config.sql ./mountpoint/backup_restore/mariadb/update-mtm-config.sql
+    # docker composre file, consist of minimal installation
+    cp ./config-template/docker-compose-local.yml docker-compose.yml
 
-        if command -v apt-get &> /dev/null; then
-            echo "It looks like you are on a Debian-based or Ubuntu-based system."
-            echo "We will try to install Docker for you"
-            ./AdvancedTooling/installDockerForUbuntu.sh
-            echo "Installation complete, setting up the sudo su command, you will need the root access to this linux machine."
-            sudo su
-        else
-            exit
-        fi
-        ;;
-      *)        echo "Sorry, this $OSTYPE might not have Docker implementation" ;;
-    esac
-fi
+}
 
-# Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
-if [ ! -e ./mountPoint ]; then
-  tar -xzvf ./resources/mountPoint.tar.gz mountPoint
-fi
+function prep_mw_localhost {
+    echo "Prepare LocalSettings.php file"
+    FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$PORT_NUMBER"
+    KCK_AUTH_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$KCK_PORT_NUMBER"
+    MTM_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$MATOMO_PORT_NUMBER"
+    GIT_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$GITEA_PORT_NUMBER"
+    #
+    sed "s|#MTM_FQDN|$MTM_FQDN|g" ./config-template/LocalSettings-Local.php > ./config/LocalSettings.php
+    sed -i '' "s|#YOUR_FQDN|$FQDN|g" ./config/LocalSettings.php
+    sed -i '' "s|#KCK_SUBDOMAIN|$KCK_AUTH_FQDN|g" ./config/LocalSettings.php
+    #
+    sed "s|#MTM_SUBDOMAIN|$MTM_FQDN|g" ./config-template/config.ini.php > ./config/config.ini.php
+    #
+    sed "s|#YOUR_KCK_FQDN|$KCK_AUTH_FQDN|g" ./config-template/update-mtm-config.sql > ./config/update-mtm-config.sql
+    #
+    sed "s|#GIT_FQDN|$GIT_FQDN|g" ./config-template/app.ini > ./config/app.ini
+}
 
-# In case, there is no .env file
-PORT_NUMBER="9352"
+function prep_mw_domain {
+    echo "Prepare LocalSettings.php file"
+    FQDN="$DEFAULT_TRANSPORT://www.$YOUR_DOMAIN"
+    KCK_AUTH_FQDN="$DEFAULT_TRANSPORT://kck.$YOUR_DOMAIN"
+    MTM_FQDN="$DEFAULT_TRANSPORT://mtm.$YOUR_DOMAIN"
+    GIT_FQDN="$DEFAULT_TRANSPORT://git.$YOUR_DOMAIN"
+    #
+    sed "s|#MTM_SUBDOMAIN|$MTM_FQDN|g" ./config-template/LocalSettings.php > ./config/LocalSettings.php
+    sed -i '' "s|#YOUR_FQDN|$FQDN|g" ./config/LocalSettings.php
+    sed -i '' "s|#KCK_SUBDOMAIN|$KCK_AUTH_FQDN|g" ./config/LocalSettings.php
+    #
+    sed "s|#MTM_SUBDOMAIN|$MTM_FQDN|g" ./config-template/config.ini.php > ./config/config.ini.php
+    #
+    sed "s|#YOUR_DOMAIN|$YOUR_DOMAIN|g" ./config-template/update-mtm-config.sql > ./config/update-mtm-config.sql
+    sed -i '' "s|#YOUR_KCK_FQDN_DOMAIN|$KCK_AUTH_FQDN|g" ./config/update-mtm-config.sql
+    #
+    sed "s|#GIT_FQDN|$GIT_FQDN|g" ./config-template/app.ini > ./config/app.ini
+}
+
+#####################################################################
+# Read .env, and present our plan to user
+echo "Mark Started Process at $(date)"
 
 if [ -f .env ]; then
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
-    echo "Loaded environmental variable: PORT_NUMBER=$PORT_NUMBER"
-fi
+    if [ "$YOUR_DOMAIN" == "localhost" ]; then {
+        GITEA_SUBDOMAIN=$YOUR_DOMAIN:$GITEA_PORT_NUMBER
+        PMA_SUBDOMAIN=$YOUR_DOMAIN:$PHP_MA
+        MTM_SUBDOMAIN=$YOUR_DOMAIN:$MATOMO_PORT_NUMBER
+        VS_SUBDOMAIN=$YOUR_DOMAIN:$VS_PORT_NUMBER
+        KCK_SUBDOMAIN=$YOUR_DOMAIN:$KCK_PORT_NUMBER
 
-# In case, there is no .machine_specific_env file
-TRANSPORT_STRING="http"
-HOST_STRING="localhost"
-OAUTH_CLIENT_ID="83698ede718fea93a79e"
-OAUTH_CLIENT_SECRET="290648a66406e1bb3c5655a96c34b62fac5e4e9a"
-LOGO_FILE_NAME="xlp.png"
+        # Displays localhost installation plan
+        echo "--------------------------------------------------------"
+        echo "Installation Plan:"
+        echo ""
+        echo "Loaded environmental variable: "
+        echo "Port number for Mediawiki: $PORT_NUMBER"
+        echo "Port number for Matomo Service: $MATOMO_PORT_NUMBER"
+        echo ""
+        echo ""
+        echo "If you have installed Dockers, please ensure your"
+        echo "Docker desktop is running."
+        echo ""
+        read -p "Press [Enter] key to continue..."
+        echo "--------------------------------------------------------"
 
+        prep_mw_localhost
+        prep_local
 
-if [ -f .machine_specific_env ]; then
-    # Load Environment Variables
-    export $(cat .machine_specific_env | grep -v '#' | awk '/=/ {print $1}')
-    # For instance, will be example_kaggle_key
-    echo "Loaded environmental variable: TRANSPORT_STRING=$TRANSPORT_STRING"
-    echo "Loaded environmental variable: HOST_STRING=$HOST_STRING"
-    echo "Loaded environmental variable: OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID"
-    #Secret will not show
-    echo "Loaded environmental variable: OAUTH_CLIENT_SECRET=********"
+        # Pre-Requisite, install docker
+        docker info | grep -q docker-desktop && echo "Docker is found, not installing..." || brew install --cask docker
+        # bring all the service up
+        docker-compose up -d
+        # wait mysql service is ready
+        read -t 10 -p "Wait 10 second for mySQL Service Ready"
+        # run maintenance script
+        docker exec xlp_mediawiki php /var/www/html/maintenance/update.php --quick
+        # run matomo config script
+        ./script/mtm-sql.sh
 
-    if [[ ${TRANSPORT_STRING} =~  .*https.* ]]; then
-      echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING"
-      replaceString="$HOST_STRING";
-    else
-      echo "To use the following transport string:  ${TRANSPORT_STRING}://$HOST_STRING:$PORT_NUMBER"
-      replaceString="$HOST_STRING:$PORT_NUMBER";
+        # display login information
+        echo "---------------------------------------------------------------------------"
+        echo "Installation is complete, please read below information"
+        echo "To access MediaWiki [localhost:$PORT_NUMBER], please use admin/xlp-admin-pass"
+        echo "To access Matomo [localhost:$MATOMO_PORT_NUMBER], please use user/bitnami"
+        echo ""
+        echo "---------------------------------------------------------------------------"
+
+    } else {
+        GITEA_SUBDOMAIN=git.$YOUR_DOMAIN
+        PMA_SUBDOMAIN=pma.$YOUR_DOMAIN
+        MTM_SUBDOMAIN=mtm.$YOUR_DOMAIN
+        VS_SUBDOMAIN=code.$YOUR_DOMAIN
+        KCK_SUBDOMAIN=kck.$YOUR_DOMAIN
+
+        # Displays installation plan on remote host machine
+        echo "--------------------------------------------------------"
+        echo "Installation Plan:"
+        echo "Ansible script to install on host file: $1"
+        echo ""
+        echo "Loaded environmental variable: "
+        echo "Port number for Mediawiki: $PORT_NUMBER"
+        echo "Port number for Matomo Service: $MATOMO_PORT_NUMBER"
+        echo "Port number for PHPMyAdmin: $PHP_MA"
+        echo "Port number for Gitea Service: $GITEA_PORT_NUMBER"
+        echo "Port number for Code Server: $VS_PORT_NUMBER"
+        echo "Port number for Keycloak: $KCK_PORT_NUMBER"
+        echo ""
+        echo "Your domain name is: $YOUR_DOMAIN"
+        echo "default installation will configure below subdomain: "
+        echo "PHPMyAdmin will be accessible from: $PMA_SUBDOMAIN"
+        echo "Gitea will be accessible from: $GITEA_SUBDOMAIN"
+        echo "Matomo will be accessible from: $MTM_SUBDOMAIN"
+        echo "Code Server will be accessible from: $VS_SUBDOMAIN"
+        echo "Keycloak will be accessible from: $KCK_SUBDOMAIN"
+        echo ""
+        echo ""
+        read -p "Press [Enter] key to continue..."
+        echo "--------------------------------------------------------"
+
+        prep_nginx
+        read -p "finished prepare nginx config Press [Enter] key to continue..."
+        prep_mw_domain
+        read -p "finished prepare LocalSettings.php Press [Enter] key to continue..."
+        ansible-playbook -i hosts cs-clean.yml
+        ansible-playbook -i hosts cs-up.yml
+        #
+        # Install HTTPS SSL
+        if [ $DEFAULT_TRANSPORT == "https" ]; then
+            echo "Installing SSL Certbot for $DEFAULT_TRANSPORT protocol"
+            ./cs-certbot.sh hosts
+        fi
+        #
+        echo "Check installation status"
+        ansible-playbook -i hosts cs-svc.yml  
+      
+        echo "---------------------------------------------------------------------------"
+        echo "Installation is complete, please read below information"
+        echo "To access MediaWiki, please use admin/xlp-admin-pass"
+        echo "To access Gitea, please use admin/pkc-admin"
+        echo "To access Matomo, please use user/bitnami"
+        echo "To access phpMyAdmin, please use Database: database, User: root, password: secret"
+        echo "To access Code Server, please use password: $VS_PASSWORD"
+        echo "To access Keycloak, please use admin/Pa55w0rd"
+        echo ""
+        echo "---------------------------------------------------------------------------"
+
+        # display finish time
+        date
+    }
     fi
-
-
-    # Localhost configuration based on .env
-    # Substitute to correct config if founded "$TargetKey =" in LocalSetting.php
-    # Only replace 'var' instead of "var" 
-    filename="LocalSettings.php"
-    # Put in all the params for configuration
-    oauth_key_array=(
-      "wgServer" 
-      "wgLogos"
-      "wgOAuth2Client\[\'client\'\]\[\'id\'\]" 
-      "wgOAuth2Client\[\'client\'\]\[\'secret\'\]"
-      "wgOAuth2Client\[\'configuration\'\]\[\'redirect_uri\'\]"
-      )
-
-    oauth_val_array=(
-      $TRANSPORT_STRING://${replaceString} 
-      "\[ \'1x\' => \"\$wgResourceBasePath\/resources\/assets\/$LOGO_FILE_NAME\" \];"
-      $OAUTH_CLIENT_ID 
-      $OAUTH_CLIENT_SECRET
-      "$TRANSPORT_STRING://${replaceString}/index.php/Special:OAuth2Client/callback"
-      )
-    len=${#oauth_key_array[@]}
-    for (( i=0; i<$len; i++ ));
-    do
-      echo "Replacing string in LocalSettings.php: ${oauth_key_array[$i]} "
-      if [ ${oauth_key_array[$i]} = "wgLogos" ]; then
-        sed "s|\$${oauth_key_array[$i]}[[:blank:]]*=.*|\$${oauth_key_array[$i]} = ${oauth_val_array[$i]};|" $filename > temp.txt && mv temp.txt $filename
-      else  
-        echo
-        sed "s|\$${oauth_key_array[$i]}[[:blank:]]*=.*|\$${oauth_key_array[$i]} = \"${oauth_val_array[$i]}\";|" $filename > temp.txt && mv temp.txt $filename
-      fi
-    done
+else
+    echo ".env files not found, please provide the .env file"
+    exit 1;
 fi
 
-echo "Please type in the Administrative(root) password of the machine that you are installing PKC service when asked... "
-
-# If docker is running already, first run a data dump before shutting down docker processes
-# One can use the following instruction to find the current directory name without the full path
-# CURRENTDIR=${PWD##*/}
-# In Bash v4.0 or later, lower case can be obtained by a simple ResultString="${OriginalString,,}"
-# See https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash
-# However, it will not work in Mac OS X, since it is still using Bash v 3.2
-LOWERCASE_CURRENTDIR="$(tr [A-Z] [a-z] <<< "${PWD##*/}")"
-MW_CONTAINER=$LOWERCASE_CURRENTDIR"-mediawiki-1"
-DB_CONTAINER=$LOWERCASE_CURRENTDIR"-database-1"
-
-# This variable should have the same value as the variable $wgResourceBasePath in LocalSettings.php
-# ResourceBasePath="/var/www/html"
-
-# BACKUPSCRIPTFULLPATH=$ResourceBasePath"/extensions/BackupAndRestore/backup.sh"
-# RESOTRESCRIPTFULLPATH=$ResourceBasePath"/extensions/BackupAndRestore/restore.sh"
-
-# echo "Executing: " docker exec $MW_CONTAINER $BACKUPSCRIPTFULLPATH
-# docker exec $MW_CONTAINER $BACKUPSCRIPTFULLPATH
-# stop all docker processes
-docker-compose down --volumes
-
-
-# Start the docker processes
-docker-compose up -d --build
-
-# After docker processes are ready, reload the data from earlier dump
-# echo "Loading data from earlier backups..."
-# echo "Executing: " docker exec $MW_CONTAINER $RESOTRESCRIPTFULLPATH
-# docker exec $MW_CONTAINER $RESOTRESCRIPTFULLPATH
-
-#echo $MW_CONTAINER" will do regular database content dump."
-#docker exec $MW_CONTAINER service cron start
-
-# Give read/write access to all users for the images directory.
-# docker exec $MW_CONTAINER chmod -R 777 /var/www/html/images
-
-echo "It needs to wait for at least 3 seconds before launching the php /var/www/html/maintenance/update.php script"
-sleep 3
-
-docker exec $MW_CONTAINER php /var/www/html/maintenance/update.php
-
-echo "Please go to a browser and use http://$HOST_STRING:$PORT_NUMBER to test the service"
-
-open http://$HOST_STRING:$PORT_NUMBER
+echo "Mark Finished Process at $(date)"

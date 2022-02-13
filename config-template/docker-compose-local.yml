@@ -1,0 +1,62 @@
+# MariaDB
+version: "3.7"
+services:
+  database:
+    image: emhavis/pkc_mariadb:v0.1
+    container_name: xlp_mariadb
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    environment:
+      MYSQL_DATABASE: my_wiki
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      # data file location
+      - ./mountpoint/mariadb:/var/lib/mysql
+      # backup and restore file location
+      - ./mountpoint/backup_restore/mariadb:/mnt/backup_restore/mariadb
+      # entry point
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports: 
+     - 3306:3306
+  matomo:
+    container_name: xlp_matomo
+    image: docker.io/bitnami/matomo:4
+    ports:
+      - ${MATOMO_PORT_NUMBER}:8080
+    environment:
+      - MATOMO_DATABASE_HOST=database
+      - MATOMO_DATABASE_PORT_NUMBER=3306
+      - MATOMO_DATABASE_USER=matomodb
+      - MATOMO_DATABASE_NAME=matomo
+      - MATOMO_DATABASE_PASSWORD=matomo-pass
+    volumes:
+      - "./mountpoint/matomo:/bitnami/matomo"
+    depends_on:
+      - database
+    restart: always
+  mediawiki:
+    # default username/password: admin/admin_on_d0cker
+    # image: xlp0/semanticwiki
+    image: emhavis/pkc_semanticwiki:v0.2
+    container_name: xlp_mediawiki
+    # platform: linux/amd64
+    #
+    restart: always
+    ports:    
+    - ${PORT_NUMBER}:80
+    links:
+    - database
+    volumes:
+    # images file location
+    - ./mountpoint/images:/var/www/html/images
+    # backup and restore file location
+    - ./mountpoint/backup_restore/mediawiki:/mnt/backup_restore/mediawiki
+    # Localsettings location file
+    - ./mountpoint/LocalSettings.php:/var/www/html/LocalSettings.php
+    - ./backup/xml:/var/www/html/backup
+    # Ansible working directory
+    - ./mountpoint/ansible:/mnt/ansible
+    depends_on:
+    - database

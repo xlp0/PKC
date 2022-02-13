@@ -1,0 +1,15 @@
+---
+- name: install docker containers
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Create group
+    group:
+      name: "docker"
+      state: present
+
+  - name: Adding user ubuntu
+    user: name=ubuntu
+          groups=docker
+          append=yes

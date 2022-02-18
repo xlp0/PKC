@@ -19,7 +19,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 
-$wgSitename = "Translator";
+$wgSitename = "PKC";
 
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
@@ -267,7 +267,7 @@ $wgTrustedMediaFormats[] = "application/sla";
 $wgTrustedMediaFormats[] = "application/octet-stream";
 # Enable MMV for 3D Objects
 $wgMediaViewerExtensions['stl'] = 'mmv.3d';
-
+#
 # 3DAlloy
 wfLoadExtension( '3DAlloy' );
 $wgFileExtensions = array_merge(
@@ -278,7 +278,6 @@ $wgFileExtensions = array_merge(
 		'stl', 'stlb', 'json'
 	)
   );
-
 #
 # Loading Math extension
 wfLoadExtension( 'Math' );
@@ -322,8 +321,9 @@ $wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
   'scope' => [ 'openid', 'profile', 'email' ]
 ];
-#
 $wgGroupPermissions['*']['autocreateaccount'] = true;
+#
+wfLoadExtension( 'Matomo' );
 $wgMatomoURL = "#MTM_SUBDOMAIN";
 $wgMatomoIDSite = "1";
 #

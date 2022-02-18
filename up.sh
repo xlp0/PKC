@@ -59,9 +59,10 @@ function prep_mw_domain {
     FQDN="$DEFAULT_TRANSPORT://www.$YOUR_DOMAIN"
     KCK_AUTH_FQDN="$DEFAULT_TRANSPORT://kck.$YOUR_DOMAIN"
     MTM_FQDN="$DEFAULT_TRANSPORT://mtm.$YOUR_DOMAIN"
+    MTM_ROOT="mtm.$YOUR_DOMAIN"
     GIT_FQDN="$DEFAULT_TRANSPORT://git.$YOUR_DOMAIN"
     #
-    sed "s|#MTM_SUBDOMAIN|$MTM_FQDN|g" ./config-template/LocalSettings.php > ./config/LocalSettings.php
+    sed "s|#MTM_SUBDOMAIN|$MTM_ROOT|g" ./config-template/LocalSettings.php > ./config/LocalSettings.php
     sed -i '' "s|#YOUR_FQDN|$FQDN|g" ./config/LocalSettings.php
     sed -i '' "s|#KCK_SUBDOMAIN|$KCK_AUTH_FQDN|g" ./config/LocalSettings.php
     #

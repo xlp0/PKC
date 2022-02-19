@@ -7,4 +7,3 @@ shudownDockersAndRemoveImages.sh
 .vscode/
 .machine_specific_env
 *.sql
-*.gz

@@ -18,7 +18,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
-
 $wgSitename = "PKC";
 
 ## The URL base path to the directory containing the wiki;
@@ -122,6 +121,10 @@ $wgRightsIcon = "";
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
+
+# To enable mod-rewrite and hide index.php
+$wgUsePathInfo = TRUE;
+$wgArticlePath = "/wiki/$1";
 
 # The following permissions were set based on your choice in the installer
 $wgGroupPermissions['*']['edit'] = false;
@@ -322,6 +325,7 @@ $wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
   'scope' => [ 'openid', 'profile', 'email' ]
 ];
 $wgGroupPermissions['*']['autocreateaccount'] = true;
+$wgPluggableAuth_EnableLocalLogin = true;
 #
 wfLoadExtension( 'Matomo' );
 $wgMatomoURL = "#MTM_SUBDOMAIN";

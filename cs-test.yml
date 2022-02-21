@@ -1,15 +1,46 @@
 ---
-- name: install docker containers
+# This playbook backups all mysql databases into separate files.
+- name: backup my-sql
   hosts: all
+  gather_facts: yes
   become: yes
+  vars:
+    - exclude_db:
+      - "Database"
+      - "information_schema"
+      - "performance_schema"
+      - "mysql"
 
   tasks:
-  - name: Create group
-    group:
-      name: "docker"
-      state: present
+    - name: Print all available facts
+      ansible.builtin.debug:
+        var: ansible_facts
 
-  - name: Adding user ubuntu
-    user: name=ubuntu
-          groups=docker
-          append=yes
+    - name: "apt-get update"
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: "install mysql client"
+      apt:
+        name: ['mysql-client']
+        state: present
+
+    - name: Make sure pymysql is present
+      pip:
+        name: pymysql
+        state: present
+
+    - name: get db names
+      shell: 'mysql --host=127.0.0.1 --port=3306 -u root -psecret -e "show databases;"'
+      register: dblist
+      async: 30
+  
+    - name: perform backup database
+      shell: 'mysqldump --column-statistics=0 --host=127.0.0.1 --port=3306 --databases {{ item }} -u root -psecret > /home/ubuntu/cs/mountpoint/backup_restore/mariadb/{{ item }}.sql'
+      async: 30
+      with_items: "{{ dblist.stdout_lines | difference(exclude_db) }}"
+
+# ansible-playbook --ask-vault-password --vault-password-file ./secrets.yml -i hosts ./cs-test.yml
+# ansible-playbook -i hosts ./cs-test.yml
+# mysqldump --column-statistics=0 --host=127.0.0.1 --port=3306 --databases my_wiki -u root -psecret > /tmp/my_wiki.sql

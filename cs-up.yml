@@ -77,7 +77,7 @@
 
   - name: Upload initdb script
     ansible.builtin.copy:
-      src: ./cs/mysql-init/init.sql
+      src: ./config-template/init.sql
       dest: ./cs/mysql-init
 
   - name: Upload scripts
@@ -162,15 +162,22 @@
       dest: /usr/local/bin/docker-compose
       mode: 755
 
-  - name: Shut Down existing PKC Service
-    community.docker.docker_compose:
-      project_src: cs
-      state: absent
+  - name: "apt-get update"
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: "install mysql client for backup/restore support"
+    apt:
+      name: ['mysql-client']
+      state: present
 
   - name: Create and start PKC services
     community.docker.docker_compose:
       project_src: cs
+      timeout: 15
     register: output
+    ignore_errors: yes
 
   - name: Execute the Matomo Keycloak Config 
     command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 

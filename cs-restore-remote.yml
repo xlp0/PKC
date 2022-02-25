@@ -1,0 +1,54 @@
+---
+# This playbook backups all mysql databases into separate files.
+#
+# How to execute:
+# ansible-playbook -i hosts-restore ./cs-restore-remote.yml
+#
+#
+- name: restore data
+  hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+  vars:
+    - db_wiki_backup_file: "pkc.pub-my_wiki-2022-02-25-14h01m01s.sql.gz"
+    - img_wiki_backup_file: "pkc.pub-2022-02-25-14h01m01s-images.tar.gz"
+    - pkc_install_root_dir: "/home/ubuntu/cs/"
+    - src_server: "pkc-back"
+    - dst_server: "pkc-ops"
+
+  tasks:
+    ## Fetch db-file from source
+    - name: Fetch the db file from the "{{ src_server }}" to master
+      run_once: yes
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_wiki_backup_file }} dest=backup/ flat=yes
+      when: "inventory_hostname|string == src_server"
+
+    - name: Fetch the db file from the master to "{{ dst_server }}"
+      copy: src=backup/{{ db_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
+      when: "inventory_hostname|string == dst_server"
+
+    ## Fetch image-file from source
+    - name: Fetch the image file from the "{{ src_server }}" to master
+      run_once: yes
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/{{ img_wiki_backup_file }} dest=backup/ flat=yes
+      when: "inventory_hostname|string == src_server"
+
+    - name: Fetch the db file from the master to "{{ dst_server }}"
+      copy: src=backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
+      when: "inventory_hostname|string == dst_server"
+
+    ## Perform scripts
+    - name: Perform database and image restore
+      ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
+      args:
+        chdir: "{{ pkc_install_root_dir }}"
+      when: "inventory_hostname|string == dst_server"
+
+    ## Download result log
+    - name: Fetch log result file from "{{ dst_server }}" to master
+      fetch: src=/{{ pkc_install_root_dir }}restore_report.log dest=backup/ flat=yes
+      when: "inventory_hostname|string == dst_server"
+
+
+    

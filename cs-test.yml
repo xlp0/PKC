@@ -12,34 +12,51 @@
       - "mysql"
 
   tasks:
-    - name: Print all available facts
-      ansible.builtin.debug:
-        var: ansible_facts
+    - name: Shut Down existing PKC Service
+      community.docker.docker_compose:
+        project_src: cs
+        state: absent
 
-    - name: "apt-get update"
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+    - name: Create and start PKC services
+      community.docker.docker_compose:
+        project_src: cs
+      register: output
 
-    - name: "install mysql client"
-      apt:
-        name: ['mysql-client']
-        state: present
+    - name: Execute the Matomo Keycloak Config 
+      command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
 
-    - name: Make sure pymysql is present
-      pip:
-        name: pymysql
-        state: present
+    - name: Execute the update script 
+      command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
 
-    - name: get db names
-      shell: 'mysql --host=127.0.0.1 --port=3306 -u root -psecret -e "show databases;"'
-      register: dblist
-      async: 30
+    # - name: "apt-get update"
+    #   apt:
+    #     update_cache: yes
+    #     cache_valid_time: 3600
+
+    # - name: "install mysql client"
+    #   apt:
+    #     name: ['mysql-client']
+    #     state: present
+
+    # - name: Make sure pymysql is present
+    #   pip:
+    #     name: pymysql
+    #     state: present
+
+    # - name: get db names
+    #   shell: 'mysql --host=127.0.0.1 --port=3306 -u root -psecret -e "show databases;"'
+    #   register: dblist
+    #   async: 30
   
-    - name: perform backup database
-      shell: 'mysqldump --column-statistics=0 --host=127.0.0.1 --port=3306 --databases {{ item }} -u root -psecret > /home/ubuntu/cs/mountpoint/backup_restore/mariadb/{{ item }}.sql'
-      async: 30
-      with_items: "{{ dblist.stdout_lines | difference(exclude_db) }}"
+    # - name: perform backup database
+    #   shell: 'mysqldump --column-statistics=0 --host=127.0.0.1 --port=3306 --databases {{ item }} -u root -psecret > /home/ubuntu/cs/mountpoint/backup_restore/mariadb/{{ item }}.sql'
+    #   async: 30
+    #   with_items: "{{ dblist.stdout_lines | difference(exclude_db) }}"
+
+    # - name: perform image backup
+
+    # - name: transfer to target instance
+
 
 # ansible-playbook --ask-vault-password --vault-password-file ./secrets.yml -i hosts ./cs-test.yml
 # ansible-playbook -i hosts ./cs-test.yml

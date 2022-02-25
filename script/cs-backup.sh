@@ -117,6 +117,7 @@ function get_localsettings_vars {
     DB_NAME=$(grep '^\$wgDBname' "$LOCALSETTINGS"  | cut -d\" -f2)
     DB_USER=$(grep '^\$wgDBuser' "$LOCALSETTINGS"  | cut -d\" -f2)
     DB_PASS=$(grep '^\$wgDBpassword' "$LOCALSETTINGS"  | cut -d\" -f2)
+    DB_PASS=$(grep '^\$wgServer' "$LOCALSETTINGS"  | cut -d\" -f2)
     DOMAIN=
     echo "Logging in to MySQL as $DB_USER to $DB_HOST to backup $DB_NAME"
 

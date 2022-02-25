@@ -265,6 +265,12 @@ $wgUploadWizardConfig['patents'] = [
 		'weapons' => '//meta.wikimedia.org/wiki/Wikilegal/3D_files_and_3D_printing#Weapons',
 	],
 ];
+# Add new file types that allows for more File Types to be uploaded.
+$wgFileExtensions = array( 'png', 'gif', 'jpg', 'jpeg', 'doc',
+    'xls', 'mpp', 'pdf', 'ppt', 'tiff', 'bmp', 'docx', 'xlsx',
+    'pptx', 'ps', 'odt', 'ods', 'odp', 'odg', 'mp4', 'zip',
+    'stl', 'sla', 'svg'
+);
 #
 $wgTrustedMediaFormats[] = "application/sla";
 $wgTrustedMediaFormats[] = "application/octet-stream";

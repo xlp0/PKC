@@ -6,26 +6,35 @@
 ## Output command usage
 function usage {
     local NAME=$(basename $0)
-    echo "Usage: $NAME -m dir -d file -i file"
-    echo "       -m <dir>    path to mountpoint folder, of Cleanslate docker implementation, Required"
-    echo "       -d <file>   backup database file, stored in ./mountpoint/backup_restore/mariadb folder, Optional."
-    echo "       -i <file>   backup image file, storoed in ./mountpoint/backup_restore/mediawiki folder, Optional."
-    echo "       -l          list the available file in backup_restore folder"
+    echo "Usage: $NAME -m dir -d file -i file -t database name" 
+    echo "       -m <dir>    path to mountpoint folder, of PKC docker implementation, Required"
+    echo "       -d <file>   backup database file, stored in ./mountpoint/backup_restore/mariadb folder,"
+    echo "       -i <file>   backup image file, stored in ./mountpoint/backup_restore/mediawiki folder,"
+    echo "       -t Database Name, target of database name, required"
     echo ""
     echo "You can restore database, images, or both. Script will process supplied file"
-    ## ./cs-restore.sh -m ./mountpoint -d backup-20211003.sql.gz -i backup-image-20211003.tar.gz
+    ## ./cs-restore.sh -m ./mountpoint -d backup-20211003.sql.gz -i backup-image-20211003.tar.gz -t my_wiki
 }
 ################################################################################
 ## Get and validate CLI options
 function get_options {
-    while getopts 'hm:d:i:' OPT; do
+    while getopts 'hm:d:i:t:' OPT; do
         case $OPT in
             h) usage; exit 1;;
             m) INSTALL_DIR=$OPTARG;;
             d) BACKUP_DB=$OPTARG;;
             i) BACKUP_IMG=$OPTARG;;
+            t) DB_NAME=$OPTARG;
         esac
     done
+
+    echo $DB_NAME
+
+    ## Default, if no parameter is supplied
+    if [ -z "$DB_NAME" ]; then
+        echo "Please specify the database target name with -t" 1>&2
+        usage; exit 1;
+    fi
 
     ## Default, if no parameter is supplied
     if [ -z "$INSTALL_DIR" ]; then
@@ -68,7 +77,7 @@ function get_options {
 ################################################################################
 ## Restoring database
 function restore_db {
-    DOCKER_CMD="gunzip < /mnt/backup_restore/mariadb/$BACKUP_DB | mysql -u root -h database -psecret; exit $?"
+    DOCKER_CMD="gunzip < /mnt/backup_restore/mariadb/$BACKUP_DB | mysql -u root -h database -D $DB_NAME -psecret; exit $?"
 
     echo "Previewing docker command: $DOCKER_CMD"
     docker exec -t xlp_mariadb /bin/bash -c "$DOCKER_CMD"

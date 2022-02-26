@@ -338,6 +338,8 @@ $wgMatomoURL = "#MTM_SUBDOMAIN";
 $wgMatomoIDSite = "1";
 #
 #
+# Interactive Timeline Extensions
+wfLoadExtension("InteractiveTimeline");
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

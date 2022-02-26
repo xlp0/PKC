@@ -1,0 +1,17 @@
+---
+- name: Update docker-compose file on all PKC Landscape
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Upload docker-compose
+    ansible.builtin.copy:
+      src: ./config-template/docker-compose.yml
+      dest: ./cs
+
+  - name: Create and start PKC services
+    community.docker.docker_compose:
+      project_src: cs
+      timeout: 15
+    register: output
+    ignore_errors: yes

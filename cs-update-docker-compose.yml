@@ -15,3 +15,6 @@
       timeout: 15
     register: output
     ignore_errors: yes
+    
+  - name: Execute the update script 
+    command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"

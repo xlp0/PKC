@@ -1,0 +1,135 @@
+# MariaDB
+version: "3.7"
+services:
+  database:
+    image: emhavis/pkc_mariadb:v0.1
+    container_name: xlp_mariadb
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    environment:
+      MYSQL_DATABASE: my_wiki
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      # data file location
+      - ./mountpoint/mariadb:/var/lib/mysql
+      # backup and restore file location
+      - ./mountpoint/backup_restore/mariadb:/mnt/backup_restore/mariadb
+      # entry point
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports: 
+     - 3306:3306
+  phpmyadmin:
+    image: emhavis/pkc_phpmyadmin:v0.1
+    container_name: phpmyadmin
+    environment:
+    - PMA_ARBITRARY=1
+    - MYSQL_ROOT_PASSWORD=secret
+    - PMA_HOST=database
+    - UPLOAD_LIMIT=123M
+    - MAX_EXECUTION_TIME=125
+    - HIDE_PHP_VERSION= 1
+    restart: always
+    ports:
+     - ${PHP_MA}:80
+    volumes:
+     - /sessions
+  keycloak:
+    container_name: xlp_keycloak
+    image: quay.io/keycloak/keycloak:15.0.2
+    environment:
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - DB_VENDOR=mysql
+      - DB_ADDR=database
+      - DB_PORT=3306 
+      - DB_DATABASE=keycloak
+      - DB_PASSWORD=keycloak-pass
+      - DB_USER=keycloak
+      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
+      - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
+      - PROXY_ADDRESS_FORWARDING=true
+    ports:
+    - ${KCK_PORT_NUMBER}:8080
+    depends_on:
+    - database
+    restart: always
+  matomo:
+    container_name: xlp_matomo
+    image: docker.io/bitnami/matomo:4
+    ports:
+      - ${MATOMO_PORT_NUMBER}:8080
+    environment:
+      - MATOMO_DATABASE_HOST=database
+      - MATOMO_DATABASE_PORT_NUMBER=3306
+      - MATOMO_DATABASE_USER=matomodb
+      - MATOMO_DATABASE_NAME=matomo
+      - MATOMO_DATABASE_PASSWORD=matomo-pass
+    volumes:
+      - "./mountpoint/matomo:/bitnami/matomo"
+    depends_on:
+      - database
+    restart: always
+  mediawiki:
+    # default username/password: admin/admin_on_d0cker
+    # image: xlp0/semanticwiki
+    # image: emhavis/pkc_semanticwiki:v0.4
+    image: emhavis/pkc_semanticwiki:v1.37.1.build.2
+    container_name: xlp_mediawiki
+    # platform: linux/amd64
+    #
+    restart: always
+    ports:    
+    - ${PORT_NUMBER}:80
+    links:
+    - database
+    volumes:
+    # images file location
+    - ./mountpoint/images:/var/www/html/images
+    # backup and restore file location
+    - ./mountpoint/backup_restore/mediawiki:/mnt/backup_restore/mediawiki
+    # Localsettings location file
+    - ./mountpoint/LocalSettings.php:/var/www/html/LocalSettings.php
+    - ./backup/xml:/var/www/html/backup
+    # Ansible working directory
+    - ./mountpoint/ansible:/mnt/ansible
+    depends_on:
+    - database
+  gitea:
+    #image: gitea/gitea:1.15.2
+    image: emhavis/pkc_gitea:v0.1
+    container_name: xlp_gitea
+    environment:
+    - USER_UID=1000
+    - USER_GID=1000
+    - GITEA__database__DB_TYPE=mysql
+    - GITEA__database__HOST=database:3306
+    - GITEA__database__NAME=gitea
+    - GITEA__database__USER=gitea
+    - GITEA__database__PASSWD=gitea-pass
+    restart: always
+    volumes:
+    - ./mountpoint/gitea:/data
+    # to maintain compatibility across OS
+    - ./mountpoint/timezone:/etc/timezone:ro
+    - ./mountpoint/localtime:/etc/localtime:ro
+    ports:
+    - ${GITEA_PORT_NUMBER}:3000
+    - "222:22"
+    depends_on:
+    - database
+  code-server:
+    #image: lscr.io/linuxserver/code-server
+    image: emhavis/pkc_codeserver:v0.1
+    container_name: xlp_vs
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PASSWORD=${VS_PASSWORD} #optional
+      - SUDO_PASSWORD=${VS_SUDO_PASSWORD} #optional
+    volumes:
+      - ./mountpoint/vs:/config
+    ports:
+      - ${VS_PORT_NUMBER}:8443
+    restart: always

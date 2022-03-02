@@ -39,10 +39,26 @@
   
   - name: Find NGINX configuration files
     find:
-      paths: /etc/nginx/sites-enabled
+      paths: /etc/nginx/sites-enabled/
       patterns: "*.conf"
     register: files_to_delete
     ignore_errors: yes
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: cleanup NGINX Configuration, if exists
+    file:
+      path: "{{ item.path }}"
+      state: absent
+    with_items: "{{ files_to_delete.files }}"
+    ignore_errors: yes
+
+  - name: Find NGINX configuration files
+    find:
+      paths: /etc/nginx/conf.d
+      patterns: "*.conf"
+    register: files_to_delete
+    ignore_errors: yes
+    when: ansible_facts['os_family'] == "RedHat"
 
   - name: cleanup NGINX Configuration, if exists
     file:

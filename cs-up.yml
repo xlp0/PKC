@@ -5,7 +5,6 @@
   vars:
     - docker_version: "latest"
 
-
   tasks:
   - name: Ubuntu Installation Process
     block:

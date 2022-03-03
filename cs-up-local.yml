@@ -1,0 +1,31 @@
+---
+- name: install and provisioning dockers PKC Server on Localhost
+  hosts: localhost
+
+  tasks:
+  - name: Localhost macOS installation process
+    block:
+
+    - name: Check docker installation on localhost machine
+      shell: "docker info | grep Docker"
+      register: docker_output
+      ignore_errors: yes
+
+    - name: Create and start PKC services
+      community.docker.docker_compose:
+        project_src: .
+        timeout: 15
+      register: output
+      ignore_errors: yes
+
+    - name: Check docker installation on localhost machine
+      shell: "./script/update-sw.sh || /usr/bin/true"
+      register: update_script
+      ignore_errors: yes    
+
+    - name: Print debug
+      ansible.builtin.debug:
+        var: update_script
+
+    when: ansible_facts['os_family'] == "Darwin"
+    ignore_errors: yes

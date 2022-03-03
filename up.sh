@@ -21,13 +21,14 @@ function prep_local {
     # extracting mountpoint
     # Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
     if [ ! -e ./mountpoint ]; then
-        tar -xvf mountpoint-mac.tar.gz
+        echo "Extracting mountpoint"
+        tar -xvf mountpoint.tar.gz > /dev/null 2>&1
     fi
     # copy LocalSettings.php
     echo "Applying Localhost setting .... "
     cp ./config/LocalSettings.php ./mountpoint/LocalSettings.php
-    cp ./config/config.ini.php-local ./mountpoint/matomo/config/config.ini.php
-    cp ./config-template/LocalSettings-local.php ./mountpoint/LocalSettings.php
+    # cp ./config/config.ini.php-local ./mountpoint/matomo/config/config.ini.php
+    # cp ./config-template/LocalSettings-local.php ./mountpoint/LocalSettings.php
     # config/app.ini
     cp ./config/app.ini ./mountpoint/gitea/gitea/conf/app.ini
     cp ./config/update-mtm-config.sql ./mountpoint/backup_restore/mariadb/update-mtm-config.sql
@@ -39,7 +40,8 @@ function prep_local {
 function prep_mw_localhost {
     echo "Prepare LocalSettings.php file"
     FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$PORT_NUMBER"
-    KCK_AUTH_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$KCK_PORT_NUMBER"
+    # KCK_AUTH_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$KCK_PORT_NUMBER"
+    KCK_AUTH_FQDN="https://kck.pkc-ops.org"
     MTM_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$MATOMO_PORT_NUMBER"
     GIT_FQDN="$DEFAULT_TRANSPORT://$YOUR_DOMAIN:$GITEA_PORT_NUMBER"
     #
@@ -93,8 +95,7 @@ if [ -f .env ]; then
         echo ""
         echo "Loaded environmental variable: "
         echo "Port number for Mediawiki: $PORT_NUMBER"
-        echo "Port number for Matomo Service: $MATOMO_PORT_NUMBER"
-        echo ""
+        echo "Port number for PHPMyAdmin: $PHP_MA"
         echo ""
         echo "If you have installed Dockers, please ensure your"
         echo "Docker desktop is running."
@@ -103,26 +104,27 @@ if [ -f .env ]; then
         echo "--------------------------------------------------------"
 
         prep_mw_localhost
+        read -p "finished prepare Configuration for Localhost config Press [Enter] key to continue..."
         prep_local
+        read -p "finished prepare mountpoint for Localhost Press [Enter] key to continue..."
 
-        # Pre-Requisite, install docker
-        docker info | grep -q docker-desktop && echo "Docker is found, not installing..." || brew install --cask docker
-        # bring all the service up
-        docker-compose up -d
-        # wait mysql service is ready
-        read -t 10 -p "Wait 10 second for mySQL Service Ready"
+        # run ansible playbook
+        ansible-playbook cs-up-local.yml --connection=local
+
         # run maintenance script
-        docker exec xlp_mediawiki php /var/www/html/maintenance/update.php --quick
-        # run matomo config script
-        ./script/mtm-sql.sh
+        echo "Running maintenance script"
+        docker exec xlp_mediawiki php /var/www/html/maintenance/update.php --quick > /dev/null 2>&1
 
         # display login information
         echo "---------------------------------------------------------------------------"
         echo "Installation is complete, please read below information"
         echo "To access MediaWiki [localhost:$PORT_NUMBER], please use admin/xlp-admin-pass"
-        echo "To access Matomo [localhost:$MATOMO_PORT_NUMBER], please use user/bitnami"
         echo ""
+        echo "If the browser is not automatically open, please copy-paste below URL into "
+        echo "your browser "
+        echo "http://localhost:32001"
         echo "---------------------------------------------------------------------------"
+        open http://localhost:32001
 
     } else {
         GITEA_SUBDOMAIN=git.$YOUR_DOMAIN

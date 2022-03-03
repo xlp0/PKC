@@ -44,3 +44,18 @@ services:
     - ./mountpoint/ansible:/mnt/ansible
     depends_on:
     - database
+  phpmyadmin:
+    image: emhavis/pkc_phpmyadmin:v0.1
+    container_name: phpmyadmin
+    environment:
+    - PMA_ARBITRARY=1
+    - MYSQL_ROOT_PASSWORD=secret
+    - PMA_HOST=database
+    - UPLOAD_LIMIT=123M
+    - MAX_EXECUTION_TIME=125
+    - HIDE_PHP_VERSION= 1
+    restart: always
+    ports:
+     - ${PHP_MA}:80
+    volumes:
+     - /sessions

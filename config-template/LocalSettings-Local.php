@@ -325,7 +325,7 @@ wfLoadExtension( 'TemplateWizard' );
 wfLoadExtension( 'OpenIDConnect' );
 wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
-$wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
+$wgOpenIDConnect_Config['https://pkc-ops.org/auth/realms/pkc-realm/'] = [
   'clientID' => 'pkc-client',
   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
   'scope' => [ 'openid', 'profile', 'email' ]

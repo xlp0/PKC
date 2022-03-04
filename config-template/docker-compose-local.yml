@@ -44,18 +44,23 @@ services:
     - ./mountpoint/ansible:/mnt/ansible
     depends_on:
     - database
-  phpmyadmin:
-    image: emhavis/pkc_phpmyadmin:v0.1
-    container_name: phpmyadmin
+  keycloak:
+    container_name: xlp_keycloak
+    image: quay.io/keycloak/keycloak:15.0.2
     environment:
-    - PMA_ARBITRARY=1
-    - MYSQL_ROOT_PASSWORD=secret
-    - PMA_HOST=database
-    - UPLOAD_LIMIT=123M
-    - MAX_EXECUTION_TIME=125
-    - HIDE_PHP_VERSION= 1
-    restart: always
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - DB_VENDOR=mysql
+      - DB_ADDR=database
+      - DB_PORT=3306 
+      - DB_DATABASE=keycloak
+      - DB_PASSWORD=keycloak-pass
+      - DB_USER=keycloak
+      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
+      - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
+      - PROXY_ADDRESS_FORWARDING=true
     ports:
-     - ${PHP_MA}:80
-    volumes:
-     - /sessions
+    - ${KCK_PORT_NUMBER}:8080
+    depends_on:
+    - database
+    restart: always

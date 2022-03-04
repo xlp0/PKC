@@ -13,7 +13,7 @@ services:
       MYSQL_DATABASE: my_wiki
       MYSQL_USER: wikiuser
       MYSQL_PASSWORD: example
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: secret
     volumes:
       - ./mountPoint/mariadb:/var/lib/mysql
       #- ./mountPoint/backup/automysqlbackup:/var/lib/automysqlbackup/

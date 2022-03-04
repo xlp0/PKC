@@ -4,7 +4,6 @@
   become: yes
 
   tasks:
-
   - name: "apt-get update"
     apt:
       update_cache: yes

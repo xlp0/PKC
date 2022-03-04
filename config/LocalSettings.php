@@ -18,7 +18,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
-
 $wgSitename = "PKC";
 
 ## The URL base path to the directory containing the wiki;
@@ -122,6 +121,10 @@ $wgRightsIcon = "";
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
+
+# To enable mod-rewrite and hide index.php
+$wgUsePathInfo = TRUE;
+$wgArticlePath = "/wiki/$1";
 
 # The following permissions were set based on your choice in the installer
 $wgGroupPermissions['*']['edit'] = false;
@@ -262,6 +265,12 @@ $wgUploadWizardConfig['patents'] = [
 		'weapons' => '//meta.wikimedia.org/wiki/Wikilegal/3D_files_and_3D_printing#Weapons',
 	],
 ];
+# Add new file types that allows for more File Types to be uploaded.
+$wgFileExtensions = array( 'png', 'gif', 'jpg', 'jpeg', 'doc',
+    'xls', 'mpp', 'pdf', 'ppt', 'tiff', 'bmp', 'docx', 'xlsx',
+    'pptx', 'ps', 'odt', 'ods', 'odp', 'odg', 'mp4', 'zip',
+    'stl', 'sla', 'svg'
+);
 #
 $wgTrustedMediaFormats[] = "application/sla";
 $wgTrustedMediaFormats[] = "application/octet-stream";
@@ -316,18 +325,21 @@ wfLoadExtension( 'TemplateWizard' );
 wfLoadExtension( 'OpenIDConnect' );
 wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
-$wgOpenIDConnect_Config['https://kck.pkc-dev.org/auth/realms/pkc-realm/'] = [
+$wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
   'clientID' => 'pkc-client',
   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
   'scope' => [ 'openid', 'profile', 'email' ]
 ];
 $wgGroupPermissions['*']['autocreateaccount'] = true;
+$wgPluggableAuth_EnableLocalLogin = true;
 #
 wfLoadExtension( 'Matomo' );
 $wgMatomoURL = "mtm.pkc-dev.org";
 $wgMatomoIDSite = "1";
 #
 #
+# Interactive Timeline Extensions
+wfLoadExtension("InteractiveTimeline");
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

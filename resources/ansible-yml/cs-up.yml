@@ -128,21 +128,21 @@
 
   - name: Uploading Configuration Files, starting services.
     block: 
-      - name: copy NGINX Configuration Files
-        copy:
-          src: "{{ item.src }}"
-          dest: "{{ item.dest }}"
-          remote_src: false
-        loop:
-          - {src: './config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
-          - {src: './config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
-          - {src: './config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
-          - {src: './config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
-          - {src: './config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
-          - {src: './config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
-          - {src: './config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
-        become: true
-        when: ansible_facts['os_family'] == "Ubuntu"
+    - name: copy NGINX Configuration Files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: false
+      loop:
+        - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
+        - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
+        - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
+        - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
+        - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
+        - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+        - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
+      become: true
+      when: ansible_facts['os_family'] == "Debian"
 
       - name: copy NGINX Configuration Files
         copy:
@@ -150,13 +150,13 @@
           dest: "{{ item.dest }}"
           remote_src: false
         loop:
-          - {src: './config/git.conf', dest: '/etc/nginx/conf.d/git.conf'}
-          - {src: './config/mtm.conf', dest: '/etc/nginx/conf.d/mtm.conf'}
-          - {src: './config/pkc.conf', dest: '/etc/nginx/conf.d/pkc.conf'}
-          - {src: './config/pma.conf', dest: '/etc/nginx/conf.d/pma.conf'}
-          - {src: './config/vs.conf', dest: '/etc/nginx/conf.d/vs.conf'}
-          - {src: './config/kck.conf', dest: '/etc/nginx/conf.d/kck.conf'}
-          - {src: './config/reverse-proxy.conf', dest: '/etc/nginx/conf.d/reverse-proxy.conf'}
+          - {src: '../../config/git.conf', dest: '/etc/nginx/conf.d/git.conf'}
+          - {src: '../../config/mtm.conf', dest: '/etc/nginx/conf.d/mtm.conf'}
+          - {src: '../../config/pkc.conf', dest: '/etc/nginx/conf.d/pkc.conf'}
+          - {src: '../../config/pma.conf', dest: '/etc/nginx/conf.d/pma.conf'}
+          - {src: '../../config/vs.conf', dest: '/etc/nginx/conf.d/vs.conf'}
+          - {src: '../../config/kck.conf', dest: '/etc/nginx/conf.d/kck.conf'}
+          - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/conf.d/reverse-proxy.conf'}
         become: true
         when: ansible_facts['os_family'] == "RedHat"
 
@@ -172,12 +172,12 @@
 
       - name: Upload docker-compose
         ansible.builtin.copy:
-          src: ./config-template/docker-compose.yml
+          src: ../../config-template/docker-compose.yml
           dest: ./cs
 
       - name: Upload initdb script
         ansible.builtin.copy:
-          src: ./config-template/init.sql
+          src: ../../config-template/init.sql
           dest: ./cs/mysql-init
 
       - name: Upload scripts and config
@@ -188,17 +188,17 @@
           mode: u=rwx,g=rx,o=rx
 
         loop:
-          - {src: './script/cs-backup.sh', dest: './cs/cs-backup.sh'}
-          - {src: './script/cs-restore.sh', dest: './cs/cs-restore.sh'}
-          - {src: './script/cs-offsite-restore.sh', dest: './cs/cs-offsite-restore.sh'}
-          - {src: './script/update-sw.sh', dest: './cs/update-sw.sh'}
-          - {src: './script/mtm-sql.sh', dest: './cs/mtm-sql.sh'}
-          - {src: './.env', dest: './cs/.env'}
+          - {src: '../script/cs-backup.sh', dest: './cs/cs-backup.sh'}
+          - {src: '../script/cs-restore.sh', dest: './cs/cs-restore.sh'}
+          - {src: '../script/cs-offsite-restore.sh', dest: './cs/cs-offsite-restore.sh'}
+          - {src: '../script/update-sw.sh', dest: './cs/update-sw.sh'}
+          - {src: '../script/mtm-sql.sh', dest: './cs/mtm-sql.sh'}
+          - {src: '../../.env', dest: './cs/.env'}
         become: true
 
       - name: Upload mountpoint
         ansible.builtin.copy:
-          src: ./mountpoint.tar.gz
+          src: ../../mountpoint.tar.gz
           dest: "/home/{{ ansible_user }}/cs"
 
       - name: Extract Mountpoint
@@ -212,9 +212,9 @@
           dest: "{{ item.dest }}"
           remote_src: false
         loop:
-          - {src: './config/LocalSettings.php', dest: './cs/mountpoint/LocalSettings.php'}
-          - {src: './config-template/timezone', dest: './cs/mountpoint/timezone'}
-          - {src: './config-template/localtime', dest: './cs/mountpoint/localtime'}
+          - {src: '../../config/LocalSettings.php', dest: './cs/mountpoint/LocalSettings.php'}
+          - {src: '../../config-template/timezone', dest: './cs/mountpoint/timezone'}
+          - {src: '../../config-template/localtime', dest: './cs/mountpoint/localtime'}
 
       - name: copy Application Configuration Files
         copy:
@@ -222,10 +222,9 @@
           dest: "{{ item.dest }}"
           remote_src: false
         loop:
-          - {src: "./config/LocalSettings.php", dest: './cs/mountpoint'}
-          - {src: './config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
-          - {src: './config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}
-          - {src: './config/app.ini', dest: './cs/mountpoint/gitea/gitea/conf'}
+          - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
+          - {src: '../../config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}
+          - {src: '../../config/app.ini', dest: './cs/mountpoint/gitea/gitea/conf'}
         become: true
 
       - name: add user mtm

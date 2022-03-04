@@ -109,11 +109,12 @@ if [ -f .env ]; then
         read -p "finished prepare mountpoint for Localhost Press [Enter] key to continue..."
 
         # run ansible playbook
-        ansible-playbook cs-up-local.yml --connection=local
+        ansible-playbook ./resources/ansible-yml/cs-up-local.yml --connection=local
 
         # run maintenance script
         echo "Running maintenance script"
         docker exec xlp_mediawiki php /var/www/html/maintenance/update.php --quick > /dev/null 2>&1
+        # ansible-playbook ./resources/ansible-yml/cs-test.yml --connection=local
 
         # display login information
         echo "---------------------------------------------------------------------------"
@@ -162,17 +163,17 @@ if [ -f .env ]; then
         read -p "finished prepare nginx config Press [Enter] key to continue..."
         prep_mw_domain
         read -p "finished prepare LocalSettings.php Press [Enter] key to continue..."
-        ansible-playbook -i hosts cs-clean.yml
-        ansible-playbook -i hosts cs-up.yml
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-clean.yml
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up.yml
         #
         # Install HTTPS SSL
         if [ $DEFAULT_TRANSPORT == "https" ]; then
             echo "Installing SSL Certbot for $DEFAULT_TRANSPORT protocol"
-            ./cs-certbot.sh hosts
+            ./resources/script/cs-certbot.sh ./resources/config/hosts
         fi
         #
         echo "Check installation status"
-        ansible-playbook -i hosts cs-svc.yml  
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-svc.yml  
       
         echo "---------------------------------------------------------------------------"
         echo "Installation is complete, please read below information"

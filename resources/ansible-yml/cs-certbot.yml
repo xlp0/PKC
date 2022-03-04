@@ -2,7 +2,7 @@
   hosts: all
   become: yes
   vars_files:
-    - ./config/default.yml
+    - ../../config/default.yml
    
   tasks:
   - name: Ubuntu Certbot Install
@@ -66,8 +66,8 @@
       dest: "{{ item.dest }}"
       remote_src: false
     loop:
-      - {src: "./config/LocalSettings.php", dest: './cs/mountpoint'}
-      - {src: './config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
+      - {src: "../../config/LocalSettings.php", dest: './cs/mountpoint'}
+      - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
     become: true
 
   - name: Set Letsencrypt Cronjob for Certificate Auto Renewal

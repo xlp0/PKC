@@ -19,3 +19,6 @@ Below are several item that you need to prepare for remote installation.
 ## Usage Description
 After above items is reviewed and adjust, please change your working folder into installation folder and run ./up.sh
 The default credentials to access all the service will be displayed at the end of installation process.
+
+## More Info
+Please visit https://www.pkc.pub/index.php/PKC_Complete_Installation_Process for more information.

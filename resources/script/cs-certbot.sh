@@ -34,4 +34,4 @@ sed -i '' "s|#YOUR_EMAIL_ADDRESS|$YOUR_EMAIL_ADDRESS|g" ./config/default.yml
 sed -i '' "s|#DEFAULT_TRANSPORT|$DEFAULT_TRANSPORT|g" ./config/default.yml
 #
 echo "Running Ansible cerbot script"
-ansible-playbook -i $1 cs-certbot.yml
+ansible-playbook -i ./$1 ./resources/ansible-yml/cs-certbot.yml

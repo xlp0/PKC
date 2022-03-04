@@ -34,7 +34,7 @@
     # mhaviz, added image backup file
     - name: copy common script cs-backup-image
       copy:
-        src: ./script/cs-backup-image.sh
+        src: ./resources/script/cs-backup-image.sh
         dest: "{{ mysql_backup_script_dir }}/cs-backup-image.sh"
         mode: '0755'
 

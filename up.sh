@@ -113,7 +113,7 @@ if [ -f .env ]; then
 
         # run maintenance script
         echo "Running maintenance script"
-        docker exec xlp_mediawiki php /var/www/html/maintenance/update.php --quick > /dev/null 2>&1
+        docker exec xlp_mediawiki php /var/www/html/maintenance/update.php --quick # > /dev/null 2>&1
         # ansible-playbook ./resources/ansible-yml/cs-test.yml --connection=local
 
         # display login information

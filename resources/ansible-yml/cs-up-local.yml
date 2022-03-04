@@ -11,12 +11,8 @@
       register: docker_output
       ignore_errors: yes
 
-    - name: Create and start PKC services
-      community.docker.docker_compose:
-        project_src: .
-        timeout: 15
-      register: output
-      ignore_errors: yes
+    - name: Execute Docker-compose
+      command: "docker-compose up -d"  
 
     # - name: Check docker installation on localhost machine
     #   shell: "./resources/script/update-sw.sh || /usr/bin/true"

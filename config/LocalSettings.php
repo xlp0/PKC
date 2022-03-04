@@ -28,7 +28,7 @@ $wgSitename = "PKC";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "https://www.pkc-dev.org";
+$wgServer = "http://localhost:32001";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -325,7 +325,7 @@ wfLoadExtension( 'TemplateWizard' );
 wfLoadExtension( 'OpenIDConnect' );
 wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
-$wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
+$wgOpenIDConnect_Config['https://kck.pkc-ops.org/auth/realms/pkc-realm/'] = [
   'clientID' => 'pkc-client',
   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
   'scope' => [ 'openid', 'profile', 'email' ]
@@ -333,9 +333,9 @@ $wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
 $wgGroupPermissions['*']['autocreateaccount'] = true;
 $wgPluggableAuth_EnableLocalLogin = true;
 #
-wfLoadExtension( 'Matomo' );
-$wgMatomoURL = "mtm.pkc-dev.org";
-$wgMatomoIDSite = "1";
+// wfLoadExtension( 'Matomo' );
+// $wgMatomoURL = "#MTM_SUBDOMAIN";
+// $wgMatomoIDSite = "1";
 #
 #
 # Interactive Timeline Extensions

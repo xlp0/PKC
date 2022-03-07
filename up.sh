@@ -22,7 +22,7 @@ function prep_local {
     # Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
     if [ ! -e ./mountpoint ]; then
         echo "Extracting mountpoint"
-        tar -xvf mountpoint.tar.gz > /dev/null 2>&1
+        tar -xvf mountpoint-mac.tar.gz > /dev/null 2>&1
     fi
     # copy LocalSettings.php
     echo "Applying Localhost setting .... "

@@ -52,7 +52,7 @@ $wgEmailAuthentication = true;
 ## Database settings
 $wgDBtype = "mysql";
 # $wgDBserver = "database";
-$wgDBserver = "192.168.100.10";
+$wgDBserver = "192.168.100.70";
 $wgDBname = "my_wiki";
 $wgDBuser = "wikiuser";
 $wgDBpassword = "example";

@@ -109,7 +109,12 @@ if [ -f .env ]; then
         read -p "finished prepare mountpoint for Localhost Press [Enter] key to continue..."
 
         # run ansible playbook
-        ansible-playbook ./resources/ansible-yml/cs-up-local.yml --connection=local
+        echo "Running localhost ansible playbook, please provide password when ask."
+        ansible-playbook ./resources/ansible-yml/cs-up-local.yml --connection=local --ask-become-pass
+
+        # 
+        echo "Wait 10 second for service to ready"
+        sleep 5 
 
         # run maintenance script
         echo "Running maintenance script"
@@ -123,9 +128,9 @@ if [ -f .env ]; then
         echo ""
         echo "If the browser is not automatically open, please copy-paste below URL into "
         echo "your browser "
-        echo "http://localhost:32001"
+        echo "http://pkc.local"
         echo "---------------------------------------------------------------------------"
-        open http://localhost:32001
+        open https://pkc.local
 
     } else {
         GITEA_SUBDOMAIN=git.$YOUR_DOMAIN

@@ -14,6 +14,10 @@
     - name: Execute Docker-compose
       command: "docker-compose up -d"  
 
+    - name: Execute Update on Hosts file
+      command: "../script/update-hosts.sh"
+      become: yes
+
     # - name: Check docker installation on localhost machine
     #   shell: "./resources/script/update-sw.sh || /usr/bin/true"
     #   register: update_script

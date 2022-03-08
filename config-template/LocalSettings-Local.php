@@ -323,8 +323,8 @@ wfLoadExtension( 'GoogleDocs4MW' );
 wfLoadExtension( 'TemplateWizard' );
 #
 # Configuration to enable keycloak
-wfLoadExtension( 'OpenIDConnect' );
-wfLoadExtension( 'PluggableAuth' );
+// wfLoadExtension( 'OpenIDConnect' );
+// wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
 // $wgOpenIDConnect_Config['https://pkc-ops.org/auth/realms/pkc-realm/'] = [
 //   'clientID' => 'pkc-client',

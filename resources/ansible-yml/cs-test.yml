@@ -10,21 +10,47 @@
     ansible.builtin.debug:
       var: ansible_facts['os_family']
 
-  - name: copy NGINX Configuration Files
-    copy:
-      src: "{{ item.src }}"
-      dest: "{{ item.dest }}"
-      remote_src: false
-    loop:
-      - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
-      - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
-      - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
-      - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
-      - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
-      - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
-      - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
-    become: true
-    when: ansible_facts['os_family'] == "Debian"
+  - name: Create and start PKC services
+    community.docker.docker_compose:
+      project_src: cs
+      timeout: 15
+    register: output
+    ignore_errors: yes
+
+  # - name: Execute the Matomo Keycloak Config 
+  #   command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
+
+  # - name: Execute the update script 
+  #   command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
+
+  # - name: SELinux Authorization, for RedHat -1
+  #   shell: "setsebool -P httpd_can_network_connect 1"
+  #   when: ansible_facts['os_family'] == "RedHat"
+
+  # - name: SELinux Authorization, for RedHat -2
+  #   shell: "setsebool -P nis_enabled 1"
+  #   when: ansible_facts['os_family'] == "RedHat"
+
+  # - name: restart nginx
+  #   service:
+  #     name: nginx
+  #     state: restarted
+
+  # - name: copy NGINX Configuration Files
+  #   copy:
+  #     src: "{{ item.src }}"
+  #     dest: "{{ item.dest }}"
+  #     remote_src: false
+  #   loop:
+  #     - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
+  #     - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
+  #     - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
+  #     - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
+  #     - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
+  #     - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+  #     - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
+  #   become: true
+  #   when: ansible_facts['os_family'] == "Debian"
 
   # - name: Check docker installation on localhost machine
   #   script: ../script/update-sw.sh || /usr/bin/true > /dev/null 2>&1

@@ -28,7 +28,7 @@ $wgSitename = "PKC";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "http://localhost:32001";
+$wgServer = "https://pkc.local";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -51,7 +51,8 @@ $wgEmailAuthentication = true;
 
 ## Database settings
 $wgDBtype = "mysql";
-$wgDBserver = "database";
+# $wgDBserver = "database";
+$wgDBserver = "192.168.100.70";
 $wgDBname = "my_wiki";
 $wgDBuser = "wikiuser";
 $wgDBpassword = "example";
@@ -322,20 +323,20 @@ wfLoadExtension( 'GoogleDocs4MW' );
 wfLoadExtension( 'TemplateWizard' );
 #
 # Configuration to enable keycloak
-wfLoadExtension( 'OpenIDConnect' );
-wfLoadExtension( 'PluggableAuth' );
+// wfLoadExtension( 'OpenIDConnect' );
+// wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
-$wgOpenIDConnect_Config['https://pkc-ops.org/auth/realms/pkc-realm/'] = [
-  'clientID' => 'pkc-client',
-  'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
-  'scope' => [ 'openid', 'profile', 'email' ]
-];
-$wgGroupPermissions['*']['autocreateaccount'] = true;
-$wgPluggableAuth_EnableLocalLogin = true;
+// $wgOpenIDConnect_Config['https://pkc-ops.org/auth/realms/pkc-realm/'] = [
+//   'clientID' => 'pkc-client',
+//   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
+//   'scope' => [ 'openid', 'profile', 'email' ]
+// ];
+// $wgGroupPermissions['*']['autocreateaccount'] = true;
+// $wgPluggableAuth_EnableLocalLogin = true;
 #
-// wfLoadExtension( 'Matomo' );
-// $wgMatomoURL = "#MTM_SUBDOMAIN";
-// $wgMatomoIDSite = "1";
+wfLoadExtension( 'Matomo' );
+$wgMatomoURL = "mtm.pkc.local";
+$wgMatomoIDSite = "1";
 #
 #
 # Interactive Timeline Extensions
@@ -346,3 +347,12 @@ wfLoadExtension("InteractiveTimeline");
 // $wgShowSQLErrors = true;
 // $wgDebugToolbar = true;
 // $wgDevelopmentWarnings = true;
+# Make sure that composer.local.json already has the required entry: "mediawiki/semantic-result-formats": "~4.0"
+# and the following command "composer update --no-dev" is executed!
+# Load SemanticResultFormats extension 
+wfLoadExtension( 'SemanticResultFormats' );
+$srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'eventline', 'timeline',
+				 'outline', 'gallery', 'jqplotchart', 'jqplotseries', 'sum', 'average', 'min', 'max', 'median', 
+				 'product', 'tagcloud', 'valuerank', 'array', 'tree', 'ultree', 'oltree', 'd3chart', 'latest', 'earliest', 
+				 'filtered', 'slideshow', 'timeseries', 'sparkline', 
+				 'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables' ];

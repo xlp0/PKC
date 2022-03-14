@@ -170,6 +170,8 @@ if [ -f .env ]; then
         read -p "finished prepare LocalSettings.php Press [Enter] key to continue..."
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-clean.yml
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up.yml
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml
         #
         # Install HTTPS SSL
         if [ $DEFAULT_TRANSPORT == "https" ]; then

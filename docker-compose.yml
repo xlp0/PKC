@@ -2,27 +2,23 @@
 version: "3.7"
 services:
   web:
-    image: nginx
     container_name: xlp_nginx
+    image: nginx:latest
     ports:
       - 80:80
       - 443:443
     volumes:
-      - ./mountpoint/local-config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./mountpoint/local-config/log:/var/log/nginx:rw
-      - ./mountpoint/local-config/cert:/etc/nginx/cert:rw
-    command: [nginx-debug, '-g', 'daemon off;']
+      - "./mountpoint/local-config/nginx.conf:/etc/nginx/nginx.conf"
+      - "./mountpoint/local-config/cert:/etc/nginx/cert"
+      - "./mountpoint/local-config/log:/etc/nginx/log"
     networks:
-      pkclocal:
+      pkcnet:
         ipv4_address: 192.168.100.10
   database:
     image: emhavis/pkc_mariadb:v0.1
-    # image: mysql:latest
     container_name: xlp_mariadb
     restart: always
-    # command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci
-    command:  --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci
-    # command:  --lower_case_table_names=1 --transaction-isolation=READ-COMMITTED --server-id=1
+    command: --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci
     environment:
       MYSQL_DATABASE: my_wiki
       MYSQL_USER: wikiuser
@@ -30,7 +26,6 @@ services:
       MYSQL_ROOT_PASSWORD: secret
     volumes:
       # data file location
-      # - ./mountpoint/mariadb:/var/lib/mysql
       - ./mountpoint/mariadb:/var/lib/mysql
       # backup and restore file location
       - ./mountpoint/backup_restore/mariadb:/mnt/backup_restore/mariadb
@@ -39,8 +34,8 @@ services:
     ports: 
      - 3306:3306
     networks:
-      pkclocal:
-        ipv4_address: 192.168.100.20
+      pkcnet:
+        ipv4_address: 192.168.100.70
   mediawiki:
     # default username/password: admin/admin_on_d0cker
     # image: xlp0/semanticwiki
@@ -65,36 +60,10 @@ services:
     - ./mountpoint/ansible:/mnt/ansible
     depends_on:
     - database
+    - web
     networks:
-      pkclocal:
+      pkcnet:
         ipv4_address: 192.168.100.30
-  keycloak:
-    container_name: xlp_keycloak
-    # image: quay.io/keycloak/keycloak:15.0.2
-    image: jboss/keycloak:16.1.1
-    # image: jboss/keycloak:16.1.1
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=Pa55w0rd
-      - DB_VENDOR=mysql
-      - DB_ADDR=database
-      - DB_PORT=3306 
-      - DB_DATABASE=keycloak
-      - DB_PASSWORD=secret
-      - DB_USER=root
-      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2&connectTimeout=30000       #workaround for aurora
-      - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
-      - PROXY_ADDRESS_FORWARDING=true
-    ports:
-     - ${KCK_PORT_NUMBER}:8080
-     - 8080:8080
-     - 8443:8443
-    depends_on:
-    - database
-    restart: always
-    networks:
-      pkclocal:
-        ipv4_address: 192.168.100.40
   matomo:
     container_name: xlp_matomo
     image: docker.io/bitnami/matomo:4
@@ -103,21 +72,43 @@ services:
     environment:
       - MATOMO_DATABASE_HOST=database
       - MATOMO_DATABASE_PORT_NUMBER=3306
-      - MATOMO_DATABASE_USER=root
+      - MATOMO_DATABASE_USER=matomodb
       - MATOMO_DATABASE_NAME=matomo
-      - MATOMO_DATABASE_PASSWORD=secret
+      - MATOMO_DATABASE_PASSWORD=matomo-pass
     volumes:
       - "./mountpoint/matomo:/bitnami/matomo"
     depends_on:
       - database
+      - web
     restart: always
     networks:
-      pkclocal:
+      pkcnet:
         ipv4_address: 192.168.100.50
+  keycloak:
+    container_name: xlp_keycloak
+    image: quay.io/keycloak/keycloak:15.0.2
+    environment:
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - DB_VENDOR=mysql
+      - DB_ADDR=192.168.100.70
+      - DB_PORT=3306 
+      - DB_DATABASE=keycloak
+      - DB_PASSWORD=secret
+      - DB_USER=root
+      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
+      - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
+      - PROXY_ADDRESS_FORWARDING=true
+    ports:
+    - ${KCK_PORT_NUMBER}:8080
+    depends_on:
+    - database
+    restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.40
 networks:
-  pkclocal:
-    driver: bridge
+  pkcnet:
     ipam:
       config:
         - subnet: 192.168.100.0/24
-          gateway: 192.168.100.1

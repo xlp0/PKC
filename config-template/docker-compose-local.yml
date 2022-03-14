@@ -84,26 +84,26 @@ services:
     networks:
       pkcnet:
         ipv4_address: 192.168.100.50
-#   keycloak:
-#     container_name: xlp_keycloak
-#     image: quay.io/keycloak/keycloak:15.0.2
-#     environment:
-# #      - KEYCLOAK_USER=admin
-# #      - KEYCLOAK_PASSWORD=Pa55w0rd
-#       - DB_VENDOR=mysql
-#       - DB_ADDR=database
-#       - DB_PORT=3306 
-#       - DB_DATABASE=keycloak
-#       - DB_PASSWORD=keycloak-pass
-#       - DB_USER=keycloak
-#       - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
-#       - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
-#       - PROXY_ADDRESS_FORWARDING=true
-#     ports:
-#     - ${KCK_PORT_NUMBER}:8080
-#     depends_on:
-#     - database
-#     restart: always
+  keycloak:
+    container_name: xlp_keycloak
+    image: quay.io/keycloak/keycloak:15.0.2
+    environment:
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - DB_VENDOR=mysql
+      - DB_ADDR=database
+      - DB_PORT=3306 
+      - DB_DATABASE=keycloak
+      - DB_PASSWORD=keycloak-pass
+      - DB_USER=keycloak
+      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
+      - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
+      - PROXY_ADDRESS_FORWARDING=true
+    ports:
+    - ${KCK_PORT_NUMBER}:8080
+    depends_on:
+    - database
+    restart: always
 networks:
   pkcnet:
     ipam:

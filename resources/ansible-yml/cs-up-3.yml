@@ -1,0 +1,26 @@
+---
+- name: install and provisioning dockers PKC Server
+  hosts: all
+  become: yes
+  vars:
+    - docker_version: "latest"
+    
+  tasks:
+    - name: Execute the Matomo Keycloak Config 
+      command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
+
+    - name: Execute the update script 
+      command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
+
+    - name: SELinux Authorization, for RedHat -1
+      shell: "setsebool -P httpd_can_network_connect 1"
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: SELinux Authorization, for RedHat -2
+      shell: "setsebool -P nis_enabled 1"
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

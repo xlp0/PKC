@@ -10,6 +10,11 @@
     ansible.builtin.debug:
       var: ansible_facts['os_family']
 
+  # - name: Create and start PKC services
+  #   docker_compose:
+  #     project_src: cs
+  #     timeout: 15
+
   - name: Create and start PKC services
     community.docker.docker_compose:
       project_src: cs
@@ -17,24 +22,25 @@
     register: output
     ignore_errors: yes
 
-  # - name: Execute the Matomo Keycloak Config 
-  #   command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
+  - name: Execute the Matomo Keycloak Config 
+    command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
 
-  # - name: Execute the update script 
-  #   command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
+  - name: Execute the update script 
+    command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
 
-  # - name: SELinux Authorization, for RedHat -1
-  #   shell: "setsebool -P httpd_can_network_connect 1"
-  #   when: ansible_facts['os_family'] == "RedHat"
+  - name: SELinux Authorization, for RedHat -1
+    shell: "setsebool -P httpd_can_network_connect 1"
+    when: ansible_facts['os_family'] == "RedHat"
 
-  # - name: SELinux Authorization, for RedHat -2
-  #   shell: "setsebool -P nis_enabled 1"
-  #   when: ansible_facts['os_family'] == "RedHat"
+  - name: SELinux Authorization, for RedHat -2
+    shell: "setsebool -P nis_enabled 1"
+    when: ansible_facts['os_family'] == "RedHat"
 
-  # - name: restart nginx
-  #   service:
-  #     name: nginx
-  #     state: restarted
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+    become: true
 
   # - name: copy NGINX Configuration Files
   #   copy:

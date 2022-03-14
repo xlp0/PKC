@@ -15,7 +15,7 @@
 
     - name: "install nginx"
       apt:
-        name: ['nginx']
+        name: ['nginx','haveged']
         state: latest
 
     - name: Install aptitude using apt
@@ -144,145 +144,145 @@
       become: true
       when: ansible_facts['os_family'] == "Debian"
 
-      - name: copy NGINX Configuration Files
-        copy:
-          src: "{{ item.src }}"
-          dest: "{{ item.dest }}"
-          remote_src: false
-        loop:
-          - {src: '../../config/git.conf', dest: '/etc/nginx/conf.d/git.conf'}
-          - {src: '../../config/mtm.conf', dest: '/etc/nginx/conf.d/mtm.conf'}
-          - {src: '../../config/pkc.conf', dest: '/etc/nginx/conf.d/pkc.conf'}
-          - {src: '../../config/pma.conf', dest: '/etc/nginx/conf.d/pma.conf'}
-          - {src: '../../config/vs.conf', dest: '/etc/nginx/conf.d/vs.conf'}
-          - {src: '../../config/kck.conf', dest: '/etc/nginx/conf.d/kck.conf'}
-          - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/conf.d/reverse-proxy.conf'}
-        become: true
-        when: ansible_facts['os_family'] == "RedHat"
+    - name: copy NGINX Configuration Files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: false
+      loop:
+        - {src: '../../config/git.conf', dest: '/etc/nginx/conf.d/git.conf'}
+        - {src: '../../config/mtm.conf', dest: '/etc/nginx/conf.d/mtm.conf'}
+        - {src: '../../config/pkc.conf', dest: '/etc/nginx/conf.d/pkc.conf'}
+        - {src: '../../config/pma.conf', dest: '/etc/nginx/conf.d/pma.conf'}
+        - {src: '../../config/vs.conf', dest: '/etc/nginx/conf.d/vs.conf'}
+        - {src: '../../config/kck.conf', dest: '/etc/nginx/conf.d/kck.conf'}
+        - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/conf.d/reverse-proxy.conf'}
+      become: true
+      when: ansible_facts['os_family'] == "RedHat"
 
-      - name: create PKC docker-compose directory
-        file:
-          path: ./cs
-          state: directory
+    - name: create PKC docker-compose directory
+      file:
+        path: ./cs
+        state: directory
 
-      - name: create PKC mysql init folder
-        file:
-          path: ./cs/mysql-init
-          state: directory
+    - name: create PKC mysql init folder
+      file:
+        path: ./cs/mysql-init
+        state: directory
 
-      - name: Upload docker-compose
-        ansible.builtin.copy:
-          src: ../../config-template/docker-compose.yml
-          dest: ./cs
+    - name: Upload docker-compose
+      ansible.builtin.copy:
+        src: ../../config-template/docker-compose.yml
+        dest: ./cs
 
-      - name: Upload initdb script
-        ansible.builtin.copy:
-          src: ../../config-template/init.sql
-          dest: ./cs/mysql-init
+    - name: Upload initdb script
+      ansible.builtin.copy:
+        src: ../../config-template/init.sql
+        dest: ./cs/mysql-init
 
-      - name: Upload scripts and config
-        copy:
-          src: "{{ item.src }}"
-          dest: "{{ item.dest }}"
-          remote_src: false
-          mode: u=rwx,g=rx,o=rx
+    - name: Upload scripts and config
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: false
+        mode: u=rwx,g=rx,o=rx
 
-        loop:
-          - {src: '../script/cs-backup.sh', dest: './cs/cs-backup.sh'}
-          - {src: '../script/cs-restore.sh', dest: './cs/cs-restore.sh'}
-          - {src: '../script/cs-offsite-restore.sh', dest: './cs/cs-offsite-restore.sh'}
-          - {src: '../script/update-sw.sh', dest: './cs/update-sw.sh'}
-          - {src: '../script/mtm-sql.sh', dest: './cs/mtm-sql.sh'}
-          - {src: '../../.env', dest: './cs/.env'}
-        become: true
+      loop:
+        - {src: '../script/cs-backup.sh', dest: './cs/cs-backup.sh'}
+        - {src: '../script/cs-restore.sh', dest: './cs/cs-restore.sh'}
+        - {src: '../script/cs-offsite-restore.sh', dest: './cs/cs-offsite-restore.sh'}
+        - {src: '../script/update-sw.sh', dest: './cs/update-sw.sh'}
+        - {src: '../script/mtm-sql.sh', dest: './cs/mtm-sql.sh'}
+        - {src: '../../.env', dest: './cs/.env'}
+      become: true
 
-      - name: Upload mountpoint
-        ansible.builtin.copy:
-          src: ../../mountpoint.tar.gz
-          dest: "/home/{{ ansible_user }}/cs"
+    - name: Upload mountpoint
+      ansible.builtin.copy:
+        src: ../../mountpoint.tar.gz
+        dest: "/home/{{ ansible_user }}/cs"
 
-      - name: Extract Mountpoint
-        shell: "tar -xvf ./mountpoint.tar.gz"
-        args:
-          chdir: "/home/{{ ansible_user }}/cs"
+    - name: Extract Mountpoint
+      shell: "tar -xvf ./mountpoint.tar.gz"
+      args:
+        chdir: "/home/{{ ansible_user }}/cs"
 
-      - name: Upload LocalSettings.php and other setting
-        copy:
-          src: "{{ item.src }}"
-          dest: "{{ item.dest }}"
-          remote_src: false
-        loop:
-          - {src: '../../config/LocalSettings.php', dest: './cs/mountpoint/LocalSettings.php'}
-          - {src: '../../config-template/timezone', dest: './cs/mountpoint/timezone'}
-          - {src: '../../config-template/localtime', dest: './cs/mountpoint/localtime'}
+    - name: Upload LocalSettings.php and other setting
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: false
+      loop:
+        - {src: '../../config/LocalSettings.php', dest: './cs/mountpoint/LocalSettings.php'}
+        - {src: '../../config-template/timezone', dest: './cs/mountpoint/timezone'}
+        - {src: '../../config-template/localtime', dest: './cs/mountpoint/localtime'}
 
-      - name: copy Application Configuration Files
-        copy:
-          src: "{{ item.src }}"
-          dest: "{{ item.dest }}"
-          remote_src: false
-        loop:
-          - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
-          - {src: '../../config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}
-          - {src: '../../config/app.ini', dest: './cs/mountpoint/gitea/gitea/conf'}
-        become: true
+    - name: copy Application Configuration Files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: false
+      loop:
+        - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
+        - {src: '../../config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}
+        - {src: '../../config/app.ini', dest: './cs/mountpoint/gitea/gitea/conf'}
+      become: true
 
-      - name: add user mtm
-        ansible.builtin.user:
-          name: mtm
-          comment: matomo docker account
-          uid: 1001
-          state: present
+    - name: add user mtm
+      ansible.builtin.user:
+        name: mtm
+        comment: matomo docker account
+        uid: 1001
+        state: present
 
-      - name: add user www-data
-        ansible.builtin.user:
-          name: www-data
-          comment: matomo docker account
-          uid: 33
-          state: present
+    - name: add user www-data
+      ansible.builtin.user:
+        name: www-data
+        comment: matomo docker account
+        uid: 33
+        state: present
 
-      - name: Change Matomo Ownership Folder
-        ansible.builtin.file:
-          path: ./cs/mountpoint/matomo
-          state: directory
-          recurse: yes
-          owner: mtm
+    - name: Change Matomo Ownership Folder
+      ansible.builtin.file:
+        path: ./cs/mountpoint/matomo
+        state: directory
+        recurse: yes
+        owner: mtm
 
-      - name: Create group
-        group:
-          name: "docker"
-          state: present
+    - name: Create group
+      group:
+        name: "docker"
+        state: present
 
-      - name: Adding user {{ ansible_user }}
-        user: name="{{ ansible_user }}"
-              groups=docker
-              append=yes
+    - name: Adding user {{ ansible_user }}
+      user: name="{{ ansible_user }}"
+            groups=docker
+            append=yes
 
-      - name: Create and start PKC services
-        community.docker.docker_compose:
-          project_src: cs
-          timeout: 15
-        register: output
-        ignore_errors: yes
+    - name: Create and start PKC services
+      community.docker.docker_compose:
+        project_src: cs
+        timeout: 15
+      register: output
+      ignore_errors: yes
 
-      - name: Execute the Matomo Keycloak Config 
-        command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
+    - name: Execute the Matomo Keycloak Config 
+      command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
 
-      - name: Execute the update script 
-        command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
+    - name: Execute the update script 
+      command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
 
-      - name: SELinux Authorization, for RedHat -1
-        shell: "setsebool -P httpd_can_network_connect 1"
-        when: ansible_facts['os_family'] == "RedHat"
+    - name: SELinux Authorization, for RedHat -1
+      shell: "setsebool -P httpd_can_network_connect 1"
+      when: ansible_facts['os_family'] == "RedHat"
 
-      - name: SELinux Authorization, for RedHat -2
-        shell: "setsebool -P nis_enabled 1"
-        when: ansible_facts['os_family'] == "RedHat"
+    - name: SELinux Authorization, for RedHat -2
+      shell: "setsebool -P nis_enabled 1"
+      when: ansible_facts['os_family'] == "RedHat"
 
-      - name: restart nginx
-        service:
-          name: nginx
-          state: restarted
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
 
     when: ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "RedHat"
     become: true

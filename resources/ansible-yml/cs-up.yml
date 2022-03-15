@@ -210,7 +210,7 @@
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-        remote_src: false
+        remote_src: no
       loop:
         - {src: '../../config/LocalSettings.php', dest: './cs/mountpoint/LocalSettings.php'}
         - {src: '../../config-template/timezone', dest: './cs/mountpoint/timezone'}
@@ -220,7 +220,7 @@
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-        remote_src: false
+        remote_src: no
       loop:
         - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
         - {src: '../../config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}

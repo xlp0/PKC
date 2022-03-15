@@ -6,8 +6,22 @@
   tasks:
   - name: Upload docker-compose
     ansible.builtin.copy:
-      src: ./config-template/docker-compose.yml
+      src: ../../config-template/docker-compose.yml
       dest: ./cs
+
+  # - name: upload .env 
+  #   ansible.builtin.copy:
+  #     src: ../../.env
+  #     dest: ./cs
+
+  # - name: Upload localtime and timezone
+  #   copy:
+  #     src: "{{ item.src }}"
+  #     dest: "{{ item.dest }}"
+  #     remote_src: no
+  #   loop:
+  #     - {src: '../../config-template/timezone', dest: './cs/mountpoint/timezone'}
+  #     - {src: '../../config-template/localtime', dest: './cs/mountpoint/localtime'}
 
   - name: Create and start PKC services
     community.docker.docker_compose:

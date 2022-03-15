@@ -340,6 +340,17 @@ $wgMatomoIDSite = "1";
 #
 # Interactive Timeline Extensions
 wfLoadExtension("InteractiveTimeline");
+#
+# Semantic Result Format
+$wgAllowCiteGroups = true; 
+$wgCiteBookReferencing = true;
+wfLoadExtension( 'SemanticResultFormats' );
+$srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'eventline', 'timeline',
+                                'outline', 'gallery', 'jqplotchart', 'jqplotseries', 'sum', 'average', 'min', 'max', 'median', 
+                                'product', 'tagcloud', 'valuerank', 'array', 'tree', 'ultree', 'oltree', 'd3chart', 'latest', 'earliest', 
+                                'filtered', 'slideshow', 'timeseries', 'sparkline', 
+                                'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables' ];
+#
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

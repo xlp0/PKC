@@ -75,7 +75,7 @@ services:
     # default username/password: admin/admin_on_d0cker
     # image: xlp0/semanticwiki
     # image: emhavis/pkc_semanticwiki:v0.4
-    image: emhavis/pkc_semanticwiki:v1.37.1.build.2
+    image: emhavis/pkc_semanticwiki:v1.37.1.build.3
     container_name: xlp_mediawiki
     # platform: linux/amd64
     #
@@ -132,4 +132,21 @@ services:
       - ./mountpoint/vs:/config
     ports:
       - ${VS_PORT_NUMBER}:8443
+    restart: always
+  lms:
+    image: bitnami/moodle:latest
+    container_name: xlp_lms
+    environment:
+      - MYSQL_CLIENT_FLAVOR=mariadb
+      - MOODLE_DATABASE_HOST=database
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=root
+      - MOODLE_DATABASE_NAME=moodle
+      - MOODLE_DATABASE_PASSWORD=secret
+    volumes:
+      - ./mountpoint/moodle:/bitnami/moodle
+      - ./mountpoint/moodledata:/bitnami/moodledata
+    ports:
+      - ${MDL_PORT_NUMBER}:8080
+      - 32080:8443
     restart: always

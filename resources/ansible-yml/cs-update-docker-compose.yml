@@ -4,10 +4,10 @@
   become: yes
 
   tasks:
-  - name: Upload docker-compose
-    ansible.builtin.copy:
-      src: ../../config-template/docker-compose.yml
-      dest: ./cs
+  # - name: Upload docker-compose
+  #   ansible.builtin.copy:
+  #     src: ../../config-template/docker-compose.yml
+  #     dest: ./cs
 
   # - name: upload .env 
   #   ansible.builtin.copy:
@@ -23,12 +23,13 @@
   #     - {src: '../../config-template/timezone', dest: './cs/mountpoint/timezone'}
   #     - {src: '../../config-template/localtime', dest: './cs/mountpoint/localtime'}
 
-  - name: Create and start PKC services
-    community.docker.docker_compose:
-      project_src: cs
-      timeout: 15
-    register: output
-    ignore_errors: yes
+  # - name: Create and start PKC services
+  #   community.docker.docker_compose:
+  #     project_src: cs
+  #     timeout: 15
+  #   register: output
+  #   ignore_errors: yes
+  
     
   - name: Execute the update script 
     command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"

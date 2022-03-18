@@ -5,7 +5,7 @@
 # ansible-playbook -i ./resources/config/hosts-restore ./resources/ansible-yml/cs-restore-remote.yml
 # 
 #
-- name: backup and restore data
+- name: Backup and Restore Loop
   hosts: all
   gather_facts: yes
   become: yes

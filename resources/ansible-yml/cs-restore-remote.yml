@@ -5,17 +5,61 @@
 # ansible-playbook -i ./resources/config/hosts-restore ./resources/ansible-yml/cs-restore-remote.yml
 # 
 #
-- name: restore data
+- name: backup and restore data
   hosts: all
   gather_facts: yes
   become: yes
   become_user: root
   vars:
     - pkc_install_root_dir: "/home/ubuntu/cs/"
-    - src_server: "pkc-back"
+    - src_server: "pkc-pub"
     - dst_server: "pkc-ops"
 
   tasks:
+
+  - name: Execute mysql backup at container on {{ src_server }}
+    block:
+    # - name: Prepare mysql backup command
+    #   set_fact:
+    #     docker_cmd: "mysqldump --single-transaction --host=database --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?"
+      
+    - name: Execute mysql backup
+      command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --host=database --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
+      become: yes
+      register: output
+
+    - name: Execute image backup create folder
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'mkdir /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
+      become: yes
+      register: output
+
+    - name: Execute image backup create
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'php /var/www/html/maintenance/dumpUploads.php | sed 's~mwstore://local-backend/local-public~./images~' | xargs cp -t /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
+      become: yes
+      register: output
+
+    - name: Prepare media backup command
+      set_fact:
+        docker_cmd: "tar -zcvf /mnt/backup_restore/mediawiki/{{ ansible_host }}-{{ ansible_date_time.iso8601_basic_short }}-image.tar.gz -C /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }} ."
+
+    - name: print output
+      debug:
+        msg: "{{ docker_cmd }}"
+
+    - name: Execute image backup tar
+      command: "docker exec -t xlp_mediawiki /bin/bash -c '{{ docker_cmd }}'"
+      become: yes
+      register: output
+
+    - name: Execute image backup remove footprint
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'rm -rf /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
+      become: yes
+      register: output
+
+    when: "inventory_hostname|string == src_server"
+    run_once: yes
+    ignore_errors: yes
+
   - name: Get backup latest file list set
     block:
     - name: Get database backup file
@@ -68,25 +112,25 @@
     block:
     # Fetch db-file from source
     - name: Fetch the db file from the "{{ src_server }}" to master
-      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_wiki_backup_file }} dest=backup/ flat=yes
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_wiki_backup_file }} dest=../../backup/ flat=yes
 
     # Fetch image-file from source
     - name: Fetch the image file from the "{{ src_server }}" to master
-      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/{{ img_wiki_backup_file }} dest=backup/ flat=yes
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/{{ img_wiki_backup_file }} dest=../../backup/ flat=yes
 
     when: "inventory_hostname|string == src_server"
     run_once: yes
-    become: true
-    become_user: root
+    become: false
+    # become_user:  root
     ignore_errors: yes
 
   - name: Fetch backup latest file to {{ dst_server }} from master
     block:
     - name: Fetch the db file from the master to "{{ dst_server }}"
-      copy: src=backup/{{ db_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
+      copy: src=../../backup/{{ db_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
 
     - name: Fetch the image file from the master to "{{ dst_server }}"
-      copy: src=backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
+      copy: src=../../backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
 
     when: "inventory_hostname|string == dst_server"
     become: true

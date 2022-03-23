@@ -1,298 +1,75 @@
 ---
-# This playbook backups all mysql databases into separate files.
-- name: test-rhel
+- name: install and provisioning dockers PKC Server
   hosts: all
-  gather_facts: yes
-  become: no
+  become: yes
   vars:
-  - pkc_install_root_dir: "/home/ubuntu/cs/"
-  - src_server: "pkc-pub"
-  - dst_server: "pkc-ops"
+    - docker_version: "latest"
 
   tasks:
-  - name: Execute mysql backup at container on {{ src_server }}
-    block:
-    # - name: Prepare mysql backup command
-    #   set_fact:
-    #     docker_cmd: "mysqldump --single-transaction --host=database --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?"
-      
-    - name: Execute mysql backup
-      command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --host=database --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
-      become: yes
-      register: output
+  - name: Create group
+    group:
+      name: "docker"
+      state: present
 
-    - name: Execute image backup create folder
-      command: "docker exec -t xlp_mediawiki /bin/bash -c 'mkdir /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
-      become: yes
-      register: output
-
-    - name: Execute image backup create
-      command: "docker exec -t xlp_mediawiki /bin/bash -c 'php /var/www/html/maintenance/dumpUploads.php | sed 's~mwstore://local-backend/local-public~./images~' | xargs cp -t /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
-      become: yes
-      register: output
-
-    - name: Prepare media backup command
-      set_fact:
-        docker_cmd: "tar -zcvf /mnt/backup_restore/mediawiki/{{ ansible_host }}-{{ ansible_date_time.iso8601_basic_short }}-image.tar.gz -C /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }} ."
-
-    - name: print output
-      debug:
-        msg: "{{ docker_cmd }}"
-
-    - name: Execute image backup tar
-      command: "docker exec -t xlp_mediawiki /bin/bash -c '{{ docker_cmd }}'"
-      become: yes
-      register: output
-
-    - name: Execute image backup remove footprint
-      command: "docker exec -t xlp_mediawiki /bin/bash -c 'rm -rf /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
-      become: yes
-      register: output
-
-    when: "inventory_hostname|string == src_server"
-    run_once: yes
-    ignore_errors: yes
-
-  #   - name: Run a simple command (command)
-  #     community.docker.docker_container_exec:
-  #       container: xlp_mariadb
-  #       command: /bin/bash -c "ls -lah"
-  #       chdir: /root
-  #     register: result
-
-  #   - name: print result
-  #     debug:
-  #       msg: "{{ result }}"
-  
-  #   when: "inventory_hostname|string == src_server"
-  #   run_once: yes
-  #   ignore_errors: yes
-
-  # - name: Get backup latest file list set
+  - name: Adding user {{ ansible_user }}
+    user: name="{{ ansible_user }}"
+          groups=docker
+          append=yes
+  # - name: Ubuntu Installation Process
   #   block:
-  #   - name: Get database backup file
-  #     find:
-  #       paths: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/"
-  #       patterns: '*my_wiki*'
-  #     register: found_files
-    
-  #   - name: Get database latest backup file path
-  #     set_fact:
-  #       db_wiki_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+  #   - name: "apt-get update"
+  #     apt:
+  #       update_cache: yes
+  #       cache_valid_time: 3600
 
-  #   - name: Get database latest backup file
-  #     set_fact:
-  #       db_wiki_backup_file: "{{ db_wiki_backup_file_path.path | basename }}"
+  #   - name: "install nginx"
+  #     apt:
+  #       name: ['nginx','haveged']
+  #       state: latest
 
-  #   - name: Get latest image backup file
-  #     find:
-  #       paths: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/"
-  #       patterns: '*image*'
-  #     register: found_files
-    
-  #   - name: Get latest image backup file path
-  #     set_fact:
-  #       img_wiki_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+  #   - name: Install aptitude using apt
+  #     apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
 
-  #   - name: Get latest image backup file
-  #     set_fact:
-  #       img_wiki_backup_file: "{{ img_wiki_backup_file_path.path | basename }}"
+  #   - name: Install required system packages
+  #     apt: name={{ item }} state=latest update_cache=yes
+  #     loop: [ 'apt-transport-https', 'ca-certificates ', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'unzip']
 
-  #   - name: print file names without path - image backup
-  #     debug:
-  #       msg: "{{ img_wiki_backup_file }}"
+  #   - name: Add Docker GPG apt Key
+  #     apt_key:
+  #       url: https://download.docker.com/linux/ubuntu/gpg
+  #       state: present
 
-  #   - name: print file names without path - database backup
-  #     debug:
-  #       msg: "{{ db_wiki_backup_file }}"
+  #   - name: Add Docker Repository
+  #     apt_repository:
+  #       repo: deb https://download.docker.com/linux/ubuntu bionic stable
+  #       state: present
 
-  #   when: "inventory_hostname|string == src_server"
-  #   become: true
-  #   become_user: root
-  #   ignore_errors: yes
+  #   - name: Update apt and install docker-ce
+  #     apt: update_cache=yes name=docker-ce state=latest
 
+  #   - name: Install Docker Module for Python
+  #     pip:
+  #       name: 
+  #         - docker
+  #         - docker-compose
 
+  #   - name: install docker compose    
+  #     get_url:
+  #       url: https://github.com/docker/compose/releases/download/1.27.3/docker-compose-Linux-x86_64
+  #       dest: /usr/local/bin/docker-compose
+  #       mode: 755
 
-### DEBUG OUTPUT
+  #   - name: "apt-get update"
+  #     apt:
+  #       update_cache: yes
+  #       cache_valid_time: 3600
 
-  # - name: Print debug database latest backup file
-  #   ansible.builtin.debug:
-  #     var: db_wiki_backup_file
+  #   - name: "install mysql client for backup/restore support"
+  #     apt:
+  #       name: ['mysql-client']
+  #       state: present
 
-  # - name: Print debug image latest backup file
-  #   ansible.builtin.debug:
-  #     var: img_wiki_backup_file
-
-  # - name: Create and start PKC services
-  #   docker_compose:
-  #     project_src: cs
-  #     timeout: 15
-
-  # - name: Create and start PKC services
-  #   community.docker.docker_compose:
-  #     project_src: cs
-  #     timeout: 15
-  #   register: output
-  #   ignore_errors: yes
-
-  # - name: Execute the Matomo Keycloak Config 
-  #   command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
-
-  # - name: Execute the update script 
-  #   command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
-
-  # - name: SELinux Authorization, for RedHat -1
-  #   shell: "setsebool -P httpd_can_network_connect 1"
-  #   when: ansible_facts['os_family'] == "RedHat"
-
-  # - name: SELinux Authorization, for RedHat -2
-  #   shell: "setsebool -P nis_enabled 1"
-  #   when: ansible_facts['os_family'] == "RedHat"
-
-  # - name: restart nginx
-  #   service:
-  #     name: nginx
-  #     state: restarted
-  #   become: true
-
-  # - name: copy NGINX Configuration Files
-  #   copy:
-  #     src: "{{ item.src }}"
-  #     dest: "{{ item.dest }}"
-  #     remote_src: false
-  #   loop:
-  #     - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
-  #     - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
-  #     - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
-  #     - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
-  #     - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
-  #     - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
-  #     - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
-  #   become: true
-  #   when: ansible_facts['os_family'] == "Debian"
-
-  # - name: Check docker installation on localhost machine
-  #   script: ../script/update-sw.sh || /usr/bin/true > /dev/null 2>&1
-  #   register: update_script
-  #   ignore_errors: yes   
-
-  # - name: Print debug
-  #   ansible.builtin.debug:
-  #     var: update_script
-      
-  # - name: Display all variables/facts known for a host
-  #   ansible.builtin.debug:
-  #     var: hostvars[inventory_hostname]
-  #     verbosity: 4
-  
-  # - name: copy NGINX Configuration Files
-  #   copy:
-  #     src: "{{ item.src }}"
-  #     dest: "{{ item.dest }}"
-  #     remote_src: false
-  #   loop:
-  #     - {src: './config/git.conf', dest: '/etc/nginx/default.d/git.conf'}
-  #     - {src: './config/mtm.conf', dest: '/etc/nginx/default.d/mtm.conf'}
-  #     - {src: './config/pkc.conf', dest: '/etc/nginx/default.d/pkc.conf'}
-  #     - {src: './config/pma.conf', dest: '/etc/nginx/default.d/pma.conf'}
-  #     - {src: './config/vs.conf', dest: '/etc/nginx/default.d/vs.conf'}
-  #     - {src: './config/kck.conf', dest: '/etc/nginx/default.d/kck.conf'}
-  #     - {src: './config/reverse-proxy.conf', dest: '/etc/nginx/default.d/reverse-proxy.conf'}
-  #   become: true
-  #   when: ansible_facts['os_family'] == "RedHat"
-
-  # - name: restart nginx
-  #   service:
-  #     name: nginx
-  #     state: restarted
-    # when: ansible_facts['os_family'] == "Ubuntu"
-  
-
-    # - name: Docker repo
-    #   yum_repository:
-    #     name: docker
-    #     description: repo for docker
-    #     baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
-    #     gpgcheck: no
-
-    # - name: Installing docker
-    #   command:
-    #     cmd: yum install docker-ce --nobest -y
-
-    # - name: install python3.6
-    #   package:
-    #     name: python36
-    #     state: present
-
-    # - name: Install python-pip
-    #   yum: 
-    #     name: python-pip
-    #     update_cache: yes 
-    #     state: present
-
-    # - name: Install docker compose 
-    #   pip: 
-    #     name: docker-compose 
-    #     state: present 
-
-    # - name: Add users to the Docker group
-    #   user:
-    #     name: "{{ ansible_user }}"
-    #     groups: docker
-    #     append: yes
-
-    # - name: Start Docker Daemon 
-    #   systemd: 
-    #     state: started
-    #     enabled: yes
-    #     name: docker
-
-  # - name: Upload initdb script
-  #   ansible.builtin.copy:
-  #     src: ./mountpoint.tar.gz
-  #     dest: ./cs/
-
-  # - name: Extract Mountpoint
-  #   shell: "setsebool -P httpd_can_network_connect 1"
-  #   args:
-  #     chdir: "/home/{{ ansible_user }}/cs"
-    # - name: Install yum utils
-    #   yum:
-    #     name: yum-utils
-    #     state: latest
-
-    # - name: Install device-mapper-persistent-data
-    #   yum:
-    #     name: device-mapper-persistent-data
-    #     state: latest
-
-    # - name: Add Docker GPG key.
-    #   rpm_key:
-    #     key: https://download.docker.com/linux/rhel/gpg
-    #     state: present
-
-    # - name: Add Docker repo
-    #   get_url:    
-    #     url: https://download.docker.com/linux/rhel/docker-ce.repo
-    #     dest: /etc/yum.repos.d/docker-ce.repo
-
-    # - rpm_key:
-    #     state: present
-    #     key: https://rpms.remirepo.net/RPM-GPG-KEY-remi2018
-
-    # - rpm_key:
-    #     state: present
-    #     key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
-      
-    # - name: Install selinux container-selinux >= 2:2.74, docker-ce & epel-release 
-    #   yum:
-    #     name: "{{ packages }}"
-    #     update_cache: yes
-    #     state: present
-    #   vars:
-    #     packages:
-    #     - http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-3.el7.noarch.rpm
-    #     - docker-ce
-    #     - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    #   when: ansible_distribution == 'RedHat'
-
+    when: ansible_facts['os_family'] == "Debian"
+    become: true
+    become_user: root
+    ignore_errors: yes

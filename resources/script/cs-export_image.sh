@@ -8,3 +8,6 @@ docker save emhavis/pkc_phpmyadmin:v0.1  | gzip > pkc_phpmyadmin.tar.gz
 docker save bitnami/moodle:latest | gzip > pkc_moodle.tar.gz
 docker save emhavis/pkc_codeserver:v0.1 | gzip > pkc_codeserver.tar.gz
 docker save emhavis/pkc_mariadb:v0.1 | gzip > pkc_mariadb.tar.gz
+#
+# Push to resources server
+scp -i ~/.ssh/Seoul_RSA.pem *.tar.gz pkc-ops:/home/ubuntu/resource/.

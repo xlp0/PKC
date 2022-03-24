@@ -14,6 +14,7 @@
     - pkc_install_root_dir: "/home/ubuntu/cs/"
     - src_server: "pkc-pub"
     - dst_server: "pkc-ops"
+    - retention: 7
 
   tasks:
 
@@ -143,7 +144,10 @@
     args:
       chdir: "{{ pkc_install_root_dir }}"
     when: "inventory_hostname|string == dst_server"
-    
+
+  ## Maintain only last x days retention
+  - name: Backup retention {{ retention }} days
+    local_action: "find ~/PKC/backup -type f -mtime +{{ retention }} -delete"
 
   ## Download result log
   - name: Fetch log result file from "{{ dst_server }}" to master

@@ -57,6 +57,14 @@
       become: yes
       register: output
 
+    - name: backup retention on source server {{ retention }} day(s)
+      command: "find {{ item }} -type f -mtime +{{ retention }} -delete"
+      become: yes
+      register: output
+      loop:
+        - "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/"
+        - "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/"
+
     when: "inventory_hostname|string == src_server"
     run_once: yes
     ignore_errors: yes

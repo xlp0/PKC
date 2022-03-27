@@ -1,5 +1,5 @@
 ---
-- name: install and provisioning dockers PKC Server
+- name: Running PKC post installation script
   hosts: all
   become: yes
   vars:

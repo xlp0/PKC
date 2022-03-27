@@ -14,7 +14,7 @@ assume_secure_protocol = 1
 enable_trusted_host_check = 0
 enable_plugin_upload = 1
 salt = "28258292af1a6b62556bedac5c01d093"
-trusted_hosts[] = "http://localhost:32010"
+trusted_hosts[] = "https://mtm.pkc-dev.org"
 
 ; Uncomment line below if you use CloudFlare
 ;proxy_client_headers[] = HTTP_CF_CONNECTING_IP

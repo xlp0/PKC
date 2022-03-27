@@ -140,6 +140,7 @@
         - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
         - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
         - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+        - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
         - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
       become: true
       when: ansible_facts['os_family'] == "Debian"
@@ -156,6 +157,7 @@
         - {src: '../../config/pma.conf', dest: '/etc/nginx/conf.d/pma.conf'}
         - {src: '../../config/vs.conf', dest: '/etc/nginx/conf.d/vs.conf'}
         - {src: '../../config/kck.conf', dest: '/etc/nginx/conf.d/kck.conf'}
+        - {src: '../../config/mdl.conf', dest: '/etc/nginx/conf.d/mdl.conf'}
         - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/conf.d/reverse-proxy.conf'}
       become: true
       when: ansible_facts['os_family'] == "RedHat"
@@ -196,11 +198,16 @@
         - {src: '../../.env', dest: './cs/.env'}
       become: true
 
-    - name: Upload mountpoint
-      ansible.builtin.copy:
-        src: ../../mountpoint.tar.gz
-        dest: "/home/{{ ansible_user }}/cs"
+    # - name: Upload mountpoint
+    #   ansible.builtin.copy:
+    #     src: ../../mountpoint.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
 
+    - name: Download mountpoint file
+      get_url:
+        url: http://res.pkc.pub/mountpoint.tar.gz
+        dest: "/home/{{ ansible_user }}/cs"
+        
     - name: Extract Mountpoint
       shell: "tar -xvf ./mountpoint.tar.gz"
       args:

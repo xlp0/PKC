@@ -1,5 +1,5 @@
 ---
-- name: install and provisioning dockers PKC Server
+- name: Brings up PKC Docker Service
   hosts: all
   become: yes
 

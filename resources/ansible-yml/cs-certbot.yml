@@ -59,6 +59,7 @@
     - "mtm.{{ certbot_domain_name }}"
     - "code.{{ certbot_domain_name }}"
     - "kck.{{ certbot_domain_name }}"
+    - "mdl.{{ certbot_domain_name }}"
 
   - name: copy Application Configuration Files
     copy:

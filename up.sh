@@ -12,6 +12,7 @@ function prep_nginx {
     sed "s/#KCK_SUBDOMAIN/$KCK_SUBDOMAIN/g" ./config-template/kck.conf > ./config/kck.conf
     sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/reverse-proxy.conf > ./config/reverse-proxy.conf
     sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/pkc.conf > ./config/pkc.conf
+    sed "s/#MDL_SUBDOMAIN/$MDL_SUBDOMAIN/g" ./config-template/mdl.conf > ./config/mdl.conf
     echo ""
 }
 
@@ -88,6 +89,7 @@ if [ -f .env ]; then
         MTM_SUBDOMAIN=$YOUR_DOMAIN:$MATOMO_PORT_NUMBER
         VS_SUBDOMAIN=$YOUR_DOMAIN:$VS_PORT_NUMBER
         KCK_SUBDOMAIN=$YOUR_DOMAIN:$KCK_PORT_NUMBER
+        MDL_SUBDOMAIN=$YOUR_DOMAIN:$MDL_PORT_NUMBER
 
         # Displays localhost installation plan
         echo "--------------------------------------------------------"
@@ -138,6 +140,7 @@ if [ -f .env ]; then
         MTM_SUBDOMAIN=mtm.$YOUR_DOMAIN
         VS_SUBDOMAIN=code.$YOUR_DOMAIN
         KCK_SUBDOMAIN=kck.$YOUR_DOMAIN
+        MDL_SUBDOMAIN=mdl.$YOUR_DOMAIN
 
         # Displays installation plan on remote host machine
         echo "--------------------------------------------------------"
@@ -197,9 +200,10 @@ if [ -f .env ]; then
         date
     }
     fi
-else
+else {
     echo ".env files not found, please provide the .env file"
     exit 1;
+}
 fi
 
 echo "Mark Finished Process at $(date)"

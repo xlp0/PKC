@@ -140,8 +140,8 @@ services:
       - MYSQL_CLIENT_FLAVOR=mariadb
       - MOODLE_DATABASE_HOST=database
       - MOODLE_DATABASE_PORT_NUMBER=3306
-      - MOODLE_DATABASE_USER=root
-      - MOODLE_DATABASE_NAME=moodle
+      - MOODLE_DATABASE_USER=moodle
+      - MOODLE_DATABASE_NAME=moodle-pass
       - MOODLE_DATABASE_PASSWORD=secret
     volumes:
       - ./mountpoint/moodle:/bitnami/moodle

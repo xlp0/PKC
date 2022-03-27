@@ -2,7 +2,7 @@
 # This playbook backups all mysql databases into separate files.
 #
 # How to execute on project root folder
-# ansible-playbook -i ./resources/config/hosts-restore ./resources/ansible-yml/cs-restore-remote.yml
+# cd /home/pi/PKC && ansible-playbook -i ./resources/config/host-pkcpub-pkcdev ./resources/ansible-yml/cs-restore-remote.yml
 # 
 #
 - name: Backup and Restore Loop
@@ -10,15 +10,9 @@
   gather_facts: yes
   become: yes
   become_user: root
-  vars:
-    - pkc_install_root_dir: "/home/ubuntu/cs/"
-    - src_server: "pkc-pub"
-    - dst_server: "pkc-ops"
-    - retention: 7
 
   tasks:
-
-  - name: Execute mysql backup at container on {{ src_server }}
+  - name: Execute mysql backup at container on {{ hostvars[inventory_hostname].inventory_hostname }}
     block:
     # - name: Prepare mysql backup command
     #   set_fact:
@@ -65,11 +59,12 @@
         - "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/"
         - "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/"
 
-    when: "inventory_hostname|string == src_server"
+    # when: "inventory_hostname|string == src_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
     run_once: yes
     ignore_errors: yes
 
-  - name: Get backup latest file list set
+  - name: Get backup latest file list set on {{ hostvars[inventory_hostname].inventory_hostname }}
     block:
     - name: Get database backup file
       find:
@@ -111,37 +106,40 @@
       debug:
         msg: "{{ db_wiki_backup_file }}"
 
-    when: "inventory_hostname|string == src_server"
+    #when: "inventory_hostname|string == src_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
     run_once: yes
     become: true
     become_user: root
     ignore_errors: yes
   
-  - name: Get backup latest file from {{ src_server }} into master
+  - name: Get backup latest file from {{ hostvars[inventory_hostname].inventory_hostname }} into master
     block:
     # Fetch db-file from source
-    - name: Fetch the db file from the "{{ src_server }}" to master
+    - name: Fetch the db file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
       fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_wiki_backup_file }} dest=../../backup/ flat=yes
 
     # Fetch image-file from source
-    - name: Fetch the image file from the "{{ src_server }}" to master
+    - name: Fetch the image file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
       fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/{{ img_wiki_backup_file }} dest=../../backup/ flat=yes
 
-    when: "inventory_hostname|string == src_server"
+    #when: "inventory_hostname|string == src_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
     run_once: yes
     become: false
     # become_user:  root
     ignore_errors: yes
 
-  - name: Fetch backup latest file to {{ dst_server }} from master
+  - name: Fetch backup latest file to {{ hostvars[inventory_hostname].inventory_hostname }} from master
     block:
-    - name: Fetch the db file from the master to "{{ dst_server }}"
+    - name: Fetch the db file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
       copy: src=../../backup/{{ db_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
 
-    - name: Fetch the image file from the master to "{{ dst_server }}"
+    - name: Fetch the image file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
       copy: src=../../backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
 
-    when: "inventory_hostname|string == dst_server"
+    #when: "inventory_hostname|string == dst_server"
+    when: "hostvars[inventory_hostname].brl == 'dst'"
     become: true
     become_user: root
     ignore_errors: yes
@@ -151,17 +149,19 @@
     ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
     args:
       chdir: "{{ pkc_install_root_dir }}"
-    when: "inventory_hostname|string == dst_server"
+    # when: "inventory_hostname|string == dst_server"
+    when: "hostvars[inventory_hostname].brl == 'dst'"
 
   ## Maintain only last x days retention
-  - name: Backup retention {{ retention }} days
+  - name: Backup retention "{{ hostvars[inventory_hostname].retention }}" days
     local_action: command find /home/pi/PKC/backup -type f -mtime +{{ retention }} -delete # pwd #command "find /home/pi/PKC/backup -type f -mtime +{{ retention }} -delete"
     register: local_files
 
   ## Download result log
-  - name: Fetch log result file from "{{ dst_server }}" to master
+  - name: Fetch log result file from "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
     fetch: src=/{{ pkc_install_root_dir }}restore_report.log dest=backup/ flat=yes
-    when: "inventory_hostname|string == dst_server"
+    #when: "inventory_hostname|string == dst_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
 
 
   

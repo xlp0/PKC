@@ -28,7 +28,7 @@ $wgSitename = "PKC";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "https://www.pkc-dev.org";
+$wgServer = "#YOUR_FQDN";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;

@@ -174,8 +174,12 @@ wfLoadExtension( 'TextExtracts' );
 wfLoadExtension( 'TitleBlacklist' );
 wfLoadExtension( 'VisualEditor' );
 wfLoadExtension( 'WikiEditor' );
-
-
+#
+#
+# Require user login to use mediawiki
+$wgGroupPermissions['*']['read'] = false;
+#
+#
 # End of automatically generated settings.
 # Add more configuration options below.
 # 

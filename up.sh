@@ -35,7 +35,6 @@ function prep_local {
     cp ./config/update-mtm-config.sql ./mountpoint/backup_restore/mariadb/update-mtm-config.sql
     # docker composre file, consist of minimal installation
     cp ./config-template/docker-compose-local.yml docker-compose.yml
-
 }
 
 function prep_mw_localhost {

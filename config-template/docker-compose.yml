@@ -5,7 +5,7 @@ services:
     image: emhavis/pkc_mariadb:v0.1
     container_name: xlp_mariadb
     restart: always
-    command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci --max-allowed-packet=67108864
     environment:
       MYSQL_DATABASE: my_wiki
       MYSQL_USER: wikiuser
@@ -20,6 +20,10 @@ services:
       - ./mysql-init:/docker-entrypoint-initdb.d
     ports: 
      - 3306:3306
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.10
+
   phpmyadmin:
     image: emhavis/pkc_phpmyadmin:v0.1
     container_name: phpmyadmin
@@ -35,6 +39,10 @@ services:
      - ${PHP_MA}:80
     volumes:
      - /sessions
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.15
+
   keycloak:
     container_name: xlp_keycloak
     image: quay.io/keycloak/keycloak:15.0.2
@@ -55,6 +63,10 @@ services:
     depends_on:
     - database
     restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.20
+
   matomo:
     container_name: xlp_matomo
     image: docker.io/bitnami/matomo:4
@@ -71,6 +83,10 @@ services:
     depends_on:
       - database
     restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.25
+
   mediawiki:
     # default username/password: admin/admin_on_d0cker
     # image: xlp0/semanticwiki
@@ -96,6 +112,10 @@ services:
     - ./mountpoint/ansible:/mnt/ansible
     depends_on:
     - database
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.30
+
   gitea:
     #image: gitea/gitea:1.15.2
     image: emhavis/pkc_gitea:v0.1
@@ -119,6 +139,10 @@ services:
     - "222:22"
     depends_on:
     - database
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.35
+
   code-server:
     #image: lscr.io/linuxserver/code-server
     image: emhavis/pkc_codeserver:v0.1
@@ -133,6 +157,10 @@ services:
     ports:
       - ${VS_PORT_NUMBER}:8443
     restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.40
+
   lms:
     image: bitnami/moodle:latest
     container_name: xlp_lms
@@ -150,3 +178,12 @@ services:
       - ${MDL_PORT_NUMBER}:8080
       - 32080:8443
     restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.45
+
+networks:
+  pkcnet:
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24

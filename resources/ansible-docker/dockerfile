@@ -1,0 +1,15 @@
+FROM ubuntu:20.04
+
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# RUN echo "sysops ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/sysops
+
+RUN apt update; \ 
+    apt updgrade -y; \
+    apt install -y software-properties-common; \
+    add-apt-repository --yes --update ppa:ansible/ansible;
+
+RUN apt update
+
+RUN apt install -y ansible

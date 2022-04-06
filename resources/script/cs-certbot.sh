@@ -27,11 +27,11 @@ echo "Prepare configuration file"
 FQDN="https://www.$YOUR_DOMAIN"
 #
 sed "s/#MTM_SUBDOMAIN/$MTM_SUBDOMAIN/g" ./config-template/LocalSettings.php > ./config/LocalSettings.php
-sed -i '' "s|#YOUR_FQDN|$FQDN|g" ./config/LocalSettings.php
+sed -i "s|#YOUR_FQDN|$FQDN|g" ./config/LocalSettings.php
 #
 sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/default.yml > ./config/default.yml
-sed -i '' "s|#YOUR_EMAIL_ADDRESS|$YOUR_EMAIL_ADDRESS|g" ./config/default.yml
-sed -i '' "s|#DEFAULT_TRANSPORT|$DEFAULT_TRANSPORT|g" ./config/default.yml
+sed -i "s|#YOUR_EMAIL_ADDRESS|$YOUR_EMAIL_ADDRESS|g" ./config/default.yml
+sed -i "s|#DEFAULT_TRANSPORT|$DEFAULT_TRANSPORT|g" ./config/default.yml
 #
 echo "Running Ansible cerbot script"
 ansible-playbook -i ./$1 ./resources/ansible-yml/cs-certbot.yml

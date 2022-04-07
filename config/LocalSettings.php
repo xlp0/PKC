@@ -28,7 +28,7 @@ $wgSitename = "PKC";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "#YOUR_FQDN";
+$wgServer = "https://www.pkc-dev.org";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -174,8 +174,12 @@ wfLoadExtension( 'TextExtracts' );
 wfLoadExtension( 'TitleBlacklist' );
 wfLoadExtension( 'VisualEditor' );
 wfLoadExtension( 'WikiEditor' );
-
-
+#
+#
+# Require user login to use mediawiki
+$wgGroupPermissions['*']['read'] = false;
+#
+#
 # End of automatically generated settings.
 # Add more configuration options below.
 # 
@@ -350,6 +354,14 @@ $srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'e
                                 'product', 'tagcloud', 'valuerank', 'array', 'tree', 'ultree', 'oltree', 'd3chart', 'latest', 'earliest', 
                                 'filtered', 'slideshow', 'timeseries', 'sparkline', 
                                 'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables' ];
+#
+#
+# Enable Semantic Access Control List extensions
+wfLoadExtension( 'SemanticACL' );
+#
+#
+# Enable User Protect Extensions
+wfLoadExtension( 'UserProtect' );
 #
 # Enable for debugging
 // $wgShowExceptionDetails = true;

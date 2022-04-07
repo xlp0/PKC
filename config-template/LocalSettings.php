@@ -357,9 +357,6 @@ $srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'e
 #
 #
 #
-# Enable User Protect Extensions
-wfLoadExtension( 'UserProtect' );
-#
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

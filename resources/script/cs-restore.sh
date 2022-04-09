@@ -77,7 +77,7 @@ function get_options {
 ################################################################################
 ## Restoring database
 function restore_db {
-    DOCKER_CMD="gunzip < /mnt/backup_restore/mariadb/$BACKUP_DB | mysql -u root -h database -D $DB_NAME -psecret; exit $?"
+    DOCKER_CMD="gunzip < /mnt/backup_restore/mariadb/$BACKUP_DB | mysql -u root -D $DB_NAME -psecret; exit $?"
 
     echo "Previewing docker command: $DOCKER_CMD"
     docker exec -t xlp_mariadb /bin/bash -c "$DOCKER_CMD"

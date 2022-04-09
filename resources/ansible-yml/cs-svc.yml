@@ -18,11 +18,13 @@
     until: _result.content != '\"\"'
     retries: 30   # retry X times
     delay: 3      # pause for X sec b/w each call
+    ignore_errors: yes
 
   - name: "Check PKC MediaWiki Service - {{ default_transport }}://{{ certbot_domain_name }}"
     uri: "url={{ default_transport }}://{{ certbot_domain_name }} return_content=true"
     register: response
-    failed_when: "'Main Page' not in response.content"
+    failed_when: "'Main page' not in response.content"
+    ignore_errors: yes
 
   - name: "Check All Services"
     uri: 
@@ -35,9 +37,11 @@
       - {url: "{{ default_transport }}://git.{{ certbot_domain_name }}", failed_when: "'Sign In' not in response.content" }
       - {url: "{{ default_transport }}://mtm.{{ certbot_domain_name }}", failed_when: "'Sign in' not in response.content" }
       - {url: "{{ default_transport }}://pma.{{ certbot_domain_name }}", failed_when: "'Log in' not in response.content" }
+    ignore_errors: yes
 
   - name: "Check Code Server Service - {{ default_transport }}://code.{{ certbot_domain_name }}"
     uri:
       url: "{{ default_transport }}://code.{{ certbot_domain_name }}"
       status_code: 200
+    ignore_errors: yes
 

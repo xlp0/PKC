@@ -28,6 +28,11 @@
       become: yes
       register: output
 
+    - name: Execute mysql backup
+      command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --user=root --password=secret moodle | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-moodle-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
+      become: yes
+      register: output
+
     - name: Execute image backup create folder
       command: "docker exec -t xlp_mediawiki /bin/bash -c 'mkdir /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
       become: yes
@@ -157,10 +162,36 @@
     # when: "inventory_hostname|string == dst_server"
     when: "hostvars[inventory_hostname].brl == 'dst'"
 
-  ## Maintain only last x days retention
+  ## Maintain only last x days retention, on agent server
   - name: Backup retention "{{ hostvars[inventory_hostname].retention }}" days
-    local_action: command find /Users/muhammadhaviz/ansible/pkc-project-root/PKC/backup -type f -mtime +{{ retention }} -delete # pwd #command "find /home/pi/PKC/backup -type f -mtime +{{ retention }} -delete"
+    local_action: command find {{ ansible_env.PWD }}/backup -type f -mtime +{{ retention }} -delete # pwd #command "find /home/pi/PKC/backup -type f -mtime +{{ retention }} -delete"
     register: local_files
+
+  ## Maintain only last x days retention, on source server
+  - name: Retention mysql backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'src'"
+
+  - name: Retention image backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'src'"
+
+  ## Maintain only last x days retention, on dest server
+  - name: Retention mysql backup to {{ retention }} day(s), on dest server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'dst'"
+
+  - name: Retention image backup to {{ retention }} day(s), on dest server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'dst'"
 
   ## Download result log
   - name: Fetch log result file from "{{ hostvars[inventory_hostname].inventory_hostname }}" to master

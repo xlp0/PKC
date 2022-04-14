@@ -80,6 +80,10 @@ function prep_mw_domain {
 # Read .env, and present our plan to user
 echo "Mark Started Process at $(date)"
 
+# Prepare .env file
+echo "Preparing env file"
+ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-prep-env.yml
+
 if [ -f .env ]; then
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
     if [ "$YOUR_DOMAIN" == "localhost" ]; then {

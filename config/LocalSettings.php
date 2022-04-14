@@ -356,12 +356,9 @@ $srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'e
                                 'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables' ];
 #
 #
-# Enable Semantic Access Control List extensions
-wfLoadExtension( 'SemanticACL' );
-#
 #
 # Enable User Protect Extensions
-wfLoadExtension( 'UserProtect' );
+# wfLoadExtension( 'UserProtect' );
 #
 # Enable for debugging
 // $wgShowExceptionDetails = true;
@@ -369,3 +366,4 @@ wfLoadExtension( 'UserProtect' );
 // $wgShowSQLErrors = true;
 // $wgDebugToolbar = true;
 // $wgDevelopmentWarnings = true;
+$wgDeprecationReleaseLimit = '1.x';

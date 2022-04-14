@@ -8,11 +8,11 @@
     - retention: 1
 
   tasks:
-  # - name: Prepare .env file, based on hosts file, copy to target
-  #   delegate_to: localhost
-  #   copy: 
-  #     src: ../../config-template/.env-template
-  #     dest: ../../.env
+  - name: Prepare .env file, based on hosts file, copy to target
+    delegate_to: localhost
+    copy: 
+      src: ../../config-template/.env-template
+      dest: ../../.env
 
   - name: .env, edit 1
     delegate_to: localhost

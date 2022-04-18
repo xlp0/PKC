@@ -2,7 +2,7 @@
 - name: install and provisioning dockers PKC Server
   hosts: all
   become: yes
-  gather_facts: no
+  gather_facts: yes
   vars:
     - docker_version: "latest"
     - retention: 1
@@ -14,26 +14,53 @@
   #     src: ../../config-template/.env-template
   #     dest: ../../.env
 
-  - name: .env, edit 1
-    delegate_to: localhost
-    ansible.builtin.replace:
-      path: ../../.env
-      regexp: '#YOUR_DOMAIN#'
-      replace: '{{ hostvars[inventory_hostname].domain }}'
+  - name: Prepare moodle media backup
+    command: "chdir={{ pkc_install_root_dir }}mountpoint/ tar -czvf ./backup_restore/{{ ansible_host }}-moodledata-{{ ansible_date_time.iso8601_basic_short }}.tar.gz ./moodledata"
+    register: ls_result
 
-  - name: .env, edit 2
-    delegate_to: localhost
-    ansible.builtin.replace:
-      path: ../../.env
-      regexp: '#YOUR_DEFAULT_TRANSPORT#'
-      replace: '{{ hostvars[inventory_hostname].default_transport }}'
+  - name: print ls resut
+    debug:
+      var: ls_result
 
-  - name: .env, edit 3
-    delegate_to: localhost
-    ansible.builtin.replace:
-      path: ../../.env
-      regexp: '#YOUR_EMAIL_ADDRESS#'
-      replace: '{{ hostvars[inventory_hostname].email }}'
+  # - name: Perform moodle database restore
+  #   community.docker.docker_container_exec:
+  #     container: xlp_mariadb
+  #     argv:
+  #       - /bin/bash
+  #       - "-c"
+  #       - "gunzip < /mnt/backup_restore/mariadb/gasing-moodle-20220417T000506.sql.gz | mysql -u root -D moodle -psecret; exit $?"
+  #     chdir: /root
+  #   register: result
+
+  # - name: Print stderr lines
+  #   debug:
+  #     var: result.stderr_lines
+
+
+  # - name: Backup retention "{{ hostvars[inventory_hostname].retention }}" days
+  #   local_action: command find ../../backup -type f -mtime +{{ retention }} -delete
+  #   register: local_files
+
+  # - name: .env, edit 1
+  #   delegate_to: localhost
+  #   ansible.builtin.replace:
+  #     path: ../../.env
+  #     regexp: '#YOUR_DOMAIN#'
+  #     replace: '{{ hostvars[inventory_hostname].domain }}'
+
+  # - name: .env, edit 2
+  #   delegate_to: localhost
+  #   ansible.builtin.replace:
+  #     path: ../../.env
+  #     regexp: '#YOUR_DEFAULT_TRANSPORT#'
+  #     replace: '{{ hostvars[inventory_hostname].default_transport }}'
+
+  # - name: .env, edit 3
+  #   delegate_to: localhost
+  #   ansible.builtin.replace:
+  #     path: ../../.env
+  #     regexp: '#YOUR_EMAIL_ADDRESS#'
+  #     replace: '{{ hostvars[inventory_hostname].email }}'
     
 
   ## Maintain only last x days retention, on agent server

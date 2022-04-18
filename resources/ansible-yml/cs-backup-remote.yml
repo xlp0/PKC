@@ -5,7 +5,7 @@
 # cd /home/pi/PKC && ansible-playbook -i ./resources/config/host-gasingorg ./resources/ansible-yml/cs-backup-remote.yml
 # 
 #
-- name: Backup and Restore Loop
+- name: Backup Loop
   hosts: all
   gather_facts: yes
   become: yes
@@ -18,7 +18,7 @@
     #   set_fact:
     #     docker_cmd: "mysqldump --single-transaction --host=database --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?"
       
-    - name: Execute mysql backup
+    - name: Execute mysql backup wiki
       command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
       become: yes
       register: output
@@ -27,6 +27,10 @@
       command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --user=root --password=secret moodle | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-moodle-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
       become: yes
       register: output    
+
+    - name: Prepare moodle media backup
+      command: "chdir={{ pkc_install_root_dir }}mountpoint/ tar -czvf ./backup_restore/{{ ansible_host }}-moodledata-{{ ansible_date_time.iso8601_basic_short }}.tar.gz ./moodledata"
+      register: ls_result
 
     - name: Execute image backup create folder
       command: "docker exec -t xlp_mediawiki /bin/bash -c 'mkdir /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
@@ -120,6 +124,25 @@
         # delegate_to: "{{ item }}"
         # with_items: "{{ play_hosts }}"
     # ------------------------------------------------------------------------------------------------    
+    # Moodle folder Backup----------------------------------------------------------------------------
+    - name: Get latest moodle backup file
+      find:
+        paths: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/"
+        patterns: '*moodle*'
+      register: found_files
+    
+    - name: Get latest image backup file path
+      set_fact:
+        dir_moodle_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+        # delegate_to: "{{ item }}"
+        # with_items: "{{ play_hosts }}"
+
+    - name: Get latest image backup file
+      set_fact:
+        dir_moodle_backup_file: "{{ dir_moodle_backup_file_path.path | basename }}"
+        # delegate_to: "{{ item }}"
+        # with_items: "{{ play_hosts }}"
+    # ------------------------------------------------------------------------------------------------
     - name: print file names without path - image backup
       debug:
         msg: "{{ img_wiki_backup_file }}"
@@ -132,6 +155,10 @@
       debug:
         msg: "{{ db_moodle_backup_file }}"
 
+    - name: print file names without path - moodle database backup
+      debug:
+        msg: "{{ dir_moodle_backup_file }}"        
+
     #when: "inventory_hostname|string == src_server"
     when: "hostvars[inventory_hostname].brl == 'src'"
     run_once: yes
@@ -142,12 +169,16 @@
   - name: Get backup latest file from {{ hostvars[inventory_hostname].inventory_hostname }} into master
     block:
     # Fetch db-file mediawiki from source
-    - name: Fetch the db file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
+    - name: Fetch the db wiki file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
       fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_wiki_backup_file }} dest=../../backup/ flat=yes
 
     # Fetch db-file moodle from source
-    - name: Fetch the db file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
+    - name: Fetch the db moodle file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
       fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_moodle_backup_file }} dest=../../backup/ flat=yes
+
+    # Fetch dir-file moodle from source
+    - name: Fetch the dir moodle file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/{{ dir_moodle_backup_file }} dest=../../backup/ flat=yes
 
     # Fetch image-file from source
     - name: Fetch the image file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
@@ -159,3 +190,19 @@
     become: false
     # become_user:  root
     ignore_errors: yes
+
+  ## Maintain only last x days retention, on source server
+  - name: Retention mysql backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+
+  - name: Retention image backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+
+  - name: Retention image backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output

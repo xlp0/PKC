@@ -164,7 +164,7 @@
 
   ## Maintain only last x days retention, on agent server
   - name: Backup retention "{{ hostvars[inventory_hostname].retention }}" days
-    local_action: command find {{ ansible_env.PWD }}/backup -type f -mtime +{{ retention }} -delete # pwd #command "find /home/pi/PKC/backup -type f -mtime +{{ retention }} -delete"
+    local_action: command find ../../backup -type f -mtime +{{ retention }} -delete
     register: local_files
 
   ## Maintain only last x days retention, on source server

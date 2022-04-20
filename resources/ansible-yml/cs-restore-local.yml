@@ -3,7 +3,7 @@
 # File set use is the latest fileset
 #
 # How to execute on project root folder
-# cd /home/pi/PKC && ansible-playbook -i ./resources/config/host-pkcpub-pkcback ./resources/ansible-yml/cs-restore-local.yml
+# cd /home/pi/PKC && ansible-playbook -i ./resources/config/hosts-pkc-back-restore ./resources/ansible-yml/cs-restore-local.yml
 # 
 # Hosts file format
 # 
@@ -33,7 +33,7 @@
     - name: Get database moodle backup file
       find:
         paths: "../../backup/"
-        patterns: "{{ from }}*moodle*"
+        patterns: "{{ from }}*moodle-*"
       register: found_files
     
     - name: Get database moodle latest backup file path
@@ -43,6 +43,27 @@
     - name: Get database moodle latest backup file
       set_fact:
         db_moodle_backup_file: "{{ db_moodle_backup_file_path.path | basename }}"
+
+
+
+    - name: Get dir moodle backup file
+      find:
+        paths: "../../backup/"
+        patterns: "{{ from }}*moodledata-*"
+      register: found_files
+    
+    - name: Get dir moodle latest backup file path
+      set_fact:
+        dir_moodle_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+    - name: Get database moodle latest backup file
+      set_fact:
+        dir_moodle_backup_file: "{{ dir_moodle_backup_file_path.path | basename }}"
+
+
+
+
+
 
     - name: Get latest image backup file
       find:
@@ -73,6 +94,10 @@
     - name: print file names without path - database backup moodle
       debug:
         msg: "{{ db_moodle_backup_file }}"
+
+    - name: print file names without path - dir backup moodle
+      debug:
+        msg: "{{ dir_moodle_backup_file }}"
         
     run_once: yes
     become: true
@@ -89,6 +114,9 @@
       copy: src=../../backup/{{ db_moodle_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
 
     - name: Fetch the image file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ dir_moodle_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/
+
+    - name: Fetch the image file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
       copy: src=../../backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
 
     run_once: yes
@@ -102,6 +130,11 @@
       ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
       args:
         chdir: "{{ pkc_install_root_dir }}"
+
+    - name: Perform moodle folder restore
+      ansible.builtin.shell: "tar -xzvf ./backup_restore/{{ dir_moodle_backup_file }} ./moodledata"
+      args:
+        chdir: "{{ pkc_install_root_dir }}mountpoint"
 
     - name: Perform moodle database restore
       community.docker.docker_container_exec:
@@ -121,7 +154,11 @@
     become: true
     become_user: root
     ignore_errors: yes
-    # DOCKER_CMD="gunzip < /mnt/backup_restore/mariadb/$BACKUP_DB | mysql -u root -D $DB_NAME -psecret; exit $?"
+
+
+
+
+    # DOCKER_CMD="gunzip < /mnt/backup_restore/marixadb/$BACKUP_DB | mysql -u root -D $DB_NAME -psecret; exit $?"
 
     # echo "Previewing docker command: $DOCKER_CMD"
     # docker exec -t xlp_mariadb /bin/bash -c "$DOCKER_CMD"

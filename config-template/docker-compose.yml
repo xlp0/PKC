@@ -179,6 +179,8 @@ services:
       - ${MDL_PORT_NUMBER}:8080
       - 32080:8443
     restart: always
+    depends_on:
+    - database
     networks:
       pkcnet:
         ipv4_address: 192.168.100.45

@@ -3,7 +3,7 @@
   become: yes
   vars_files:
     - ../../config/default.yml
-   
+    
   tasks:
   - name: Ubuntu Certbot Install
     block:
@@ -50,16 +50,16 @@
     ignore_errors: yes
  
   - name: Create and Install Cert Using NGINX Plugin
-    command: "certbot --nginx -d  {{ item }} -m {{ certbot_mail_address }} --agree-tos --noninteractive --redirect"
+    command: "certbot --nginx -d  {{ item }} -m {{ hostvars[inventory_hostname].email }} --agree-tos --noninteractive --redirect"
     with_items: 
-    - "{{ certbot_domain_name }}"
-    - "www.{{ certbot_domain_name }}"
-    - "pma.{{ certbot_domain_name }}"
-    - "git.{{ certbot_domain_name }}"
-    - "mtm.{{ certbot_domain_name }}"
-    - "code.{{ certbot_domain_name }}"
-    - "kck.{{ certbot_domain_name }}"
-    - "mdl.{{ certbot_domain_name }}"
+    - "{{ hostvars[inventory_hostname].domain }}"
+    - "www.{{ hostvars[inventory_hostname].domain }}"
+    - "pma.{{ hostvars[inventory_hostname].domain }}"
+    - "git.{{ hostvars[inventory_hostname].domain }}"
+    - "mtm.{{ hostvars[inventory_hostname].domain }}"
+    - "code.{{ hostvars[inventory_hostname].domain }}"
+    - "kck.{{ hostvars[inventory_hostname].domain }}"
+    - "mdl.{{ hostvars[inventory_hostname].domain }}"
 
   - name: copy Application Configuration Files
     copy:

@@ -86,7 +86,8 @@ services:
         ipv4_address: 192.168.100.50
   keycloak:
     container_name: xlp_keycloak
-    image: quay.io/keycloak/keycloak:15.0.2
+    # image: quay.io/keycloak/keycloak:15.0.2
+    image: emhavis/pkc_keycloak:v0.1
     environment:
 #      - KEYCLOAK_USER=admin
 #      - KEYCLOAK_PASSWORD=Pa55w0rd

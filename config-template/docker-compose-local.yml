@@ -87,7 +87,7 @@ services:
   keycloak:
     container_name: xlp_keycloak
     # image: quay.io/keycloak/keycloak:15.0.2
-    image: emhavis/pkc_keycloak:v0.1
+    image: emhavis/pkc_keycloak:v0.2
     environment:
 #      - KEYCLOAK_USER=admin
 #      - KEYCLOAK_PASSWORD=Pa55w0rd

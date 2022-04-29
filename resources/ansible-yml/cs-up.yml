@@ -177,10 +177,10 @@
         src: ../../config-template/docker-compose.yml
         dest: ./cs
 
-    - name: Upload initdb script
-      ansible.builtin.copy:
-        src: ../../config-template/init.sql
-        dest: ./cs/mysql-init
+    # - name: Upload initdb script
+    #   ansible.builtin.copy:
+    #     src: ../../config-template/init.sql
+    #     dest: ./cs/mysql-init
 
     - name: Upload scripts and config
       copy:

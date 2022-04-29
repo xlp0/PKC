@@ -77,6 +77,27 @@ function prep_mw_domain {
 }
 
 #####################################################################
+
+function prep_vars {
+    echo "Reading values from hosts file into variable"
+
+    rm ./temp-out
+    touch ./temp-out
+    sentence=$(cat ./resources/config/hosts)
+    for word in $sentence
+    do
+        echo $word >> temp-out
+    done
+    export $(cat ./temp-out | grep -v '#' | awk '/=/ {print $1}')
+    echo $ansible_connection
+    echo $ansible_ssh_private_key_file
+    echo $ansible_user
+    echo $domain
+    echo $default_transport
+    echo $email
+}
+
+
 # Read .env, and present our plan to user
 echo "Mark Started Process at $(date)"
 
@@ -167,17 +188,22 @@ if [ -f .env ]; then
         echo "Keycloak will be accessible from: $KCK_SUBDOMAIN"
         echo ""
         echo ""
-        read -p "Press [Enter] key to continue..."
+        # read -p "Press [Enter] key to continue..."
         echo "--------------------------------------------------------"
 
+        prep_vars
+        CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$domain 'cd /home/$ansible_user/cs; docker-compose up -d'"
+        # echo $CMD_VARS
+        # read  -p "press enter to continue ..."
+
         prep_nginx
-        read -p "finished prepare nginx config Press [Enter] key to continue..."
+        # read -p "finished prepare nginx config Press [Enter] key to continue..."
+        echo "finished prepare nginx config"
         prep_mw_domain
-        read -p "finished prepare LocalSettings.php Press [Enter] key to continue..."
+        echo "finished prepare LocalSettings.php"
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-clean.yml
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up.yml
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml
+        # ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
         #
         # Install HTTPS SSL
         if [ $DEFAULT_TRANSPORT == "https" ]; then
@@ -185,6 +211,11 @@ if [ -f .env ]; then
             ./resources/script/cs-certbot.sh ./resources/config/hosts
         fi
         #
+        
+        # remote shell, ansible is not stable to bring container services up
+        eval $CMD_VARS
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml
+
         echo "Check installation status"
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-svc.yml  
       

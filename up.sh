@@ -211,7 +211,6 @@ if [ -f .env ]; then
             ./resources/script/cs-certbot.sh ./resources/config/hosts
         fi
         #
-        
         # remote shell, ansible is not stable to bring container services up
         eval $CMD_VARS
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml

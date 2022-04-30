@@ -18,13 +18,20 @@ function prep_nginx {
 
 #####################################################################
 function prep_local {
-    # 
-    # extracting mountpoint
-    # Make sure that the docker-compose.yml is available in this directory, otherwise, download it.
+
+    # check if we already have mountpoint file
+    if [ ! -f ./mountpoint.tar.gz ]; then
+        # download mountpoint from pkc.pub
+        echo "Download mountpoint"
+        wget http://res.pkc.pub/mountpoint-mac.tar.gz mountpoint.tar.gz
+    fi     
+
+    # check if folder is already exists
     if [ ! -e ./mountpoint ]; then
         echo "Extracting mountpoint"
         tar -xvf mountpoint-mac.tar.gz > /dev/null 2>&1
     fi
+
     # copy LocalSettings.php
     echo "Applying Localhost setting .... "
     cp ./config/LocalSettings.php ./mountpoint/LocalSettings.php
@@ -101,10 +108,6 @@ function prep_vars {
 # Read .env, and present our plan to user
 echo "Mark Started Process at $(date)"
 
-# Prepare .env file
-echo "Preparing env file"
-ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-prep-env.yml
-
 if [ -f .env ]; then
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
     if [ "$YOUR_DOMAIN" == "localhost" ]; then {
@@ -122,6 +125,7 @@ if [ -f .env ]; then
         echo "Loaded environmental variable: "
         echo "Port number for Mediawiki: $PORT_NUMBER"
         echo "Port number for PHPMyAdmin: $PHP_MA"
+        echo "Port number for Keycloak: $KCK_PORT_NUMBER    "
         echo ""
         echo "If you have installed Dockers, please ensure your"
         echo "Docker desktop is running."
@@ -159,6 +163,11 @@ if [ -f .env ]; then
         open https://pkc.local
 
     } else {
+
+        # Prepare .env file
+        echo "Preparing env file"
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-prep-env.yml        
+
         GITEA_SUBDOMAIN=git.$YOUR_DOMAIN
         PMA_SUBDOMAIN=pma.$YOUR_DOMAIN
         MTM_SUBDOMAIN=mtm.$YOUR_DOMAIN
@@ -192,7 +201,6 @@ if [ -f .env ]; then
         echo "--------------------------------------------------------"
 
         prep_vars
-        CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$domain 'cd /home/$ansible_user/cs; docker-compose up -d'"
         # echo $CMD_VARS
         # read  -p "press enter to continue ..."
 
@@ -212,6 +220,10 @@ if [ -f .env ]; then
         fi
         #
         # remote shell, ansible is not stable to bring container services up
+        CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$domain 'cd /home/$ansible_user/cs; docker-compose pull'"
+        eval $CMD_VARS
+
+        CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$domain 'cd /home/$ansible_user/cs; docker-compose up -d'"
         eval $CMD_VARS
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml
 

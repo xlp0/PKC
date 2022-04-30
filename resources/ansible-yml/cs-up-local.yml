@@ -18,20 +18,10 @@
       command: "../script/update-hosts.sh"
       become: yes
 
-    - name: Download mountpoint
-      get_url:
-        url: http://res.pkc.pub/mountpoint.tar.gz
-        dest: "../"
-
-    - name: Extract Mountpoint
-      shell: "tar -xvf ./mountpoint.tar.gz"
-      args:
-        chdir: "../"
-
-    # - name: Check docker installation on localhost machine
-    #   shell: "./resources/script/update-sw.sh || /usr/bin/true"
-    #   register: update_script
-    #   ignore_errors: yes    
+    - name: Check docker installation on localhost machine
+      shell: "./resources/script/update-sw.sh || /usr/bin/true"
+      register: update_script
+      ignore_errors: yes    
 
     - name: Print debug
       ansible.builtin.debug:

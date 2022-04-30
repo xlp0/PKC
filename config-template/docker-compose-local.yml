@@ -64,26 +64,26 @@ services:
     networks:
       pkcnet:
         ipv4_address: 192.168.100.30
-  matomo:
-    container_name: xlp_matomo
-    image: docker.io/bitnami/matomo:4
-    ports:
-      - 32070:8080
-    environment:
-      - MATOMO_DATABASE_HOST=database
-      - MATOMO_DATABASE_PORT_NUMBER=3306
-      - MATOMO_DATABASE_USER=matomodb
-      - MATOMO_DATABASE_NAME=matomo
-      - MATOMO_DATABASE_PASSWORD=matomo-pass
-    volumes:
-      - "./mountpoint/matomo:/bitnami/matomo"
-    depends_on:
-      - database
-      - web
-    restart: always
-    networks:
-      pkcnet:
-        ipv4_address: 192.168.100.50
+  # matomo:
+  #   container_name: xlp_matomo
+  #   image: docker.io/bitnami/matomo:4
+  #   ports:
+  #     - 32070:8080
+  #   environment:
+  #     - MATOMO_DATABASE_HOST=database
+  #     - MATOMO_DATABASE_PORT_NUMBER=3306
+  #     - MATOMO_DATABASE_USER=matomodb
+  #     - MATOMO_DATABASE_NAME=matomo
+  #     - MATOMO_DATABASE_PASSWORD=matomo-pass
+  #   volumes:
+  #     - "./mountpoint/matomo:/bitnami/matomo"
+  #   depends_on:
+  #     - database
+  #     - web
+  #   restart: always
+  #   networks:
+  #     pkcnet:
+  #       ipv4_address: 192.168.100.50
   keycloak:
     container_name: xlp_keycloak
     # image: quay.io/keycloak/keycloak:15.0.2

@@ -1,4 +1,0 @@
-pkc_install_root_dir: "/home/ubuntu/cs/"
-src_server: "pkc-pub"
-dst_server: "pkc-ops"
-retention: 1

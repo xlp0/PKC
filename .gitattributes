@@ -1,2 +1,0 @@
-mountpoint-mac.tar.gz filter=lfs diff=lfs merge=lfs -text
-mountpoint.tar.gz filter=lfs diff=lfs merge=lfs -text

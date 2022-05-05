@@ -1,0 +1,5 @@
+certbot_package: "python3-certbot-nginx"
+certbot_plugin: "nginx"
+certbot_mail_address: emhavis@gmail.com
+certbot_domain_name: pkc-dev.org
+default_transport: https

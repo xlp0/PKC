@@ -1,0 +1,8 @@
+[docker]
+async = 1
+baseurl = https://download.docker.com/linux/centos/8.5/source/stable/
+enabled = 1
+gpgcheck = 1
+gpgkey = https://download.docker.com/linux/centos/gpg
+name = docker repository
+

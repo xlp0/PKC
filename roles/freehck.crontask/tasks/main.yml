@@ -1,0 +1,15 @@
+---
+
+- name: create cron task
+  cron:
+    name: "{{ crontask_name }}"
+    cron_file: "{{ crontask_file }}"
+    day: "{{ crontask_day }}"
+    hour: "{{ crontask_hour }}"
+    minute: "{{ crontask_minute }}"
+    month: "{{ crontask_month }}"
+    weekday: "{{ crontask_weekday }}"
+    state: "{{ crontask_state }}"
+    user: "{{ crontask_user }}"
+    disabled: "{{ crontask_commented_out }}"
+    job: "{{ crontask_job }}"

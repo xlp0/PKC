@@ -1,0 +1,23 @@
+---
+- name: install and provisioning dockers PKC Server
+  hosts: all
+  become: yes
+  vars:
+    - docker_version: "latest"
+
+  tasks:
+  - name: Upload scripts and config
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+      mode: u=rwx,g=rx,o=rx
+
+    loop:
+      - {src: '../script/cs-backup.sh', dest: './cs/cs-backup.sh'}
+      - {src: '../script/cs-restore.sh', dest: './cs/cs-restore.sh'}
+      - {src: '../script/cs-offsite-restore.sh', dest: './cs/cs-offsite-restore.sh'}
+      - {src: '../script/update-sw.sh', dest: './cs/update-sw.sh'}
+      - {src: '../script/mtm-sql.sh', dest: './cs/mtm-sql.sh'}
+      - {src: '../../.env', dest: './cs/.env'}
+    become: true

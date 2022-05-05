@@ -1,0 +1,203 @@
+---
+# This playbook backups all mysql databases into separate files.
+#
+# How to execute on project root folder
+# cd /home/pi/PKC && ansible-playbook -i ./resources/config/host-pkcpub-pkcback ./resources/ansible-yml/cs-restore-remote.yml
+# 
+#
+- name: Backup and Restore Loop
+  hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+  - name: Execute mysql backup at container on {{ hostvars[inventory_hostname].inventory_hostname }}
+    block:
+    # - name: Prepare mysql backup command
+    #   set_fact:
+    #     docker_cmd: "mysqldump --single-transaction --host=database --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?"
+
+    # prepare backup filename
+    # 1. my_wiki
+    # 2. moodle
+    # 3. 
+      
+    - name: Execute mysql backup
+      command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --user=root --password=secret my_wiki | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-my_wiki-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
+      become: yes
+      register: output
+
+    - name: Execute mysql backup
+      command: "docker exec -t xlp_mariadb /bin/bash -c 'mysqldump --single-transaction --user=root --password=secret moodle | gzip > /mnt/backup_restore/mariadb/{{ ansible_host }}-moodle-{{ ansible_date_time.iso8601_basic_short }}.sql.gz; exit $?'"
+      become: yes
+      register: output
+
+    - name: Execute image backup create folder
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'mkdir /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
+      become: yes
+      register: output
+
+    - name: Execute image backup create
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'php /var/www/html/maintenance/dumpUploads.php | sed 's~mwstore://local-backend/local-public~./images~' | xargs cp -t /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
+      become: yes
+      register: output
+
+    - name: Prepare media backup command
+      set_fact:
+        docker_cmd: "tar -zcvf /mnt/backup_restore/mediawiki/{{ ansible_host }}-{{ ansible_date_time.iso8601_basic_short }}-image.tar.gz -C /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }} ."
+
+    - name: print output
+      debug:
+        msg: "{{ docker_cmd }}"
+
+    - name: Execute image backup tar
+      command: "docker exec -t xlp_mediawiki /bin/bash -c '{{ docker_cmd }}'"
+      become: yes
+      register: output
+
+    - name: Execute image backup remove footprint
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'rm -rf /mnt/backup_restore/mediawiki/{{ ansible_date_time.iso8601_basic_short }}'"
+      become: yes
+      register: output
+
+    - name: backup retention on source server {{ retention }} day(s)
+      command: "find {{ item }} -type f -mtime +{{ retention }} -delete"
+      become: yes
+      register: output
+      loop:
+        - "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/"
+        - "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/"
+
+    # when: "inventory_hostname|string == src_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
+    run_once: yes
+    ignore_errors: yes
+
+  - name: Get backup latest file list set on {{ hostvars[inventory_hostname].inventory_hostname }}
+    block:
+    - name: Get database backup file
+      find:
+        paths: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/"
+        patterns: '*my_wiki*'
+      register: found_files
+    
+    - name: Get database latest backup file path
+      set_fact:
+        db_wiki_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+    - name: Get database latest backup file
+      set_fact:
+        db_wiki_backup_file: "{{ db_wiki_backup_file_path.path | basename }}"
+
+    - name: Get latest image backup file
+      find:
+        paths: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/"
+        patterns: '*image*'
+      register: found_files
+    
+    - name: Get latest image backup file path
+      set_fact:
+        img_wiki_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+        # delegate_to: "{{ item }}"
+        # with_items: "{{ play_hosts }}"
+
+    - name: Get latest image backup file
+      set_fact:
+        img_wiki_backup_file: "{{ img_wiki_backup_file_path.path | basename }}"
+        # delegate_to: "{{ item }}"
+        # with_items: "{{ play_hosts }}"
+        
+    - name: print file names without path - image backup
+      debug:
+        msg: "{{ img_wiki_backup_file }}"
+
+    - name: print file names without path - database backup
+      debug:
+        msg: "{{ db_wiki_backup_file }}"
+
+    #when: "inventory_hostname|string == src_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
+    run_once: yes
+    become: true
+    become_user: root
+    ignore_errors: yes
+  
+  - name: Get backup latest file from {{ hostvars[inventory_hostname].inventory_hostname }} into master
+    block:
+    # Fetch db-file from source
+    - name: Fetch the db file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/{{ db_wiki_backup_file }} dest=../../backup/ flat=yes
+
+    # Fetch image-file from source
+    - name: Fetch the image file from the "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
+      fetch: src=/{{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/{{ img_wiki_backup_file }} dest=../../backup/ flat=yes
+
+    #when: "inventory_hostname|string == src_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
+    run_once: yes
+    become: false
+    # become_user:  root
+    ignore_errors: yes
+
+  - name: Fetch backup latest file to {{ hostvars[inventory_hostname].inventory_hostname }} from master
+    block:
+    - name: Fetch the db file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ db_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
+
+    - name: Fetch the image file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
+
+    #when: "inventory_hostname|string == dst_server"
+    when: "hostvars[inventory_hostname].brl == 'dst'"
+    become: true
+    become_user: root
+    ignore_errors: yes
+
+  ## Perform scripts
+  - name: Perform database and image restore
+    ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
+    args:
+      chdir: "{{ pkc_install_root_dir }}"
+    # when: "inventory_hostname|string == dst_server"
+    when: "hostvars[inventory_hostname].brl == 'dst'"
+
+  ## Maintain only last x days retention, on agent server
+  - name: Backup retention "{{ hostvars[inventory_hostname].retention }}" days
+    local_action: command find ../../backup -type f -mtime +{{ retention }} -delete
+    register: local_files
+
+  ## Maintain only last x days retention, on source server
+  - name: Retention mysql backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'src'"
+
+  - name: Retention image backup to {{ retention }} day(s), on source server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'src'"
+
+  ## Maintain only last x days retention, on dest server
+  - name: Retention mysql backup to {{ retention }} day(s), on dest server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'dst'"
+
+  - name: Retention image backup to {{ retention }} day(s), on dest server
+    command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
+    become: yes
+    register: output
+    when: "hostvars[inventory_hostname].brl == 'dst'"
+
+  ## Download result log
+  - name: Fetch log result file from "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
+    fetch: src=/{{ pkc_install_root_dir }}restore_report.log dest=backup/ flat=yes
+    #when: "inventory_hostname|string == dst_server"
+    when: "hostvars[inventory_hostname].brl == 'src'"
+
+
+  

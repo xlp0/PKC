@@ -1,0 +1,164 @@
+---
+# This playbook restore from local agent into target server
+# File set use is the latest fileset
+#
+# How to execute on project root folder
+# cd /home/pi/PKC && ansible-playbook -i ./resources/config/hosts-pkc-back-restore ./resources/ansible-yml/cs-restore-local.yml
+# 
+# Hosts file format
+# 
+- name: Restore from Local
+  hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+  - name: Find latest fileset at local folder
+    block:
+    - name: Get database wiki backup file
+      find:
+        paths: "../../backup/"
+        patterns: "{{ from }}*my_wiki*"
+      register: found_files
+    
+    - name: Get database wiki latest backup file path
+      set_fact:
+        db_wiki_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+    - name: Get database wiki latest backup file
+      set_fact:
+        db_wiki_backup_file: "{{ db_wiki_backup_file_path.path | basename }}"
+
+    - name: Get database moodle backup file
+      find:
+        paths: "../../backup/"
+        patterns: "{{ from }}*moodle-*"
+      register: found_files
+    
+    - name: Get database moodle latest backup file path
+      set_fact:
+        db_moodle_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+    - name: Get database moodle latest backup file
+      set_fact:
+        db_moodle_backup_file: "{{ db_moodle_backup_file_path.path | basename }}"
+
+
+
+    - name: Get dir moodle backup file
+      find:
+        paths: "../../backup/"
+        patterns: "{{ from }}*moodledata-*"
+      register: found_files
+    
+    - name: Get dir moodle latest backup file path
+      set_fact:
+        dir_moodle_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+
+    - name: Get database moodle latest backup file
+      set_fact:
+        dir_moodle_backup_file: "{{ dir_moodle_backup_file_path.path | basename }}"
+
+
+
+
+
+
+    - name: Get latest image backup file
+      find:
+        paths: "../../backup"
+        patterns: "{{ from }}*image*"
+      register: found_files
+    
+    - name: Get latest image backup file path
+      set_fact:
+        img_wiki_backup_file_path: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first }}"
+        # delegate_to: "{{ item }}"
+        # with_items: "{{ play_hosts }}"
+
+    - name: Get latest image backup file
+      set_fact:
+        img_wiki_backup_file: "{{ img_wiki_backup_file_path.path | basename }}"
+        # delegate_to: "{{ item }}"
+        # with_items: "{{ play_hosts }}"
+        
+    - name: print file names without path - image backup
+      debug:
+        msg: "{{ img_wiki_backup_file }}"
+
+    - name: print file names without path - database backup wiki
+      debug:
+        msg: "{{ db_wiki_backup_file }}"
+
+    - name: print file names without path - database backup moodle
+      debug:
+        msg: "{{ db_moodle_backup_file }}"
+
+    - name: print file names without path - dir backup moodle
+      debug:
+        msg: "{{ dir_moodle_backup_file }}"
+        
+    run_once: yes
+    become: true
+    become_user: root
+    ignore_errors: yes
+    delegate_to: 127.0.0.1
+
+  - name: Fetch all files to target server
+    block:
+    - name: Fetch the db file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ db_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
+
+    - name: Fetch the db file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ db_moodle_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mariadb/
+
+    - name: Fetch the image file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ dir_moodle_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/
+
+    - name: Fetch the image file from the master to "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      copy: src=../../backup/{{ img_wiki_backup_file }} dest={{ pkc_install_root_dir }}mountpoint/backup_restore/mediawiki/
+
+    run_once: yes
+    become: true
+    become_user: root
+    ignore_errors: yes
+
+  - name: Perform restore on target server
+    block:
+    - name: Perform database and image restore
+      ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
+      args:
+        chdir: "{{ pkc_install_root_dir }}"
+
+    - name: Perform moodle folder restore
+      ansible.builtin.shell: "tar -xzvf ./backup_restore/{{ dir_moodle_backup_file }} ./moodledata"
+      args:
+        chdir: "{{ pkc_install_root_dir }}mountpoint"
+
+    - name: Perform moodle database restore
+      community.docker.docker_container_exec:
+        container: xlp_mariadb
+        argv:
+          - /bin/bash
+          - "-c"
+          - "gunzip < /mnt/backup_restore/mariadb/{{ db_moodle_backup_file }} | mysql -u root -D moodle -psecret; exit $?"
+        chdir: /root
+      register: result
+
+    - name: Print stderr lines
+      debug:
+        var: result.stderr_lines
+
+    run_once: yes
+    become: true
+    become_user: root
+    ignore_errors: yes
+
+
+
+
+    # DOCKER_CMD="gunzip < /mnt/backup_restore/marixadb/$BACKUP_DB | mysql -u root -D $DB_NAME -psecret; exit $?"
+
+    # echo "Previewing docker command: $DOCKER_CMD"
+    # docker exec -t xlp_mariadb /bin/bash -c "$DOCKER_CMD"

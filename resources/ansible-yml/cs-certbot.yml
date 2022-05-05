@@ -1,0 +1,80 @@
+- name: Install PKC HTTPS 
+  hosts: all
+  become: yes
+  vars_files:
+    - ../../config/default.yml
+    
+  tasks:
+  - name: Ubuntu Certbot Install
+    block:
+    - name : Install Python Package
+      apt: name=python3 update_cache=yes state=latest
+
+    - name : Install Let's Encrypt Package
+      apt: name={{ certbot_package }} update_cache=yes state=latest
+
+    when: ansible_facts['os_family'] == "Debian"
+    become: true
+    become_user: root
+    ignore_errors: yes
+  
+  - name: Redhat Certbot Install
+    block:
+    - name: DNF update the system
+      dnf:
+        name:  "*"
+        state: latest
+      when: ansible_facts['os_family'] == 'RedHat' and ansible_facts  ['distribution_major_version'] >= '8'
+
+    - name: Yum update the system
+      yum:
+        name: "*"
+        state: latest
+      when: ansible_facts['os_family'] == 'RedHat' and ansible_facts ['distribution_major_version'] <= '7'
+
+    - name: Enable EPEL Release for RHEL 8
+      dnf:
+        name: 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm'
+        state: present
+
+    - name: Install Certbot
+      dnf:
+        name: 
+          - certbot
+          - "{{ certbot_package }}"
+        state: latest      
+
+    when: ansible_facts['os_family'] == "RedHat"
+    become: true
+    become_user: root
+    ignore_errors: yes
+ 
+  - name: Create and Install Cert Using NGINX Plugin
+    command: "certbot --nginx -d  {{ item }} -m {{ hostvars[inventory_hostname].email }} --agree-tos --noninteractive --redirect"
+    with_items: 
+    - "{{ hostvars[inventory_hostname].domain }}"
+    - "www.{{ hostvars[inventory_hostname].domain }}"
+    - "pma.{{ hostvars[inventory_hostname].domain }}"
+    - "git.{{ hostvars[inventory_hostname].domain }}"
+    - "mtm.{{ hostvars[inventory_hostname].domain }}"
+    - "code.{{ hostvars[inventory_hostname].domain }}"
+    - "kck.{{ hostvars[inventory_hostname].domain }}"
+    - "mdl.{{ hostvars[inventory_hostname].domain }}"
+
+  - name: copy Application Configuration Files
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+    loop:
+      - {src: "../../config/LocalSettings.php", dest: './cs/mountpoint'}
+      - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
+    become: true
+
+  - name: Set Letsencrypt Cronjob for Certificate Auto Renewal
+    cron: name=letsencrypt_renewal special_time=monthly job="/usr/bin/certbot renew"
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Set Letsencrypt Cronjob for Certificate Auto Renewal
+    cron: name=letsencrypt_renewal special_time=monthly job="/usr/bin/certbot renew"
+    when: ansible_facts['os_family'] == "RedHat"

@@ -32,7 +32,7 @@ if not exist ".\mountpoint" (
     tar -xzvf ./mountpoint.tar.gz
 )
 
-echo Bring PKC Container Services Up
+echo Bring PKC Container Services up
 docker-compose up -d
 echo Wait for Docker-compose to get services ready before launching the browser... 
 timeout /t %w% > nul

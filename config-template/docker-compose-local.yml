@@ -97,7 +97,7 @@ services:
       - DB_DATABASE=keycloak
       - DB_PASSWORD=secret
       - DB_USER=root
-      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
+      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for auroraz
       - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
       - PROXY_ADDRESS_FORWARDING=true
     ports:

@@ -39,7 +39,7 @@ function prep_local {
     # cp ./config-template/LocalSettings-local.php ./mountpoint/LocalSettings.php
     # config/app.ini
     cp ./config/app.ini ./mountpoint/gitea/gitea/conf/app.ini
-    cp ./config/update-mtm-config.sql ./mountpoint/backup_restore/mariadb/update-mtm-config.sql
+    # cp ./config/update-mtm-config.sql ./mountpoint/backup_restore/mariadb/update-mtm-config.sql
     # docker composre file, consist of minimal installation
     cp ./config-template/docker-compose-local.yml docker-compose.yml
 }
@@ -58,7 +58,7 @@ function prep_mw_localhost {
     #
     sed "s|#MTM_SUBDOMAIN|$MTM_FQDN|g" ./config-template/config.ini.php > ./config/config.ini.php
     #
-    sed "s|#YOUR_KCK_FQDN|$KCK_AUTH_FQDN|g" ./config-template/update-mtm-config.sql > ./config/update-mtm-config.sql
+    # sed "s|#YOUR_KCK_FQDN|$KCK_AUTH_FQDN|g" ./config-template/update-mtm-config.sql > ./config/update-mtm-config.sql
     #
     sed "s|#GIT_FQDN|$GIT_FQDN|g" ./config-template/app.ini > ./config/app.ini
 }
@@ -159,7 +159,7 @@ if [ -f .env ]; then
         echo "your browser "
         echo "http://pkc.local"
         echo "---------------------------------------------------------------------------"
-        open https://pkc.local
+        open http://pkc.local
 
     } else {
 

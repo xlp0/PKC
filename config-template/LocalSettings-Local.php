@@ -28,7 +28,7 @@ $wgSitename = "PKC";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "https://pkc.local";
+$wgServer = "http://pkc.local";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -323,16 +323,16 @@ wfLoadExtension( 'GoogleDocs4MW' );
 wfLoadExtension( 'TemplateWizard' );
 #
 # Configuration to enable keycloak
-// wfLoadExtension( 'OpenIDConnect' );
-// wfLoadExtension( 'PluggableAuth' );
+wfLoadExtension( 'OpenIDConnect' );
+wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
-// $wgOpenIDConnect_Config['https://pkc-ops.org/auth/realms/pkc-realm/'] = [
-//   'clientID' => 'pkc-client',
-//   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
-//   'scope' => [ 'openid', 'profile', 'email' ]
-// ];
-// $wgGroupPermissions['*']['autocreateaccount'] = true;
-// $wgPluggableAuth_EnableLocalLogin = true;
+$wgOpenIDConnect_Config['http://kck.pkc.local:8080/auth/realms/pkc-realm/'] = [
+  'clientID' => 'pkc-client',
+  'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
+  'scope' => [ 'openid', 'profile', 'email' ]
+];
+$wgGroupPermissions['*']['autocreateaccount'] = true;
+$wgPluggableAuth_EnableLocalLogin = true;
 #
 wfLoadExtension( 'Matomo' );
 $wgMatomoURL = "mtm.pkc.local";

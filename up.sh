@@ -23,13 +23,13 @@ function prep_local {
     if [ ! -f ./mountpoint.tar.gz ]; then
         # download mountpoint from pkc.pub
         echo "Download mountpoint"
-        wget http://res.pkc.pub/mountpoint-mac.tar.gz mountpoint.tar.gz
+        wget -O mountpoint.tar.gz http://res.pkc.pub/mountpoint-mac.tar.gz
     fi     
 
     # check if folder is already exists
     if [ ! -e ./mountpoint ]; then
         echo "Extracting mountpoint"
-        tar -xvf mountpoint-mac.tar.gz > /dev/null 2>&1
+        tar -xvf mountpoint.tar.gz > /dev/null 2>&1
     fi
 
     # copy LocalSettings.php
@@ -141,7 +141,6 @@ if [ -f .env ]; then
         # run ansible playbook
         echo "Running localhost ansible playbook, please provide password when ask."
         ansible-playbook ./resources/ansible-yml/cs-up-local.yml --connection=local --ask-become-pass
-
         # 
         echo "Wait 10 second for service to ready"
         sleep 5 

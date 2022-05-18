@@ -26,8 +26,6 @@ if not exist ".\mountPoint" (
     cd .\resources
     .\unzip mountPoint.zip -d ..\.
     cd ..
-
-
 )
 
 for %%d in %l% do (
@@ -52,4 +50,4 @@ if %found%==false (
 :readyToLaunch
 docker exec -it pkc-mediawiki php /var/www/html/maintenance/update.php
 
-start http://pkc.local
+start https://pkc.local

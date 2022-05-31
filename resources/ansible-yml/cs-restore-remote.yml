@@ -173,12 +173,14 @@
     become: yes
     register: output
     when: "hostvars[inventory_hostname].brl == 'src'"
+    ignore_errors: yes
 
   - name: Retention image backup to {{ retention }} day(s), on source server
     command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
     become: yes
     register: output
     when: "hostvars[inventory_hostname].brl == 'src'"
+    ignore_errors: yes
 
   ## Maintain only last x days retention, on dest server
   - name: Retention mysql backup to {{ retention }} day(s), on dest server
@@ -186,18 +188,21 @@
     become: yes
     register: output
     when: "hostvars[inventory_hostname].brl == 'dst'"
+    ignore_errors: yes
 
   - name: Retention image backup to {{ retention }} day(s), on dest server
     command: "find {{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki -type f -mtime +{{ retention }} -delete"
     become: yes
     register: output
     when: "hostvars[inventory_hostname].brl == 'dst'"
+    ignore_errors: yes
 
   ## Download result log
   - name: Fetch log result file from "{{ hostvars[inventory_hostname].inventory_hostname }}" to master
     fetch: src=/{{ pkc_install_root_dir }}restore_report.log dest=backup/ flat=yes
     #when: "inventory_hostname|string == dst_server"
     when: "hostvars[inventory_hostname].brl == 'src'"
+    ignore_errors: yes
 
 
   

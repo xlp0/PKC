@@ -156,6 +156,7 @@ services:
       - SUDO_PASSWORD=${VS_SUDO_PASSWORD} #optional
     volumes:
       - ./mountpoint/vs:/config
+      - ./mountpoint:/pkc_mountpoint
     ports:
       - ${VS_PORT_NUMBER}:8443
     restart: always

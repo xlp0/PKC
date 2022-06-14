@@ -335,7 +335,7 @@ $wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
   'scope' => [ 'openid', 'profile', 'email' ]
 ];
 $wgGroupPermissions['*']['autocreateaccount'] = true;
-$wgPluggableAuth_EnableLocalLogin = true;
+$wgPluggableAuth_EnableLocalLogin = false;
 #
 wfLoadExtension( 'Matomo' );
 $wgMatomoURL = "#MTM_SUBDOMAIN";
@@ -356,6 +356,8 @@ $srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'e
                                 'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables' ];
 #
 #
+# Enable String Functions
+$wgPFEnableStringFunctions = true;
 #
 # Enable User Protect Extensions
 # wfLoadExtension( 'UserProtect' );

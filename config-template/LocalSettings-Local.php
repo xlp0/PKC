@@ -338,6 +338,8 @@ wfLoadExtension( 'Matomo' );
 $wgMatomoURL = "mtm.pkc.local";
 $wgMatomoIDSite = "1";
 #
+# Enable String Functions
+$wgPFEnableStringFunctions = true;
 #
 # Interactive Timeline Extensions
 wfLoadExtension("InteractiveTimeline");

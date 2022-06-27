@@ -2,7 +2,8 @@
 version: "3.7"
 services:
   database:
-    image: emhavis/pkc_mariadb:v0.2
+    # image: emhavis/pkc_mariadb:v0.2
+    image: mariadb:10.6
     container_name: xlp_mariadb
     restart: always
     command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci --max-allowed-packet=67108864

@@ -1,50 +1,91 @@
 #
 # cd /home/pi/PKC && ansible-playbook -i ./resources/config/hosts-pkc-back-restore ./resources/ansible-yml/cs-test.yml
 #
----
-- name: install and provisioning dockers PKC Server
+# ---
+# - name: install and provisioning dockers PKC Server
+#   hosts: all
+#   become: yes
+#   gather_facts: yes
+#   vars:
+#     - docker_version: "latest"
+#     - retention: 1
+#     - db_wiki_backup_file: gasing-my_wiki-20220418T210627.sql.gz
+#     - dir_moodle_backup_file: 
+#     - db_moodle_backup_file: 
+#     - img_wiki_backup_file: gasing-20220418T210627-image.tar.gz
+
+#   tasks:
+- name: print out hosts architectures
   hosts: all
-  become: yes
-  gather_facts: yes
-  vars:
-    - docker_version: "latest"
-    - retention: 1
-    - db_wiki_backup_file: gasing-my_wiki-20220418T210627.sql.gz
-    - dir_moodle_backup_file: 
-    - db_moodle_backup_file: 
-    - img_wiki_backup_file: gasing-20220418T210627-image.tar.gz
-
+  gather_facts: True
   tasks:
-  - name: Perform restore on target server
-    block:
-    - name: Perform database and image restore
-      ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
-      args:
-        chdir: "{{ pkc_install_root_dir }}"
+    - debug: var=ansible_architecture
+    # - name: Download mountpoint file/armv7l
+    #   get_url:
+    #     url: http://res.pkc.pub/mountpoint-arm7l.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
+    #   when: ansible_architecture == 'armv7l'
 
-    - name: Perform moodle folder restore
-      ansible.builtin.shell: "tar -xzvf ./backup_restore/{{ dir_moodle_backup_file }} ./moodledata"
-      args:
-        chdir: "{{ pkc_install_root_dir }}mountpoint"
+    # - name: Download mountpoint file/arm64
+    #   get_url:
+    #     url: http://res.pkc.pub/mountpoint-arm64.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
+    #   when: ansible_architecture == 'aarch64'
+    
+    # - name: Download mountpoint file/amd64
+    #   get_url:
+    #     url: http://res.pkc.pub/mountpoint-arm.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
+    #   when: ansible_architecture == 'x86_64'
 
-    - name: Perform moodle database restore
-      community.docker.docker_container_exec:
-        container: xlp_mariadb
-        argv:
-          - /bin/bash
-          - "-c"
-          - "gunzip < /mnt/backup_restore/mariadb/{{ db_moodle_backup_file }} | mysql -u root -D moodle -psecret; exit $?"
-        chdir: /root
-      register: result
+    # - name: Download mountpoint file-nonARM
+    #   get_url:
+    #     url: http://res.pkc.pub/mountpoint.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
+    #     when: ansible_architecture != 'aarch64'
 
-    - name: Print stderr lines
-      debug:
-        var: result.stderr_lines
+    # - name: Download mountpoint file-ARM
+    #   get_url:
+    #     url: http://res.pkc.pub/mountpoint-arm64.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
+    #     when: ansible_architecture = 'aarch64'
 
-    run_once: yes
-    become: true
-    become_user: root
-    ignore_errors: yes
+    # - name: Extract Mountpoint
+    #   shell: "tar -xvf ./mountpoint.tar.gz"
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/cs"
+
+
+  # - name: Perform restore on target server
+  #   block:
+  #   - name: Perform database and image restore
+  #     ansible.builtin.shell: "./cs-restore.sh -m mountpoint -d {{ db_wiki_backup_file }} -i {{ img_wiki_backup_file }} -t my_wiki > ./restore_report.log"
+  #     args:
+  #       chdir: "{{ pkc_install_root_dir }}"
+
+  #   - name: Perform moodle folder restore
+  #     ansible.builtin.shell: "tar -xzvf ./backup_restore/{{ dir_moodle_backup_file }} ./moodledata"
+  #     args:
+  #       chdir: "{{ pkc_install_root_dir }}mountpoint"
+
+  #   - name: Perform moodle database restore
+  #     community.docker.docker_container_exec:
+  #       container: xlp_mariadb
+  #       argv:
+  #         - /bin/bash
+  #         - "-c"
+  #         - "gunzip < /mnt/backup_restore/mariadb/{{ db_moodle_backup_file }} | mysql -u root -D moodle -psecret; exit $?"
+  #       chdir: /root
+  #     register: result
+
+  #   - name: Print stderr lines
+  #     debug:
+  #       var: result.stderr_lines
+
+  #   run_once: yes
+  #   become: true
+  #   become_user: root
+  #   ignore_errors: yes
 
   # - name: Prepare .env file, based on hosts file, copy to target
   #   delegate_to: localhost

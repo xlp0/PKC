@@ -362,6 +362,9 @@ $wgPFEnableStringFunctions = true;
 # Enable User Protect Extensions
 # wfLoadExtension( 'UserProtect' );
 #
+# to resolve keycloak user issues
+$wgOpenIDConnect_ForceLogout = true;
+$wgRememberMe = 'never';
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

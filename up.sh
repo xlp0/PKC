@@ -210,13 +210,7 @@ if [ -f .env ]; then
         echo "finished prepare LocalSettings.php"
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-clean.yml
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up.yml
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
-        #
-        # Install HTTPS SSL
-        if [ $DEFAULT_TRANSPORT == "https" ]; then
-            echo "Installing SSL Certbot for $DEFAULT_TRANSPORT protocol"
-            ./resources/script/cs-certbot.sh ./resources/config/hosts
-        fi
+        # ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
         #
         # remote shell, ansible is not stable to bring container services up
         CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$domain 'cd /home/$ansible_user/cs; docker-compose pull'"
@@ -224,6 +218,13 @@ if [ -f .env ]; then
 
         CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$domain 'cd /home/$ansible_user/cs; docker-compose up -d'"
         eval $CMD_VARS
+        #
+        #
+        # Install HTTPS SSL
+        if [ $DEFAULT_TRANSPORT == "https" ]; then
+            echo "Installing SSL Certbot for $DEFAULT_TRANSPORT protocol"
+            ./resources/script/cs-certbot.sh ./resources/config/hosts
+        fi
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml
 
         echo "Check installation status"

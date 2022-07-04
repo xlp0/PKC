@@ -113,6 +113,8 @@ services:
     - ./backup/xml:/var/www/html/backup
     # Ansible working directory
     - ./mountpoint/ansible:/mnt/ansible
+    # Extensions Folder
+    - ./mountpoint/extensions:/var/www/html/extensions
     depends_on:
     - database
     networks:

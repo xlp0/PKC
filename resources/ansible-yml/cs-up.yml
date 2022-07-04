@@ -198,16 +198,18 @@
         - {src: '../../.env', dest: './cs/.env'}
       become: true
 
-    # - name: Upload mountpoint
-    #   ansible.builtin.copy:
-    #     src: ../../mountpoint.tar.gz
-    #     dest: "/home/{{ ansible_user }}/cs"
-
-    - name: Download mountpoint file
+    - name: Download mountpoint file/arm64
+      get_url:
+        url: http://res.pkc.pub/mountpoint-arm64.tar.gz
+        dest: "/home/{{ ansible_user }}/cs/mountpoint.tar.gz"
+      when: ansible_architecture == 'aarch64'
+    
+    - name: Download mountpoint file/amd64
       get_url:
         url: http://res.pkc.pub/mountpoint.tar.gz
         dest: "/home/{{ ansible_user }}/cs"
-        
+      when: ansible_architecture == 'x86_64'
+
     - name: Extract Mountpoint
       shell: "tar -xvf ./mountpoint.tar.gz"
       args:

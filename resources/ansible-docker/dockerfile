@@ -24,6 +24,6 @@ WORKDIR /
 RUN git clone https://github.com/xlp0/PKC.git -b dev
 
 RUN apt update
-RUN apt install -y ansible
+RUN apt install ansible -y
 
 WORKDIR /PKC

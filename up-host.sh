@@ -241,7 +241,7 @@ if [ -f .env ]; then
         echo "To access MediaWiki, please use admin/xlp-admin-pass"
         echo "To access Gitea, please use admin/pkc-admin"
         echo "To access Matomo, please use user/bitnami"
-        echo "To access phpMyAdmin, please use Database: database, User: root, password: secret"
+        echo "To access phpMyAdmin, please use Database: database, User: pkcmysqladmin, password: P2v*]57[(9mv3BqX"
         echo "To access Code Server, please use password: $VS_PASSWORD"
         echo "To access Keycloak, please use admin/Pa55w0rd"
         echo ""

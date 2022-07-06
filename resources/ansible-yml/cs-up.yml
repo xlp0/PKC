@@ -234,6 +234,7 @@
         - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
         - {src: '../../config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}
         - {src: '../../config/app.ini', dest: './cs/mountpoint/gitea/gitea/conf'}
+        - {src: '../../config-template/upload.ini', dest: './cs/mountpoint/upload.ini'}
       become: true
 
     - name: add user mtm

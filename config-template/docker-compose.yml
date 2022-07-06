@@ -115,6 +115,8 @@ services:
     - ./mountpoint/ansible:/mnt/ansible
     # Extensions Folder
     - ./mountpoint/extensions:/var/www/html/extensions
+    # Upload MAX change to 100MB on php.ini
+    - ./mountpoint/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     depends_on:
     - database
     networks:

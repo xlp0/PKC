@@ -20,6 +20,11 @@
   gather_facts: True
   tasks:
     - debug: var=ansible_architecture
+
+    - name: Execute composer update for extension
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'cd ./extensions/TemplateStyles && composer update --no-dev'"
+      become: yes
+      register: output
     # - name: Download mountpoint file/armv7l
     #   get_url:
     #     url: http://res.pkc.pub/mountpoint-arm7l.tar.gz

@@ -234,7 +234,7 @@
         - {src: '../../config/config.ini.php', dest: './cs/mountpoint/matomo/config'}
         - {src: '../../config/update-mtm-config.sql', dest: './cs/mountpoint/backup_restore/mariadb'}
         - {src: '../../config/app.ini', dest: './cs/mountpoint/gitea/gitea/conf'}
-        - {src: '../../config-template/upload.ini', dest: './cs/mountpoint/upload.ini'}
+        - {src: '../../config-template/uploads.ini', dest: './cs/mountpoint/uploads.ini'}
       become: true
 
     - name: add user mtm
@@ -257,6 +257,13 @@
         state: directory
         recurse: yes
         owner: mtm
+
+    - name: Change Images Ownership Folder
+      ansible.builtin.file:
+        path: ./cs/mountpoint/images
+        state: directory
+        recurse: yes
+        owner: www-data
 
     - name: Create group
       group:

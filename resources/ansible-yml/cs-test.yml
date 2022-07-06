@@ -21,10 +21,27 @@
   tasks:
     - debug: var=ansible_architecture
 
-    - name: Execute composer update for extension
-      command: "docker exec -t xlp_mediawiki /bin/bash -c 'cd ./extensions/TemplateStyles && composer update --no-dev'"
-      become: yes
-      register: output
+    - name: Uploading Configuration Files, starting services.
+      block: 
+      - name: copy NGINX Configuration Files
+        copy:
+          src: "{{ item.src }}"
+          dest: "{{ item.dest }}"
+          remote_src: false
+        loop:
+          - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
+          - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
+          - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
+          - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
+          - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
+          - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+          - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
+          - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
+        become: true
+        when: ansible_facts['os_family'] == "Debian"
+
+
+        
     # - name: Download mountpoint file/armv7l
     #   get_url:
     #     url: http://res.pkc.pub/mountpoint-arm7l.tar.gz

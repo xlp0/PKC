@@ -6,6 +6,11 @@
     - docker_version: "latest"
     
   tasks:
+    - name: Execute composer update for extension
+      command: "docker exec -t xlp_mediawiki /bin/bash -c 'cd ./extensions/TemplateStyles && composer update --no-dev'"
+      become: yes
+      register: output
+
     - name: Execute the Matomo Keycloak Config 
       command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
 

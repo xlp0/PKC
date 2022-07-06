@@ -90,7 +90,7 @@ function prep_vars {
 
     rm ./temp-out
     touch ./temp-out
-    sentence=$(cat ./resources/config/hosts)
+    sentence=$(cat ./resources/config/$HOST_FILE_NAME)
     for word in $sentence
     do
         echo $word >> temp-out
@@ -106,8 +106,13 @@ function prep_vars {
     echo $email
 }
 
+
 # Read .env, and present our plan to user
 echo "Mark Started Process at $(date)"
+
+# read parameters
+HOST_FILE_NAME=$1
+echo "$HOST_FILE_NAME"
 
 if [ -f .env ]; then
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
@@ -166,7 +171,7 @@ if [ -f .env ]; then
 
         # Prepare .env file
         echo "Preparing env file"
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-prep-env.yml        
+        ansible-playbook -i ./resources/config/$1 ./resources/ansible-yml/cs-prep-env.yml        
 
         GITEA_SUBDOMAIN=git.$YOUR_DOMAIN
         PMA_SUBDOMAIN=pma.$YOUR_DOMAIN
@@ -207,10 +212,10 @@ if [ -f .env ]; then
         prep_nginx
         # read -p "finished prepare nginx config Press [Enter] key to continue..."
         echo "finished prepare nginx config"
-        prep_mw_domain
+        
         echo "finished prepare LocalSettings.php"
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-clean.yml
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up.yml
+        ansible-playbook -i ./resources/config/$1 ./resources/ansible-yml/cs-clean.yml
+        ansible-playbook -i ./resources/config/$1 ./resources/ansible-yml/cs-up.yml
         ## ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
         #
         # remote shell, ansible is not stable to bring container services up
@@ -224,12 +229,12 @@ if [ -f .env ]; then
         # Install HTTPS SSL
         if [ $DEFAULT_TRANSPORT == "https" ]; then
             echo "Installing SSL Certbot for $DEFAULT_TRANSPORT protocol"
-            ./resources/script/cs-certbot.sh ./resources/config/hosts
+            ./resources/script/cs-certbot.sh ./resources/config/$1
         fi
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-3.yml
+        ansible-playbook -i ./resources/config/$1 ./resources/ansible-yml/cs-up-3.yml
 
         echo "Check installation status"
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-svc.yml  
+        ansible-playbook -i ./resources/config/$1 ./resources/ansible-yml/cs-svc.yml  
       
         echo "---------------------------------------------------------------------------"
         echo "Installation is complete, please read below information"

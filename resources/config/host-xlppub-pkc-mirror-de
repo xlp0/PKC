@@ -1,0 +1,2 @@
+xlp-pub ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/TSEA01.pem ansible_user=ubuntu domain=xlp.pub ansible_python_interpreter=/usr/bin/python2 brl=src retention=1 pkc_install_root_dir=/home/ubuntu/Workspace/PKC/
+pkc-mirror ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/OregonCluster.pem ansible_user=ubuntu domain=pkc-mirror.de brl=dst retention=1 pkc_install_root_dir=/home/ubuntu/cs/

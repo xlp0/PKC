@@ -60,6 +60,8 @@
     - "code.{{ hostvars[inventory_hostname].domain }}"
     - "kck.{{ hostvars[inventory_hostname].domain }}"
     - "mdl.{{ hostvars[inventory_hostname].domain }}"
+    - "qtux.{{ hostvars[inventory_hostname].domain }}"
+    - "swg.{{ hostvars[inventory_hostname].domain }}"
 
   - name: copy Application Configuration Files
     copy:

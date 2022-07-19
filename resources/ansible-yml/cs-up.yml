@@ -8,7 +8,7 @@
   tasks:
   - name: Ubuntu Installation Process
     block:
-    - name: "apt-get update"
+    - name: "apt-get update"    
       apt:
         update_cache: yes
         cache_valid_time: 3600
@@ -141,6 +141,8 @@
         - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
         - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
         - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
+        - {src: '../../config/swg.conf', dest: '/etc/nginx/sites-enabled/swg.conf'}
+        - {src: '../../config/qtux.conf', dest: '/etc/nginx/sites-enabled/qtux.conf'}
         - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
       become: true
       when: ansible_facts['os_family'] == "Debian"
@@ -158,6 +160,8 @@
         - {src: '../../config/vs.conf', dest: '/etc/nginx/conf.d/vs.conf'}
         - {src: '../../config/kck.conf', dest: '/etc/nginx/conf.d/kck.conf'}
         - {src: '../../config/mdl.conf', dest: '/etc/nginx/conf.d/mdl.conf'}
+        - {src: '../../config/swg.conf', dest: '/etc/nginx/conf.d/swg.conf'}
+        - {src: '../../config/qtux.conf', dest: '/etc/nginx/conf.d/qtux.conf'}
         - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/conf.d/reverse-proxy.conf'}
       become: true
       when: ansible_facts['os_family'] == "RedHat"
@@ -174,8 +178,15 @@
 
     - name: Upload docker-compose
       ansible.builtin.copy:
+        src: ../../config-template/docker-compose-arm64.yml
+        dest: ./cs/docker-compose.yml
+      when: ansible_architecture == 'aarch64'
+
+    - name: Upload docker-compose
+      ansible.builtin.copy:
         src: ../../config-template/docker-compose.yml
         dest: ./cs
+      when: ansible_architecture == 'x86_64'
 
     # - name: Upload initdb script
     #   ansible.builtin.copy:
@@ -214,6 +225,7 @@
       shell: "tar -xvf ./mountpoint.tar.gz"
       args:
         chdir: "/home/{{ ansible_user }}/cs"
+        warn: no
 
     - name: Upload LocalSettings.php and other setting
       copy:
@@ -274,29 +286,6 @@
       user: name="{{ ansible_user }}"
             groups=docker
             append=yes
-
-    # - name: Create and start PKC services
-    #   docker_compose:
-    #     project_src: cs
-
-    # - name: Execute the Matomo Keycloak Config 
-    #   command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
-
-    # - name: Execute the update script 
-    #   command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"
-
-    # - name: SELinux Authorization, for RedHat -1
-    #   shell: "setsebool -P httpd_can_network_connect 1"
-    #   when: ansible_facts['os_family'] == "RedHat"
-
-    # - name: SELinux Authorization, for RedHat -2
-    #   shell: "setsebool -P nis_enabled 1"
-    #   when: ansible_facts['os_family'] == "RedHat"
-
-    # - name: restart nginx
-    #   service:
-    #     name: nginx
-    #     state: restarted
 
     when: ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "RedHat"
     become: true

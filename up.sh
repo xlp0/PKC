@@ -10,6 +10,10 @@ function prep_nginx {
     sed "s/#MTM_SUBDOMAIN/$MTM_SUBDOMAIN/g" ./config-template/mtm.conf > ./config/mtm.conf
     sed "s/#VS_SUBDOMAIN/$VS_SUBDOMAIN/g" ./config-template/vs.conf > ./config/vs.conf
     sed "s/#KCK_SUBDOMAIN/$KCK_SUBDOMAIN/g" ./config-template/kck.conf > ./config/kck.conf
+
+    sed "s/#QTUX_SUBDOMAIN/$QTUX_SUBDOMAIN/g" ./config-template/qtux.conf > ./config/qtux.conf
+    sed "s/#SWG_SUBDOMAIN/$SWG_SUBDOMAIN/g" ./config-template/swg.conf > ./config/swg.conf
+
     sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/reverse-proxy.conf > ./config/reverse-proxy.conf
     sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/pkc.conf > ./config/pkc.conf
     sed "s/#MDL_SUBDOMAIN/$MDL_SUBDOMAIN/g" ./config-template/mdl.conf > ./config/mdl.conf
@@ -174,6 +178,10 @@ if [ -f .env ]; then
         VS_SUBDOMAIN=code.$YOUR_DOMAIN
         KCK_SUBDOMAIN=kck.$YOUR_DOMAIN
         MDL_SUBDOMAIN=mdl.$YOUR_DOMAIN
+        # swagger
+        SWG_SUBDOMAIN=swg.$YOUR_DOMAIN
+        # quant-ux
+        QTUX_SUBDOMAIN=qtux.$YOUR_DOMAIN
 
         # Displays installation plan on remote host machine
         echo "--------------------------------------------------------"
@@ -195,6 +203,8 @@ if [ -f .env ]; then
         echo "Matomo will be accessible from: $MTM_SUBDOMAIN"
         echo "Code Server will be accessible from: $VS_SUBDOMAIN"
         echo "Keycloak will be accessible from: $KCK_SUBDOMAIN"
+        echo "Swagger will be accessible from: $SWG_SUBDOMAIN"
+        echo "Quant UX will be accessible from: $QTUX_SUBDOMAIN"
         echo ""
         echo ""
         # read -p "Press [Enter] key to continue..."
@@ -211,14 +221,15 @@ if [ -f .env ]; then
         echo "finished prepare LocalSettings.php"
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-clean.yml
         ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up.yml
-        ## ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-up-2.yml
         #
         # remote shell, ansible is not stable to bring container services up
         CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$ansible_host_name 'cd /home/$ansible_user/cs; docker-compose pull'"
-        eval $CMD_VARS
+        echo "docker-compose pull"
+        eval $CMD_VARS >/dev/null
 
         CMD_VARS="ssh -i $ansible_ssh_private_key_file $ansible_user@$ansible_host_name 'cd /home/$ansible_user/cs; docker-compose up -d'"
-        eval $CMD_VARS
+        echo "docker-compose up -d"
+        eval $CMD_VARS > /dev/null
         #
         #
         # Install HTTPS SSL
@@ -239,6 +250,8 @@ if [ -f .env ]; then
         echo "To access phpMyAdmin, please use Database: database, User: pkcmysqladmin, password: P2v*]57[(9mv3BqX"
         echo "To access Code Server, please use password: $VS_PASSWORD"
         echo "To access Keycloak, please use admin/Pa55w0rd"
+        echo "To access Quant-UX, please register"
+        echo "To access Swagger-API, no password"
         echo ""
         echo "---------------------------------------------------------------------------"
 
@@ -251,4 +264,5 @@ else {
     exit 1;
 }
 fi
+
 echo "Mark Finished Process at $(date)"

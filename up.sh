@@ -9,13 +9,17 @@ function prep_nginx {
     sed "s/#PMA_SUBDOMAIN/$PMA_SUBDOMAIN/g" ./config-template/pma.conf > ./config/pma.conf
     sed "s/#MTM_SUBDOMAIN/$MTM_SUBDOMAIN/g" ./config-template/mtm.conf > ./config/mtm.conf
     sed "s/#VS_SUBDOMAIN/$VS_SUBDOMAIN/g" ./config-template/vs.conf > ./config/vs.conf
+
     sed "s/#KCK_SUBDOMAIN/$KCK_SUBDOMAIN/g" ./config-template/kck.conf > ./config/kck.conf
+    sed -i "s|#YOUR_DOMAIN|$YOUR_DOMAIN|g" ./config/kck.conf
 
     sed "s/#QTUX_SUBDOMAIN/$QTUX_SUBDOMAIN/g" ./config-template/qtux.conf > ./config/qtux.conf
     sed "s/#SWG_SUBDOMAIN/$SWG_SUBDOMAIN/g" ./config-template/swg.conf > ./config/swg.conf
 
     sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/reverse-proxy.conf > ./config/reverse-proxy.conf
     sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/pkc.conf > ./config/pkc.conf
+    sed -i "s|#KCK_SUBDOMAIN|$KCK_SUBDOMAIN|g" ./config/pkc.conf
+
     sed "s/#MDL_SUBDOMAIN/$MDL_SUBDOMAIN/g" ./config-template/mdl.conf > ./config/mdl.conf
     echo ""
 }
@@ -207,7 +211,7 @@ if [ -f .env ]; then
         echo "Quant UX will be accessible from: $QTUX_SUBDOMAIN"
         echo ""
         echo ""
-        # read -p "Press [Enter] key to continue..."
+        read -p "Press [Enter] key to continue..."
         echo "--------------------------------------------------------"
 
         prep_vars
@@ -215,7 +219,7 @@ if [ -f .env ]; then
         # read  -p "press enter to continue ..."
 
         prep_nginx
-        # read -p "finished prepare nginx config Press [Enter] key to continue..."
+        read -p "finished prepare nginx config Press [Enter] key to continue..."
         echo "finished prepare nginx config"
         prep_mw_domain
         echo "finished prepare LocalSettings.php"

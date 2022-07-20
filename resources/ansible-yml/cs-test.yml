@@ -19,32 +19,28 @@
   hosts: all
   gather_facts: True
   tasks:
-    - name: Extract Mountpoint
-      shell: "tar -xvf ./mountpoint.tar.gz"
-      args:
-        chdir: "/home/{{ ansible_user }}/cs"
-        warn: no
-
     - debug: var=ansible_architecture
 
-    # - name: Uploading Configuration Files, starting services.
-    #   block: 
-    #   - name: copy NGINX Configuration Files
-    #     copy:
-    #       src: "{{ item.src }}"
-    #       dest: "{{ item.dest }}"
-    #       remote_src: false
-    #     loop:
-    #       - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
-    #       - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
-    #       - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
-    #       - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
-    #       - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
-    #       - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
-    #       - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
-    #       - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
-    #     become: true
-    #     when: ansible_facts['os_family'] == "Debian"
+    - name: Uploading Configuration Files, starting services.
+      block: 
+      - name: copy NGINX Configuration Files
+        copy:
+          src: "{{ item.src }}"
+          dest: "{{ item.dest }}"
+          remote_src: false
+        loop:
+          - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
+          - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
+          - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
+          - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
+          - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
+          - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+          - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
+          - {src: '../../config/swg.conf', dest: '/etc/nginx/sites-enabled/swg.conf'}
+          - {src: '../../config/qtux.conf', dest: '/etc/nginx/sites-enabled/qtux.conf'}
+          - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
+        become: true
+        when: ansible_facts['os_family'] == "Debian"
 
 
         

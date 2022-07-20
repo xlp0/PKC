@@ -27,9 +27,11 @@ fi
 
 echo "Prepare configuration file"
 FQDN="https://www.$YOUR_DOMAIN"
+KCK_FQDN="https://kck.$YOUR_DOMAIN"
 #
 sed "s/#MTM_SUBDOMAIN/$MTM_SUBDOMAIN/g" ./config-template/LocalSettings.php > ./config/LocalSettings.php
 sed -i "s|#YOUR_FQDN|$FQDN|g" ./config/LocalSettings.php
+sed -i "s|#KCK_SUBDOMAIN|$KCK_FQDN|g" ./config/LocalSettings.php
 #
 sed "s/#YOUR_DOMAIN/$YOUR_DOMAIN/g" ./config-template/default.yml > ./config/default.yml
 sed -i "s|#YOUR_EMAIL_ADDRESS|$YOUR_EMAIL_ADDRESS|g" ./config/default.yml

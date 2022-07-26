@@ -1,1 +1,1 @@
-pasarrakyatbali-id ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/PKC-KEY.pem ansible_user=ubuntu domain=pasarrakyatbali.id brl=src retention=1 pkc_install_root_dir=/home/ubuntu/cs/
+pasarrakyatbali-id ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/PKC-KEY.pem ansible_user=ubuntu domain=pasarrakyatbali.id default_transport=https email=emhavis@gmail.com

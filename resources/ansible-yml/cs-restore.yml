@@ -3,7 +3,7 @@
 # ansible-playbook -i hosts cs-restore.yml --extra-vars "dbname=backup-db.sql.zip imagename=backup-image-20211003.tar.gz"
 # pkc-pub-20220713T111015-image.tar.gz
 # pkc-pub-my_wiki-20220713T111015.sql.gz
-# ansible-playbook -i ./resources/config/hosts-pkc-dev ./resources/ansible-yml/cs-restore.yml --extra-vars "dbname=pkc-pub-my_wiki-20220713T111015.sql.gz imagename=pkc-pub-20220713T111015-image.tar.gz"
+# ansible-playbook -i ./resources/config/host-pkc-back ./resources/ansible-yml/cs-restore.yml --extra-vars "dbname=pkc-pub-my_wiki-20220713T111015.sql.gz imagename=pkc-pub-20220713T111015-image.tar.gz"
 # 
 ---
 - name: Restore database and image backup
@@ -28,8 +28,8 @@
       dest: "{{ item.dest }}"
       remote_src: false
     loop:
-      - {src: '../../backup/{{ dbname }}', dest: "{{ ansible_env.PWD }}/cs-test/mountpoint/backup_restore/mariadb/{{ dbname }}"}
-      - {src: '../../backup/{{ imagename }}', dest: "{{ ansible_env.PWD }}/cs-test/mountpoint/backup_restore/mediawiki/{{ imagename }}"}
+      - {src: '../../backup/{{ dbname }}', dest: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb/{{ dbname }}"}
+      - {src: '../../backup/{{ imagename }}', dest: "{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki/{{ imagename }}"}
     become: true
 
   - name: Execute restore script

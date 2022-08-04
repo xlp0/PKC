@@ -1,5 +1,5 @@
 ---
-- name: install docker containers
+- name: Clean up docker containers
   hosts: all
   become: yes
 

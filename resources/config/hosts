@@ -1,1 +1,1 @@
-pkc-back ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/TSEA01-N.pem ansible_user=ubuntu domain=pkc-back.org default_transport=https email=emhavis@gmail.com
+pkc.local.id ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_user=ubuntu domain=pkc.local.id default_transport=http email=emhavis@gmail.com

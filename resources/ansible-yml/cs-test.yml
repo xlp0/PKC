@@ -1,5 +1,5 @@
 #
-# cd /home/pi/PKC && ansible-playbook -i ./resources/config/hosts-pkc-back-restore ./resources/ansible-yml/cs-test.yml
+# cd /home/pi/PKC && ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-test.yml
 #
 # ---
 # - name: install and provisioning dockers PKC Server
@@ -18,29 +18,39 @@
 - name: print out hosts architectures
   hosts: all
   gather_facts: True
+  become: yes
   tasks:
     - debug: var=ansible_architecture
 
-    - name: Uploading Configuration Files, starting services.
-      block: 
-      - name: copy NGINX Configuration Files
-        copy:
-          src: "{{ item.src }}"
-          dest: "{{ item.dest }}"
-          remote_src: false
-        loop:
-          - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
-          - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
-          - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
-          - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
-          - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
-          - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
-          - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
-          - {src: '../../config/swg.conf', dest: '/etc/nginx/sites-enabled/swg.conf'}
-          - {src: '../../config/qtux.conf', dest: '/etc/nginx/sites-enabled/qtux.conf'}
-          - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
-        become: true
-        when: ansible_facts['os_family'] == "Debian"
+    - name: Download mountpoint file/amd64
+      get_url:
+        url: https://res.posco.id/mountpoint.tar.gz
+        dest: "/home/{{ ansible_user }}/cs"
+      when: ansible_architecture == 'x86_64'
+      async: 600 # Maximum allowed time in Seconds
+      poll: 15 # Polling Interval in Seconds
+      register: scrout
+
+    # - name: Uploading Configuration Files, starting services.
+    #   block: 
+    #   - name: copy NGINX Configuration Files
+    #     copy:
+    #       src: "{{ item.src }}"
+    #       dest: "{{ item.dest }}"
+    #       remote_src: false
+    #     loop:
+    #       - {src: '../../config/git.conf', dest: '/etc/nginx/sites-enabled/git.conf'}
+    #       - {src: '../../config/mtm.conf', dest: '/etc/nginx/sites-enabled/mtm.conf'}
+    #       - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
+    #       - {src: '../../config/pma.conf', dest: '/etc/nginx/sites-enabled/pma.conf'}
+    #       - {src: '../../config/vs.conf', dest: '/etc/nginx/sites-enabled/vs.conf'}
+    #       - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+    #       - {src: '../../config/mdl.conf', dest: '/etc/nginx/sites-enabled/mdl.conf'}
+    #       - {src: '../../config/swg.conf', dest: '/etc/nginx/sites-enabled/swg.conf'}
+    #       - {src: '../../config/qtux.conf', dest: '/etc/nginx/sites-enabled/qtux.conf'}
+    #       - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
+    #     become: true
+    #     when: ansible_facts['os_family'] == "Debian"
 
 
         

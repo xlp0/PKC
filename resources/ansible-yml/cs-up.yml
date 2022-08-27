@@ -211,15 +211,21 @@
 
     - name: Download mountpoint file/arm64
       get_url:
-        url: http://res.pkc.pub/mountpoint-arm64.tar.gz
+        url: https://res.posco.id/mountpoint-arm64.tar.gz
         dest: "/home/{{ ansible_user }}/cs/mountpoint.tar.gz"
       when: ansible_architecture == 'aarch64'
+      async: 1200 # Maximum allowed time in Seconds
+      poll: 15 # Polling Interval in Seconds
+      register: scrout
     
     - name: Download mountpoint file/amd64
       get_url:
-        url: http://res.pkc.pub/mountpoint.tar.gz
+        url: https://res.posco.id/mountpoint.tar.gz
         dest: "/home/{{ ansible_user }}/cs"
       when: ansible_architecture == 'x86_64'
+      async: 1200 # Maximum allowed time in Seconds
+      poll: 15 # Polling Interval in Seconds
+      register: scrout
 
     - name: Extract Mountpoint
       shell: "tar -xvf ./mountpoint.tar.gz"
@@ -273,6 +279,13 @@
     - name: Change Images Ownership Folder
       ansible.builtin.file:
         path: ./cs/mountpoint/images
+        state: directory
+        recurse: yes
+        owner: www-data
+
+    - name: Change Widget Ownership Folder
+      ansible.builtin.file:
+        path: ./cs/mountpoint/extensions
         state: directory
         recurse: yes
         owner: www-data

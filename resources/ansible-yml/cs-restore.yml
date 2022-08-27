@@ -3,7 +3,7 @@
 # ansible-playbook -i hosts cs-restore.yml --extra-vars "dbname=backup-db.sql.zip imagename=backup-image-20211003.tar.gz"
 # pkc-pub-20220713T111015-image.tar.gz
 # pkc-pub-my_wiki-20220713T111015.sql.gz
-# ansible-playbook -i ./resources/config/host-pkc-back ./resources/ansible-yml/cs-restore.yml --extra-vars "dbname=pkc-pub-my_wiki-20220713T111015.sql.gz imagename=pkc-pub-20220713T111015-image.tar.gz"
+# ansible-playbook -i ./resources/config/host-pkc-back ./resources/ansible-yml/cs-restore.yml --extra-vars "dbname=pkc-pub-my_wiki-20220726T153145.sql.gz imagename=pkc-pub-20220726T153145-image.tar.gz"
 # 
 ---
 - name: Restore database and image backup
@@ -33,10 +33,10 @@
     become: true
 
   - name: Execute restore script
-    command: sh -c "{{ ansible_env.PWD }}/cs-test/cs-restore.sh -m {{ ansible_env.PWD }}/cs/mountpoint -d {{ dbname }} -i {{ imagename }} -t my_wiki"
+    command: sh -c "{{ ansible_env.PWD }}/cs/cs-restore.sh -m {{ ansible_env.PWD }}/cs/mountpoint -d {{ dbname }} -i {{ imagename }} -t my_wiki"
     become: true
     # pkc-pub-my_wiki-20220713T111015.sql.g
     # cs-restore.sh -m ./mountpoint -d pkc-pub-my_wiki-20220713T111015.sql.gz -i pkc-pub-20220713T111015-image.tar.gz -t my_wiki
 
   - name: Execute the update script 
-    command: sh -c "{{ ansible_env.PWD }}/cs-test/update-sw.sh"
+    command: sh -c "{{ ansible_env.PWD }}/cs/update-sw.sh"

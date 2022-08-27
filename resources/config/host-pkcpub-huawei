@@ -1,0 +1,1 @@
+huawei-pkcpub ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/huawei-key.pem ansible_user=ubuntu domain=pkc.pub brl=src retention=1 pkc_install_root_dir=/home/ubuntu/cs/

@@ -22,14 +22,18 @@
   tasks:
     - debug: var=ansible_architecture
 
-    - name: Download mountpoint file/amd64
-      get_url:
-        url: https://res.posco.id/mountpoint.tar.gz
-        dest: "/home/{{ ansible_user }}/cs"
-      when: ansible_architecture == 'x86_64'
-      async: 600 # Maximum allowed time in Seconds
-      poll: 15 # Polling Interval in Seconds
-      register: scrout
+    - name: Set Letsencrypt Cronjob for Certificate Auto Renewal
+      cron: name=letsencrypt_renewal special_time=monthly job="/usr/bin/certbot renew"
+      when: ansible_facts['os_family'] == "Debian"
+
+    # - name: Download mountpoint file/amd64
+    #   get_url:
+    #     url: https://res.posco.id/mountpoint.tar.gz
+    #     dest: "/home/{{ ansible_user }}/cs"
+    #   when: ansible_architecture == 'x86_64'
+    #   async: 600 # Maximum allowed time in Seconds
+    #   poll: 15 # Polling Interval in Seconds
+    #   register: scrout
 
     # - name: Uploading Configuration Files, starting services.
     #   block: 

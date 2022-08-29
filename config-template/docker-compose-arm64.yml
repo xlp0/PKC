@@ -123,7 +123,8 @@ services:
 
   gitea:
     #image: gitea/gitea:1.15.2
-    image: emhavis/pkc_gitea:v0.1
+    image: gitea/gitea:1.15.2
+    #image: emhavis/pkc_gitea:v0.1
     container_name: xlp_gitea
     environment:
     - USER_UID=1000
@@ -150,7 +151,8 @@ services:
 
   code-server:
     #image: lscr.io/linuxserver/code-server
-    image: emhavis/pkc_codeserver:v0.2
+    #image: emhavis/pkc_codeserver:v0.2
+    image: lscr.io/linuxserver/code-server:arm64v8-4.4.0
     container_name: xlp_vs
     environment:
       - PUID=1000

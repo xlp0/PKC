@@ -13,6 +13,7 @@
 
     - name: Execute the Matomo Keycloak Config 
       command: "sh {{ ansible_env.PWD }}/cs/mtm-sql.sh" 
+      ignore_errors: yes
 
     - name: Execute the update script 
       command: "sh {{ ansible_env.PWD }}/cs/update-sw.sh"

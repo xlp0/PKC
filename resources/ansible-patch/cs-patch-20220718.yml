@@ -1,0 +1,92 @@
+---
+# This playbook is to patch update ref to Keycloak CORS issue
+#
+# How to execute on project root folder
+# cd /home/pi/PKC && ansible-playbook -i ./resources/config/hosts-all ./resources/ansible-patch/cs-patch-20220718.yml
+# 
+#
+- name: Patch CORS Issue
+  hosts: all
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Prepare new NGINX Config files for "{{ hostvars[inventory_hostname].inventory_hostname }}"
+      block:
+        - name: copy from template NGINX Configuration Files
+          delegate_to: localhost
+          copy:
+            src: "{{ item.src }}"
+            dest: "{{ item.dest }}"
+            remote_src: false
+          loop:
+            - {src: '../../config-template/pkc.conf', dest: '../../config/pkc.conf'}
+            - {src: '../../config-template/kck.conf', dest: '../../config/kck.conf'}
+
+        - name: edit pkc.conf for {{ hostvars[inventory_hostname].domain }}
+          delegate_to: localhost
+          ansible.builtin.replace:
+            path: ../../config/pkc.conf
+            regexp: '#YOUR_DOMAIN'
+            replace: '{{ hostvars[inventory_hostname].domain }}'
+
+        - name: edit pkc.conf for {{ hostvars[inventory_hostname].domain }}
+          delegate_to: localhost
+          ansible.builtin.replace:
+            path: ../../config/pkc.conf
+            regexp: '#KCK_SUBDOMAIN'
+            replace: 'kck.{{ hostvars[inventory_hostname].domain }}'
+
+        - name: edit kck.conf for {{ hostvars[inventory_hostname].domain }}
+          delegate_to: localhost
+          ansible.builtin.replace:
+            path: ../../config/kck.conf
+            regexp: '#KCK_SUBDOMAIN'
+            replace: 'kck.{{ hostvars[inventory_hostname].domain }}'
+
+        - name: edit kck.conf for {{ hostvars[inventory_hostname].domain }}
+          delegate_to: localhost
+          ansible.builtin.replace:
+            path: ../../config/kck.conf
+            regexp: '#YOUR_DOMAIN'
+            replace: '{{ hostvars[inventory_hostname].domain }}'
+
+      become: true
+      become_user: root
+      ignore_errors: yes
+
+    - name: Backup current NGINX Configuration Files into mountpoint/backup folder on "{{ hostvars[inventory_hostname].domain }}"
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: true
+      loop:
+        - {src: '/etc/nginx/sites-enabled/pkc.conf', dest: '/home/ubuntu/cs/mountpoint/backup_restore/pkc.conf.backup'}
+        - {src: '/etc/nginx/sites-enabled/kck.conf', dest: '/home/ubuntu/cs/mountpoint/backup_restore/kck.conf.backup'}
+      become: true
+      become_user: root
+      ignore_errors: no
+
+    - name: upload NGINX Configuration Files to "{{ hostvars[inventory_hostname].domain }}"
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        remote_src: false
+      loop:
+        - {src: '../../config/pkc.conf', dest: '/etc/nginx/sites-enabled/pkc.conf'}
+        - {src: '../../config/kck.conf', dest: '/etc/nginx/sites-enabled/kck.conf'}
+      become: true
+      become_user: root
+      ignore_errors: yes
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Create and Install Cert Using NGINX Plugin for PKC and KCK
+      command: "certbot --nginx -d  {{ item }} -m {{ hostvars[inventory_hostname].email }} --agree-tos --noninteractive --redirect"
+      with_items: 
+      - "{{ hostvars[inventory_hostname].domain }}"
+      - "kck.{{ hostvars[inventory_hostname].domain }}"

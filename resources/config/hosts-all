@@ -1,0 +1,1 @@
+pasarrakyatbali-id ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/PKC-KEY.pem ansible_user=ubuntu domain=pasarrakyatbali.id email=emhavis@gmail.com

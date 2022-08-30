@@ -1,0 +1,30 @@
+---
+- name: Brings up PKC Docker Service
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Find out playbook's path
+      shell: pwd
+      register: playbook_path_output
+
+    - debug: var=playbook_path_output.stdout
+
+    - name: Brings PKC Service Up
+      command: "docker-compose -f ./cs/docker-compose.yml up -d" 
+
+  # - name: Print debug
+  #   ansible.builtin.debug:
+  #     var: ansible_pwd
+  # - community.docker.docker_compose:
+  #     project_src: cs
+  #     build: yes
+  #     state: present
+  #     timeout: 30
+
+  # - community.docker.docker_compose:
+  #     project_src: cs
+  #     state: present
+  #     timeout: 30
+
+

@@ -1,0 +1,147 @@
+---
+# This playbook is to patch update ref to adding QuantUX and Swagger
+# services into PKC Implementation
+#
+# How to execute on project root folder
+# ansible-playbook -i ./resources/config/host-pasarrakyatbali-id ./resources/ansible-patch/cs-patch-20220722.yml
+# 
+- name: Adding QuantUX and Swagger
+  hosts: all
+  serial: 1
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+  - name: Prepare .env file, based on hosts file, copy to target
+    delegate_to: localhost
+    copy: 
+      src: ../../config-template/.env-template
+      dest: ../../.env
+
+  - name: .env, edit 1
+    delegate_to: localhost
+    ansible.builtin.replace:
+      path: ../../.env
+      regexp: '#YOUR_DOMAIN#'
+      replace: '{{ hostvars[inventory_hostname].domain }}'
+
+  - name: .env, edit 2
+    delegate_to: localhost
+    ansible.builtin.replace:
+      path: ../../.env
+      regexp: '#YOUR_DEFAULT_TRANSPORT#'
+      replace: '{{ hostvars[inventory_hostname].default_transport }}'
+
+  - name: .env, edit 3
+    delegate_to: localhost
+    ansible.builtin.replace:
+      path: ../../.env
+      regexp: '#YOUR_EMAIL_ADDRESS#'
+      replace: '{{ hostvars[inventory_hostname].email }}'
+
+  - name: Copy qtux.conf from template
+    delegate_to: localhost
+    copy: 
+      src: ../../config-template/qtux.conf
+      dest: ../../config/qtux.conf
+
+  - name: Copy swg.conf from template
+    delegate_to: localhost
+    copy: 
+      src: ../../config-template/swg.conf
+      dest: ../../config/swg.conf
+
+  - name: edit qtux.conf
+    delegate_to: localhost
+    ansible.builtin.replace:
+      path: ../../config/qtux.conf
+      regexp: '#QTUX_SUBDOMAIN'
+      replace: 'qtux.{{ hostvars[inventory_hostname].domain }}'
+
+  - name: edit swg.conf
+    delegate_to: localhost
+    ansible.builtin.replace:
+      path: ../../config/swg.conf
+      regexp: '#SWG_SUBDOMAIN'
+      replace: 'swg.{{ hostvars[inventory_hostname].domain }}'
+
+  - name: backing-up files debian
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: yes
+    loop:
+      - {src: '/etc/nginx/sites-enable/qtux.conf', dest: '/home/ubuntu/patch20220722/'}
+      - {src: '/etc/nginx/sites-enable/swg.conf', dest: '/home/ubuntu/patch20220722/'}
+      - {src: '/home/ubuntu/cs/.env', dest: '/home/ubuntu/patch20220722/'}
+      - {src: '/home/ubuntu/cs/docker-compose.yml', dest: '/home/ubuntu/patch20220722/'}
+    become: true
+    ignore_errors: yes
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: backing-up files redhat
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: yes
+    loop:
+      - {src: '/etc/nginx/conf.d/qtux.conf', dest: '/home/ubuntu/patch20220722/'}
+      - {src: '/etc/nginx/conf.d/swg.conf', dest: '/home/ubuntu/patch20220722/'}
+      - {src: '/home/ubuntu/cs/.env', dest: '/home/ubuntu/patch20220722/'}
+      - {src: '/home/ubuntu/cs/docker-compose.yml', dest: '/home/ubuntu/patch20220722/'}
+    become: true
+    ignore_errors: yes
+    when: ansible_facts['os_family'] == "Debian"  v
+
+  - name: upload files - Ubuntu
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+    loop:
+      - {src: '../../config/swg.conf', dest: '/etc/nginx/sites-enabled/swg.conf'}
+      - {src: '../../config/qtux.conf', dest: '/etc/nginx/sites-enabled/qtux.conf'}
+      - {src: '../../.env', dest: '/home/ubuntu/cs'}
+      - {src: '../../config/reverse-proxy.conf', dest: '/etc/nginx/sites-enabled/reverse-proxy.conf'}
+    become: true
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: upload files - redhat
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+    loop:
+      - {src: '../../config/swg.conf', dest: '/etc/nginx/conf.d/swg.conf'}
+      - {src: '../../config/qtux.conf', dest: '/etc/nginx/conf.d/qtux.conf'}
+    become: true
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: upload files - docker-compose
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+    loop:
+      - {src: '../../config-template/docker-compose.yml', dest: '/home/ubuntu/cs'}
+    become: true
+
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+
+  - name: Install certificate using certbot qtux and swg
+    command: "certbot --nginx -d  {{ item }} -m {{ hostvars[inventory_hostname].email }} --agree-tos --noninteractive --redirect"
+    with_items: 
+    - "qtux.{{ hostvars[inventory_hostname].domain }}"
+    - "swg.{{ hostvars[inventory_hostname].domain }}"
+
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+  # - name: down docker
+  # - name: up docker
+

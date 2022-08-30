@@ -1,0 +1,16 @@
+---
+#crontask_file: ""
+
+#crontask_name: ""
+crontask_day: "*"
+crontask_hour: "*"
+crontask_minute: "*"
+crontask_month: "*"
+crontask_weekday: "*"
+
+#crontask_job: ""
+
+crontask_state: "present"
+crontask_user: "root"
+
+crontask_commented_out: "no"

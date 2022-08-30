@@ -1,0 +1,21 @@
+---
+- name: Transfer backup file to target machine
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Fetch backup file to remote server
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: false
+      mode: u=rwx,g=rx,o=rx
+
+    loop:
+      - {src: './mountpoint/backup_restore/mariadb/auto-database.sql.gz', dest: '{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mariadb'}
+      - {src: './mountpoint/backup_restore/mediawiki/auto-images.tar.gz', dest: '{{ ansible_env.PWD }}/cs/mountpoint/backup_restore/mediawiki'}
+    become: true
+    
+  - name: execute restore script on remote server
+    command: sh -c "{{ ansible_env.PWD }}/cs/cs-restore.sh -m {{ ansible_env.PWD }}/cs/mountpoint -d auto-database.sql.gz -i auto-images.tar.gz"
+    become: true

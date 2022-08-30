@@ -1,0 +1,1 @@
+pkc-mirror.org ansible_connection=ssh ansible_ssh_private_key_file=~/.ssh/id_rsa_nin37 ansible_user=ubuntu domain=pkc-mirror.org default_transport=https email=emhavis@gmail.com

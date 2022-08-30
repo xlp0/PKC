@@ -1,0 +1,49 @@
+---
+
+- name: create script directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items: "{{ [ mysql_backup_script_dir, mysql_backup_custom_script_dir, mysql_backup_conf_dir,  mysql_backup_encrypt_aes_key_dir, mysql_backup_scp_identity_dir ] | unique }}"
+
+- name: copy common script mysql-backup.sh
+  copy:
+    src: mysql-backup.sh
+    dest: "{{ mysql_backup_script }}"
+    mode: '0755'
+
+- name: copy encryption key
+  copy:
+    src: "{{ mysql_backup_encrypt_aes_key_src }}"
+    dest: "{{ mysql_backup_encrypt_aes_key }}"
+    mode: '0600'
+  when: mysql_backup_encrypt_aes
+
+- name: S3 backend -- create s3cfg config
+  template:
+    src: "{{ mysql_backup_s3cfg_template }}"
+    dest: "{{ mysql_backup_s3cfg_path }}"
+  when:
+    - mysql_backup_backend_use_s3
+    - mysql_backup_s3cfg_template is defined
+
+- name: SCP backend -- copy identity file
+  copy:
+    src: "{{ mysql_backup_scp_identity_src }}"
+    dest: "{{ mysql_backup_scp_identity }}"
+    mode: '0600'
+  when:
+    - mysql_backup_backend_use_scp
+    - mysql_backup_scp_identity_src is defined
+
+- name: generate custom script {{ mysql_backup_custom_script_name }}
+  template:
+    src: mysql-backup-runner.sh.j2
+    dest: "{{ mysql_backup_custom_script }}"
+    mode: '0755'
+
+- name: save generated custom script into variable
+  set_fact:
+    mysql_backup_last_generated_custom_script: "{{ mysql_backup_custom_script }}"
+  when: mysql_backup_save_facts_about_custom_script

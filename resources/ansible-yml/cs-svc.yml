@@ -1,0 +1,47 @@
+# ansible-playbook -i hosts cs-svc.yml
+---
+- name: Check all docker service
+  hosts: all
+  become: yes
+  gather_facts: yes
+  # vars_files:
+  # - ../../config/default.yml
+
+  tasks:
+  - name: "Wait for {{ default_transport }}://{{ domain }} service is up"
+    uri:
+      url: "{{ default_transport }}://{{ domain }}"
+      method: GET
+      headers:
+      return_content: yes
+    register: _result
+    until: _result.content != '\"\"'
+    retries: 30   # retry X times
+    delay: 3      # pause for X sec b/w each call
+    ignore_errors: yes
+
+  - name: "Check PKC MediaWiki Service - {{ default_transport }}://{{ domain }}"
+    uri: "url={{ default_transport }}://{{ domain }} return_content=true"
+    register: response
+    failed_when: "'Main page' not in response.content"
+    ignore_errors: yes
+
+  - name: "Check All Services"
+    uri: 
+      url: "{{ item.url }}" 
+      return_content: yes
+    register: response
+    failed_when: "{{ item.failed_when }}"
+
+    loop:
+      - {url: "{{ default_transport }}://git.{{ domain }}", failed_when: "'Sign In' not in response.content" }
+      - {url: "{{ default_transport }}://mtm.{{ domain }}", failed_when: "'Sign in' not in response.content" }
+      - {url: "{{ default_transport }}://pma.{{ domain }}", failed_when: "'Log in' not in response.content" }
+    ignore_errors: yes
+
+  - name: "Check Code Server Service - {{ default_transport }}://code.{{ domain }}"
+    uri:
+      url: "{{ default_transport }}://code.{{ domain }}"
+      status_code: 200
+    ignore_errors: yes
+

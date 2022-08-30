@@ -1,0 +1,266 @@
+# MariaDB
+version: "3.7"
+services:
+  database:
+    # image: emhavis/pkc_mariadb:v0.2
+    image: mariadb:10.6
+    container_name: xlp_mariadb
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --server-id=1 --character-set-server=utf8 --collation-server=utf8_unicode_ci --max-allowed-packet=67108864
+    environment:
+      MYSQL_DATABASE: my_wiki
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      # data file location
+      - ./mountpoint/mariadb:/var/lib/mysql
+      # backup and restore file location
+      - ./mountpoint/backup_restore/mariadb:/mnt/backup_restore/mariadb
+      # entry point
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports: 
+     - 3306:3306
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.10
+
+  phpmyadmin:
+    image: emhavis/pkc_phpmyadmin:v0.2
+    container_name: phpmyadmin
+    environment:
+    - PMA_ARBITRARY=1
+    - MYSQL_ROOT_PASSWORD=secret
+    - PMA_HOST=database
+    - UPLOAD_LIMIT=123M
+    - MAX_EXECUTION_TIME=125
+    - HIDE_PHP_VERSION= 1
+    restart: always
+    ports:
+     - ${PHP_MA}:80
+    volumes:
+     - /sessions
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.15
+
+  keycloak:
+    container_name: xlp_keycloak
+    image: emhavis/pkc_keycloak:v0.2
+    environment:
+#      - KEYCLOAK_USER=admin
+#      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - DB_VENDOR=mysql
+      - DB_ADDR=database
+      - DB_PORT=3306 
+      - DB_DATABASE=keycloak
+      - DB_PASSWORD=keycloak-pass
+      - DB_USER=keycloak
+      - JDBC_PARAMS=enabledTLSProtocols=TLSv1.2       #workaround for aurora
+      - JAVA_OPTS=-server -Xms1024m -Xmx1024m 
+      - PROXY_ADDRESS_FORWARDING=true
+    ports:
+    - ${KCK_PORT_NUMBER}:8080
+    depends_on:
+    - database
+    restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.20
+
+  matomo:
+    container_name: xlp_matomo
+    image: docker.io/bitnami/matomo:4
+    ports:
+      - ${MATOMO_PORT_NUMBER}:8080
+    environment:
+      - MATOMO_DATABASE_HOST=database
+      - MATOMO_DATABASE_PORT_NUMBER=3306
+      - MATOMO_DATABASE_USER=matomodb
+      - MATOMO_DATABASE_NAME=matomo
+      - MATOMO_DATABASE_PASSWORD=matomo-pass
+    volumes:
+      - "./mountpoint/matomo:/bitnami/matomo"
+    depends_on:
+      - database
+    restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.25
+
+  mediawiki:
+    # default username/password: admin/admin_on_d0cker
+    # image: xlp0/semanticwiki
+    # image: emhavis/pkc_semanticwiki:v0.4
+    image: emhavis/pkc_semanticwiki:v1.37.1.build.4
+    container_name: xlp_mediawiki
+    # platform: linux/amd64
+    #
+    restart: always
+    ports:    
+    - ${PORT_NUMBER}:80
+    links:
+    - database
+    volumes:
+    # images file location
+    - ./mountpoint/images:/var/www/html/images
+    # backup and restore file location
+    - ./mountpoint/backup_restore/mediawiki:/mnt/backup_restore/mediawiki
+    # Localsettings location file
+    - ./mountpoint/LocalSettings.php:/var/www/html/LocalSettings.php
+    - ./backup/xml:/var/www/html/backup
+    # Ansible working directory
+    - ./mountpoint/ansible:/mnt/ansible
+    # Extensions Folder
+    - ./mountpoint/extensions:/var/www/html/extensions
+    # Upload MAX change to 100MB on php.ini
+    - ./mountpoint/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+    - database
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.30
+
+  gitea:
+    #image: gitea/gitea:1.15.2
+    image: gitea/gitea:1.15.2
+    #image: emhavis/pkc_gitea:v0.1
+    container_name: xlp_gitea
+    environment:
+    - USER_UID=1000
+    - USER_GID=1000
+    - GITEA__database__DB_TYPE=mysql
+    - GITEA__database__HOST=database:3306
+    - GITEA__database__NAME=gitea
+    - GITEA__database__USER=gitea
+    - GITEA__database__PASSWD=gitea-pass
+    restart: always
+    volumes:
+    - ./mountpoint/gitea:/data
+    # to maintain compatibility across OS
+    - ./mountpoint/timezone:/etc/timezone:ro
+    - ./mountpoint/localtime:/etc/localtime:ro
+    ports:
+    - ${GITEA_PORT_NUMBER}:3000
+    - "222:22"
+    depends_on:
+    - database
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.35
+
+  code-server:
+    #image: lscr.io/linuxserver/code-server
+    #image: emhavis/pkc_codeserver:v0.2
+    image: lscr.io/linuxserver/code-server:arm64v8-4.4.0
+    container_name: xlp_vs
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PASSWORD=${VS_PASSWORD} #optional
+      - SUDO_PASSWORD=${VS_SUDO_PASSWORD} #optional
+    volumes:
+      - ./mountpoint/vs:/config
+      - ./mountpoint:/pkc_mountpoint
+    ports:
+      - ${VS_PORT_NUMBER}:8443
+    restart: always
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.40
+
+  lms:
+    image: bitnami/moodle:latest
+    container_name: xlp_lms
+    environment:
+      - MYSQL_CLIENT_FLAVOR=mariadb
+      - MOODLE_DATABASE_HOST=database
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=moodle
+      - MOODLE_DATABASE_NAME=moodle
+      - MOODLE_DATABASE_PASSWORD=moodle-pass
+    volumes:
+      - ./mountpoint/moodle:/bitnami/moodle
+      - ./mountpoint/moodledata:/bitnami/moodledata
+    ports:
+      - ${MDL_PORT_NUMBER}:8080
+      - 32080:8443
+    restart: always
+    depends_on:
+    - database
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.45
+
+  #
+  # QuantUX
+  #
+  mongo:
+    restart: always
+    container_name: xlp_mongo
+    image: mongo
+    volumes:
+      - ./mountpoint/mongo_data:/data/db        # pth for the data to be stored and kept on your host machine is on the left side of the ":"
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.65
+
+  qux-fe:
+    restart: always
+    container_name: xlp_qtux_frontend
+    image: bmcgonag/qux-fe
+    environment:
+      - QUX_PROXY_URL=http://xlp_qtux_backend:8080        # this is the path the front end uses to talk to the backend
+    links:
+      - mongo
+      - qux-be
+    ports:
+      - ${QTUX_FE_PORT}:8082        # change the left side port if your host machine already has 8082 in use
+    depends_on:
+      - qux-be
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.70
+
+  qux-be:
+    restart: always
+    container_name: xlp_qtux_backend
+    image: bmcgonag/qux-be
+    environment:
+      - QUX_HTTP_HOST=http://xlp_qtux_frontend:8082         # this is the path the backend uses to talk to the front end
+      - QUX_HTTP_PORT=8080                                  # This is the port the backend will use
+      - QUX_MONGO_DB_NAME=quantux                           # the database / collection name in mongodb
+      - QUX_MONGO_TABLE_PREFIX=quantux                      # table / document prefix in mongodb
+      - QUX_MONGO_CONNECTION_STRING=mongodb://xlp_mongo:27017        # this assumes your mongodb container will be called "quant-ux-mongo" in the docker-compose file
+      - QUX_MAIL_USER=mail_admin@example.com                # this should be your smtp email user
+      - QUX_MAIL_PASSWORD=sTr0ngPa55w0Rd                    # this should be your smtp email password
+      - QUX_MAIL_HOST=mail.example.com                      # this should be your smtp host address
+      - QUX_JWT_PASSWORD=some-long-string-of-mix-case-chars-and-nums        # you should change this to a real JWT secret
+      - QUX_IMAGE_FOLDER_USER=/qux-images                   # just a folder name, change if you like
+      - QUX_IMAGE_FOLDER_APPS=/qux-image-apps               # just a folder name, change if you like
+      - TZ=Asia/Jakarta                                     # change to your timezone
+    depends_on:
+      - mongo   
+
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.75
+  
+  #
+  # Swagger
+  #
+  swagger:
+    restart: always
+    container_name: xlp_swagger
+    image: swaggerapi/swagger-ui
+    ports:
+      - ${SWG_PORT_PORT}:8080        # change the left side port if your host machine already has 8082 in use
+    networks:
+      pkcnet:
+        ipv4_address: 192.168.100.80 
+
+networks:
+  pkcnet:
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24

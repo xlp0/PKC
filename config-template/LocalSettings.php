@@ -359,12 +359,18 @@ $srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'e
 # Enable String Functions
 $wgPFEnableStringFunctions = true;
 #
-# Enable User Protect Extensions
-# wfLoadExtension( 'UserProtect' );
+# Enable Swagger Docs extensions
 #
-# to resolve keycloak user issues
-$wgOpenIDConnect_ForceLogout = true;
-$wgRememberMe = 'never';
+wfLoadExtension( 'SwaggerDoc' ); 
+#
+# Enable CORS on PKC Implementation
+$wgCrossSiteAJAXdomains = [
+  '#QTUX_FQDN'
+];
+#
+# to resolve keycloak user issues, disable below line
+# $wgOpenIDConnect_ForceLogout = true;
+# $wgRememberMe = 'never';
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

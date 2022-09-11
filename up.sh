@@ -174,7 +174,10 @@ if [ -f .env ]; then
 
         # Prepare .env file
         echo "Preparing env file"
-        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-prep-env.yml        
+        ansible-playbook -i ./resources/config/hosts ./resources/ansible-yml/cs-prep-env.yml
+
+        # read the .env file
+        export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
 
         GITEA_SUBDOMAIN=git.$YOUR_DOMAIN
         PMA_SUBDOMAIN=pma.$YOUR_DOMAIN

@@ -28,7 +28,7 @@ $wgSitename = "PKC";
 $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "https://www.pkc-dev.org";
+$wgServer = "https://www.rndteam-isnspeed.com";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
@@ -151,7 +151,7 @@ wfLoadExtension( 'CategoryTree' );
 wfLoadExtension( 'Cite' );
 wfLoadExtension( 'CiteThisPage' );
 wfLoadExtension( 'CodeEditor' );
-wfLoadExtension( 'ConfirmEdit' );
+# wfLoadExtension( 'ConfirmEdit' );
 wfLoadExtension( 'Gadgets' );
 wfLoadExtension( 'ImageMap' );
 wfLoadExtension( 'InputBox' );
@@ -329,16 +329,16 @@ wfLoadExtension( 'TemplateWizard' );
 wfLoadExtension( 'OpenIDConnect' );
 wfLoadExtension( 'PluggableAuth' );
 # http://localhost:32060/auth/realms/pkc-realm/.well-known/openid-configuration --> check here
-$wgOpenIDConnect_Config['#KCK_SUBDOMAIN/auth/realms/pkc-realm/'] = [
+$wgOpenIDConnect_Config['https://kck.rndteam-isnspeed.com/auth/realms/pkc-realm/'] = [
   'clientID' => 'pkc-client',
   'clientsecret' => 'd9ecdca8-ad69-4322-9452-ff725898eb03',
   'scope' => [ 'openid', 'profile', 'email' ]
 ];
 $wgGroupPermissions['*']['autocreateaccount'] = true;
-$wgPluggableAuth_EnableLocalLogin = true;
+$wgPluggableAuth_EnableLocalLogin = false;
 #
 wfLoadExtension( 'Matomo' );
-$wgMatomoURL = "mtm.pkc-dev.org";
+$wgMatomoURL = "mtm.rndteam-isnspeed.com";
 $wgMatomoIDSite = "1";
 #
 #
@@ -356,10 +356,21 @@ $srfgFormats = [ 'icalendar', 'vcard', 'bibtex', 'calendar', 'eventcalendar', 'e
                                 'listwidget', 'pagewidget', 'dygraphs', 'media', 'datatables' ];
 #
 #
+# Enable String Functions
+$wgPFEnableStringFunctions = true;
 #
-# Enable User Protect Extensions
-# wfLoadExtension( 'UserProtect' );
+# Enable Swagger Docs extensions
 #
+wfLoadExtension( 'SwaggerDoc' ); 
+#
+# Enable CORS on PKC Implementation
+$wgCrossSiteAJAXdomains = [
+  '#QTUX_FQDN'
+];
+#
+# to resolve keycloak user issues, disable below line
+# $wgOpenIDConnect_ForceLogout = true;
+# $wgRememberMe = 'never';
 # Enable for debugging
 // $wgShowExceptionDetails = true;
 // $wgShowDBErrorBacktrace = true;

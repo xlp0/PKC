@@ -1,0 +1,316 @@
+Mark Started Process at Sab Apr 30 14:52:17 WIB 2022
+Preparing env file
+
+PLAY [install and provisioning dockers PKC Server] *****************************
+
+TASK [Prepare .env file, based on hosts file, copy to target] ******************
+changed: [pkc-dev.org -> localhost]
+
+TASK [.env, edit 1] ************************************************************
+changed: [pkc-dev.org -> localhost]
+
+TASK [.env, edit 2] ************************************************************
+changed: [pkc-dev.org -> localhost]
+
+TASK [.env, edit 3] ************************************************************
+changed: [pkc-dev.org -> localhost]
+
+PLAY RECAP *********************************************************************
+pkc-dev.org                : ok=4    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+--------------------------------------------------------
+Installation Plan:
+Ansible script to install on host file: 
+
+Loaded environmental variable: 
+Port number for Mediawiki: 32001
+Port number for Matomo Service: 32010
+Port number for PHPMyAdmin: 32040
+Port number for Gitea Service: 32030
+Port number for Code Server: 32050
+Port number for Keycloak: 32060
+
+Your domain name is: pkc-dev.org
+default installation will configure below subdomain: 
+PHPMyAdmin will be accessible from: pma.pkc-dev.org
+Gitea will be accessible from: git.pkc-dev.org
+Matomo will be accessible from: mtm.pkc-dev.org
+Code Server will be accessible from: code.pkc-dev.org
+Keycloak will be accessible from: kck.pkc-dev.org
+
+
+--------------------------------------------------------
+Reading values from hosts file into variable
+ssh
+~/.ssh/OregonCluster.pem
+ubuntu
+pkc-dev.org
+https
+emhavis@gmail.com
+Preparing NGINX Config Files ...
+
+finished prepare nginx config
+Prepare LocalSettings.php file
+finished prepare LocalSettings.php
+
+PLAY [install docker containers] ***********************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [pkc-dev.org]
+
+TASK [Get running containers] **************************************************
+ok: [pkc-dev.org]
+
+TASK [Stop running containers] *************************************************
+
+TASK [Remove Stopped docker containers] ****************************************
+skipping: [pkc-dev.org]
+
+TASK [Get details of all images] ***********************************************
+ok: [pkc-dev.org]
+
+TASK [Remove all images] *******************************************************
+changed: [pkc-dev.org] => (item=sha256:36c9f9b3e885c5cad5aa0d56164dce85ad84fd866d79f20937684d2273114c7a)
+changed: [pkc-dev.org] => (item=sha256:f25277591109e89b8b64eb264b2a69bf649bfc4e93b44b290985410a97bdc7d8)
+changed: [pkc-dev.org] => (item=sha256:9b424663fd5b2882a6e5c239b0b8e676d81f74bb266ee3c197bda0f82c143503)
+changed: [pkc-dev.org] => (item=sha256:735ea822457c7cfd3ae75e56c4f65269dc76600f21a4d4670196bb9d536216ce)
+changed: [pkc-dev.org] => (item=sha256:8ff18bccc123227c8397fb5ca06395cedafb375c0533d6f1a9684033bb48162d)
+
+TASK [Find NGINX configuration files] ******************************************
+ok: [pkc-dev.org]
+
+TASK [cleanup NGINX Configuration, if exists] **********************************
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303562.698245, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/git.conf', u'xusr': False, u'atime': 1651303562.710245, u'inode': 257165, u'isgid': False, u'size': 1234, u'isdir': False, u'wgrp': False, u'ctime': 1651303562.698245, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303570.838237, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/mtm.conf', u'xusr': False, u'atime': 1651303570.8502371, u'inode': 257168, u'isgid': False, u'size': 1187, u'isdir': False, u'wgrp': False, u'ctime': 1651303570.838237, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303554.5382528, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/pma.conf', u'xusr': False, u'atime': 1651303554.5502527, u'inode': 257173, u'isgid': False, u'size': 1234, u'isdir': False, u'wgrp': False, u'ctime': 1651303554.5382528, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303579.0302293, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/vs.conf', u'xusr': False, u'atime': 1651303579.0422292, u'inode': 257174, u'isgid': False, u'size': 976, u'isdir': False, u'wgrp': False, u'ctime': 1651303579.0302293, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303587.2742212, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/kck.conf', u'xusr': False, u'atime': 1651303587.2862213, u'inode': 257175, u'isgid': False, u'size': 1239, u'isdir': False, u'wgrp': False, u'ctime': 1651303587.2742212, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303595.5102131, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/mdl.conf', u'xusr': False, u'atime': 1651303595.5222132, u'inode': 257178, u'isgid': False, u'size': 1247, u'isdir': False, u'wgrp': False, u'ctime': 1651303595.5102131, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303538.2382684, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/pkc.conf', u'xusr': False, u'atime': 1651303538.2502682, u'inode': 257170, u'isgid': False, u'size': 1177, u'isdir': False, u'wgrp': False, u'ctime': 1651303538.2382684, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+changed: [pkc-dev.org] => (item={u'islnk': False, u'uid': 0, u'rgrp': True, u'xoth': False, u'rusr': True, u'woth': False, u'nlink': 1, u'issock': False, u'mtime': 1651303546.4022605, u'gr_name': u'root', u'path': u'/etc/nginx/sites-enabled/reverse-proxy.conf', u'xusr': False, u'atime': 1651303546.4142606, u'inode': 257180, u'isgid': False, u'size': 690, u'isdir': False, u'wgrp': False, u'ctime': 1651303546.4022605, u'isblk': False, u'xgrp': False, u'isuid': False, u'dev': 51713, u'roth': True, u'isreg': True, u'isfifo': False, u'mode': u'0644', u'pw_name': u'root', u'gid': 0, u'ischr': False, u'wusr': True})
+
+TASK [Find NGINX configuration files] ******************************************
+skipping: [pkc-dev.org]
+
+TASK [cleanup NGINX Configuration, if exists] **********************************
+fatal: [pkc-dev.org]: FAILED! => {"msg": "'dict object' has no attribute 'files'"}
+...ignoring
+
+PLAY RECAP *********************************************************************
+pkc-dev.org                : ok=7    changed=2    unreachable=0    failed=0    skipped=3    rescued=0    ignored=1   
+
+
+PLAY [install and provisioning dockers PKC Server] *****************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [pkc-dev.org]
+
+TASK [apt-get update] **********************************************************
+ok: [pkc-dev.org]
+
+TASK [install nginx] ***********************************************************
+ok: [pkc-dev.org]
+
+TASK [Install aptitude using apt] **********************************************
+ok: [pkc-dev.org]
+
+TASK [Install required system packages] ****************************************
+ok: [pkc-dev.org] => (item=apt-transport-https)
+ok: [pkc-dev.org] => (item=ca-certificates )
+ok: [pkc-dev.org] => (item=curl)
+ok: [pkc-dev.org] => (item=software-properties-common)
+ok: [pkc-dev.org] => (item=python3-pip)
+ok: [pkc-dev.org] => (item=virtualenv)
+ok: [pkc-dev.org] => (item=python3-setuptools)
+ok: [pkc-dev.org] => (item=unzip)
+
+TASK [Add Docker GPG apt Key] **************************************************
+ok: [pkc-dev.org]
+
+TASK [Add Docker Repository] ***************************************************
+ok: [pkc-dev.org]
+
+TASK [Update apt and install docker-ce] ****************************************
+ok: [pkc-dev.org]
+
+TASK [Install Docker Module for Python] ****************************************
+ok: [pkc-dev.org]
+
+TASK [install docker compose] **************************************************
+ok: [pkc-dev.org]
+
+TASK [apt-get update] **********************************************************
+ok: [pkc-dev.org]
+
+TASK [install mysql client for backup/restore support] *************************
+ok: [pkc-dev.org]
+
+TASK [Add signing key] *********************************************************
+skipping: [pkc-dev.org]
+
+TASK [Configure Docker-CE repository.] *****************************************
+skipping: [pkc-dev.org]
+
+TASK [Configure Docker repository.] ********************************************
+skipping: [pkc-dev.org]
+
+TASK [Install Docker] **********************************************************
+skipping: [pkc-dev.org]
+
+TASK [Execute python3.6 pip install] *******************************************
+skipping: [pkc-dev.org]
+
+TASK [Install docker compose] **************************************************
+skipping: [pkc-dev.org]
+
+TASK [Add users to the Docker group] *******************************************
+skipping: [pkc-dev.org]
+
+TASK [Start Docker Daemon] *****************************************************
+skipping: [pkc-dev.org]
+
+TASK [copy NGINX Configuration Files] ******************************************
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/git.conf', u'src': u'../../config/git.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/mtm.conf', u'src': u'../../config/mtm.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/pkc.conf', u'src': u'../../config/pkc.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/pma.conf', u'src': u'../../config/pma.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/vs.conf', u'src': u'../../config/vs.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/kck.conf', u'src': u'../../config/kck.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/mdl.conf', u'src': u'../../config/mdl.conf'})
+changed: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/sites-enabled/reverse-proxy.conf', u'src': u'../../config/reverse-proxy.conf'})
+
+TASK [copy NGINX Configuration Files] ******************************************
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/git.conf', u'src': u'../../config/git.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/mtm.conf', u'src': u'../../config/mtm.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/pkc.conf', u'src': u'../../config/pkc.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/pma.conf', u'src': u'../../config/pma.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/vs.conf', u'src': u'../../config/vs.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/kck.conf', u'src': u'../../config/kck.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/mdl.conf', u'src': u'../../config/mdl.conf'}) 
+skipping: [pkc-dev.org] => (item={u'dest': u'/etc/nginx/conf.d/reverse-proxy.conf', u'src': u'../../config/reverse-proxy.conf'}) 
+
+TASK [create PKC docker-compose directory] *************************************
+ok: [pkc-dev.org]
+
+TASK [create PKC mysql init folder] ********************************************
+ok: [pkc-dev.org]
+
+TASK [Upload docker-compose] ***************************************************
+ok: [pkc-dev.org]
+
+TASK [Upload scripts and config] ***********************************************
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/cs-backup.sh', u'src': u'../script/cs-backup.sh'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/cs-restore.sh', u'src': u'../script/cs-restore.sh'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/cs-offsite-restore.sh', u'src': u'../script/cs-offsite-restore.sh'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/update-sw.sh', u'src': u'../script/update-sw.sh'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/mtm-sql.sh', u'src': u'../script/mtm-sql.sh'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/.env', u'src': u'../../.env'})
+
+TASK [Download mountpoint file] ************************************************
+ok: [pkc-dev.org]
+
+TASK [Extract Mountpoint] ******************************************************
+[WARNING]: Consider using the unarchive module rather than running 'tar'.  If
+you need to use command because unarchive is insufficient you can add 'warn:
+false' to this command task or set 'command_warnings=False' in ansible.cfg to
+get rid of this message.
+changed: [pkc-dev.org]
+
+TASK [Upload LocalSettings.php and other setting] ******************************
+changed: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/LocalSettings.php', u'src': u'../../config/LocalSettings.php'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/timezone', u'src': u'../../config-template/timezone'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/localtime', u'src': u'../../config-template/localtime'})
+
+TASK [copy Application Configuration Files] ************************************
+changed: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/matomo/config', u'src': u'../../config/config.ini.php'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/backup_restore/mariadb', u'src': u'../../config/update-mtm-config.sql'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/gitea/gitea/conf', u'src': u'../../config/app.ini'})
+
+TASK [add user mtm] ************************************************************
+ok: [pkc-dev.org]
+
+TASK [add user www-data] *******************************************************
+ok: [pkc-dev.org]
+
+TASK [Change Matomo Ownership Folder] ******************************************
+ok: [pkc-dev.org]
+
+TASK [Create group] ************************************************************
+ok: [pkc-dev.org]
+
+TASK [Adding user ubuntu] ******************************************************
+ok: [pkc-dev.org]
+
+PLAY RECAP *********************************************************************
+pkc-dev.org                : ok=26   changed=4    unreachable=0    failed=0    skipped=9    rescued=0    ignored=0   
+
+Installing SSL Certbot for https protocol
+Prepare configuration file
+Running Ansible cerbot script
+
+PLAY [Install PKC HTTPS] *******************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [pkc-dev.org]
+
+TASK [Install Python Package] **************************************************
+ok: [pkc-dev.org]
+
+TASK [Install Let's Encrypt Package] *******************************************
+ok: [pkc-dev.org]
+
+TASK [DNF update the system] ***************************************************
+skipping: [pkc-dev.org]
+
+TASK [Yum update the system] ***************************************************
+skipping: [pkc-dev.org]
+
+TASK [Enable EPEL Release for RHEL 8] ******************************************
+skipping: [pkc-dev.org]
+
+TASK [Install Certbot] *********************************************************
+skipping: [pkc-dev.org]
+
+TASK [Create and Install Cert Using NGINX Plugin] ******************************
+changed: [pkc-dev.org] => (item=pkc-dev.org)
+changed: [pkc-dev.org] => (item=www.pkc-dev.org)
+changed: [pkc-dev.org] => (item=pma.pkc-dev.org)
+changed: [pkc-dev.org] => (item=git.pkc-dev.org)
+changed: [pkc-dev.org] => (item=mtm.pkc-dev.org)
+changed: [pkc-dev.org] => (item=code.pkc-dev.org)
+changed: [pkc-dev.org] => (item=kck.pkc-dev.org)
+changed: [pkc-dev.org] => (item=mdl.pkc-dev.org)
+
+TASK [copy Application Configuration Files] ************************************
+changed: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint', u'src': u'../../config/LocalSettings.php'})
+ok: [pkc-dev.org] => (item={u'dest': u'./cs/mountpoint/matomo/config', u'src': u'../../config/config.ini.php'})
+
+TASK [Set Letsencrypt Cronjob for Certificate Auto Renewal] ********************
+ok: [pkc-dev.org]
+
+TASK [Set Letsencrypt Cronjob for Certificate Auto Renewal] ********************
+skipping: [pkc-dev.org]
+
+PLAY RECAP *********************************************************************
+pkc-dev.org                : ok=6    changed=2    unreachable=0    failed=0    skipped=5    rescued=0    ignored=0   
+
+bash: warning: setlocale: LC_ALL: cannot change locale (id_ID.UTF-8)
+Pulling database (emhavis/pkc_mariadb:v0.1)...
+v0.1: Pulling from emhavis/pkc_mariadb
+Digest: sha256:a69e0a995682fce2caf4f5a7906f8eb65758bad6a25d41834bc23dc99bfb6c91
+Status: Downloaded newer image for emhavis/pkc_mariadb:v0.1
+Pulling phpmyadmin (emhavis/pkc_phpmyadmin:v0.1)...
+v0.1: Pulling from emhavis/pkc_phpmyadmin
+Digest: sha256:7c56d9a7af2a4365152d70557f156316679a6e0afa2785b6083d162ae0fb7242
+Status: Downloaded newer image for emhavis/pkc_phpmyadmin:v0.1
+Pulling keycloak (emhavis/pkc_keycloak:v0.2)...
+v0.2: Pulling from emhavis/pkc_keycloak
+Digest: sha256:c8da16a9ba33cbd05e52f8c5b636dd9dfe412ec743e9eb57b04115f0722ee1c3
+Status: Downloaded newer image for emhavis/pkc_keycloak:v0.2
+Pulling matomo (docker.io/bitnami/matomo:4)...
+4: Pulling from bitnami/matomo
+Digest: sha256:2daaf607706f573bf4d2aa67106d6789c3e06883048cf60335fc3ba5efb03910
+Status: Downloaded newer image for bitnami/matomo:4
+Pulling mediawiki (emhavis/pkc_semanticwiki:v1.37.1.build.4)...
+v1.37.1.build.4: Pulling from emhavis/pkc_semanticwiki
+packet_write_wait: Connection to 34.217.255.219 port 22: Broken pipe

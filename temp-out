@@ -1,7 +1,7 @@
-pkc-dev.org
+rndteam-isnspeed.com
 ansible_connection=ssh
-ansible_ssh_private_key_file=~/.ssh/OregonCluster.pem
+ansible_ssh_private_key_file=~/.ssh/pkc.pem
 ansible_user=ubuntu
-domain=pkc-dev.org
+domain=rndteam-isnspeed.com
 default_transport=https
 email=emhavis@gmail.com
